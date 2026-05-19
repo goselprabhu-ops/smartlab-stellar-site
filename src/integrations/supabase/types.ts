@@ -1495,6 +1495,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_attempt_answer_key: {
+        Args: { _attempt_id: string }
+        Returns: {
+          correct: Json
+          question_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1505,6 +1512,14 @@ export type Database = {
       is_linked_parent: {
         Args: { _parent: string; _student: string }
         Returns: boolean
+      }
+      score_quiz_attempt: {
+        Args: { _answers: Json; _quiz_id: string }
+        Returns: {
+          per_question: Json
+          score: number
+          total: number
+        }[]
       }
     }
     Enums: {

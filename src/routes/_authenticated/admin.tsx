@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, Navigate } from "@tanstack/react-router";
-import { LayoutDashboard, Users, BookOpen, BarChart3, Brain, CreditCard, FolderTree } from "lucide-react";
+import { LayoutDashboard, Users, BookOpen, BarChart3, Brain, CreditCard, FolderTree, GraduationCap, Bell, FileBarChart, LifeBuoy, Activity } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -7,13 +7,18 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 const tabs: Array<{ to: string; label: string; icon: typeof Users; exact?: boolean }> = [
-  { to: "/admin",                label: "Overview",     icon: LayoutDashboard, exact: true },
-  { to: "/admin/users",          label: "Users",        icon: Users },
-  { to: "/admin/content",        label: "Content",      icon: FolderTree },
-  { to: "/admin/courses",        label: "Courses",      icon: BookOpen },
-  { to: "/admin/analytics",      label: "Analytics",    icon: BarChart3 },
-  { to: "/admin/ai",             label: "AI",           icon: Brain },
-  { to: "/admin/subscriptions",  label: "Subscriptions",icon: CreditCard },
+  { to: "/admin",                label: "Overview",      icon: LayoutDashboard, exact: true },
+  { to: "/admin/users",          label: "Students",      icon: Users },
+  { to: "/admin/teachers",       label: "Teachers",      icon: GraduationCap },
+  { to: "/admin/content",        label: "Content",       icon: FolderTree },
+  { to: "/admin/courses",        label: "Courses",       icon: BookOpen },
+  { to: "/admin/analytics",      label: "Analytics",     icon: BarChart3 },
+  { to: "/admin/ai",             label: "AI",            icon: Brain },
+  { to: "/admin/notifications",  label: "Notifications", icon: Bell },
+  { to: "/admin/subscriptions",  label: "Subscriptions", icon: CreditCard },
+  { to: "/admin/reports",        label: "Reports",       icon: FileBarChart },
+  { to: "/admin/support",        label: "Support",       icon: LifeBuoy },
+  { to: "/admin/activity",       label: "Activity",      icon: Activity },
 ];
 
 function AdminLayout() {

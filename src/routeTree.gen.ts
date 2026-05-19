@@ -30,12 +30,19 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedParentRouteImport } from './routes/_authenticated/parent'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedStudentTestsRouteImport } from './routes/_authenticated/student/tests'
+import { Route as AuthenticatedStudentSubjectsRouteImport } from './routes/_authenticated/student/subjects'
+import { Route as AuthenticatedStudentStudyPathRouteImport } from './routes/_authenticated/student/study-path'
 import { Route as AuthenticatedStudentRetentionRouteImport } from './routes/_authenticated/student/retention'
 import { Route as AuthenticatedStudentRecommendationsRouteImport } from './routes/_authenticated/student/recommendations'
 import { Route as AuthenticatedStudentQuizzesRouteImport } from './routes/_authenticated/student/quizzes'
 import { Route as AuthenticatedStudentProgressRouteImport } from './routes/_authenticated/student/progress'
+import { Route as AuthenticatedStudentNotificationsRouteImport } from './routes/_authenticated/student/notifications'
+import { Route as AuthenticatedStudentNotesRouteImport } from './routes/_authenticated/student/notes'
 import { Route as AuthenticatedStudentMasteryRouteImport } from './routes/_authenticated/student/mastery'
+import { Route as AuthenticatedStudentLeaderboardRouteImport } from './routes/_authenticated/student/leaderboard'
 import { Route as AuthenticatedStudentCoursesRouteImport } from './routes/_authenticated/student/courses'
+import { Route as AuthenticatedStudentAiTutorRouteImport } from './routes/_authenticated/student/ai-tutor'
 import { Route as AuthenticatedStudentRemediationMicroConceptIdRouteImport } from './routes/_authenticated/student/remediation.$microConceptId'
 import { Route as AuthenticatedStudentLearnMicroConceptIdRouteImport } from './routes/_authenticated/student/learn.$microConceptId'
 import { Route as AuthenticatedStudentCoursesCourseIdLessonIdRouteImport } from './routes/_authenticated/student/courses.$courseId.$lessonId'
@@ -144,6 +151,24 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedStudentTestsRoute =
+  AuthenticatedStudentTestsRouteImport.update({
+    id: '/student/tests',
+    path: '/student/tests',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedStudentSubjectsRoute =
+  AuthenticatedStudentSubjectsRouteImport.update({
+    id: '/student/subjects',
+    path: '/student/subjects',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedStudentStudyPathRoute =
+  AuthenticatedStudentStudyPathRouteImport.update({
+    id: '/student/study-path',
+    path: '/student/study-path',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedStudentRetentionRoute =
   AuthenticatedStudentRetentionRouteImport.update({
     id: '/student/retention',
@@ -168,16 +193,40 @@ const AuthenticatedStudentProgressRoute =
     path: '/student/progress',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedStudentNotificationsRoute =
+  AuthenticatedStudentNotificationsRouteImport.update({
+    id: '/student/notifications',
+    path: '/student/notifications',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedStudentNotesRoute =
+  AuthenticatedStudentNotesRouteImport.update({
+    id: '/student/notes',
+    path: '/student/notes',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedStudentMasteryRoute =
   AuthenticatedStudentMasteryRouteImport.update({
     id: '/student/mastery',
     path: '/student/mastery',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedStudentLeaderboardRoute =
+  AuthenticatedStudentLeaderboardRouteImport.update({
+    id: '/student/leaderboard',
+    path: '/student/leaderboard',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedStudentCoursesRoute =
   AuthenticatedStudentCoursesRouteImport.update({
     id: '/student/courses',
     path: '/student/courses',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedStudentAiTutorRoute =
+  AuthenticatedStudentAiTutorRouteImport.update({
+    id: '/student/ai-tutor',
+    path: '/student/ai-tutor',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedStudentRemediationMicroConceptIdRoute =
@@ -220,12 +269,19 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/parent': typeof AuthenticatedParentRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/student/ai-tutor': typeof AuthenticatedStudentAiTutorRoute
   '/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
+  '/student/leaderboard': typeof AuthenticatedStudentLeaderboardRoute
   '/student/mastery': typeof AuthenticatedStudentMasteryRoute
+  '/student/notes': typeof AuthenticatedStudentNotesRoute
+  '/student/notifications': typeof AuthenticatedStudentNotificationsRoute
   '/student/progress': typeof AuthenticatedStudentProgressRoute
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
   '/student/retention': typeof AuthenticatedStudentRetentionRoute
+  '/student/study-path': typeof AuthenticatedStudentStudyPathRoute
+  '/student/subjects': typeof AuthenticatedStudentSubjectsRoute
+  '/student/tests': typeof AuthenticatedStudentTestsRoute
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
@@ -251,12 +307,19 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/parent': typeof AuthenticatedParentRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/student/ai-tutor': typeof AuthenticatedStudentAiTutorRoute
   '/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
+  '/student/leaderboard': typeof AuthenticatedStudentLeaderboardRoute
   '/student/mastery': typeof AuthenticatedStudentMasteryRoute
+  '/student/notes': typeof AuthenticatedStudentNotesRoute
+  '/student/notifications': typeof AuthenticatedStudentNotificationsRoute
   '/student/progress': typeof AuthenticatedStudentProgressRoute
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
   '/student/retention': typeof AuthenticatedStudentRetentionRoute
+  '/student/study-path': typeof AuthenticatedStudentStudyPathRoute
+  '/student/subjects': typeof AuthenticatedStudentSubjectsRoute
+  '/student/tests': typeof AuthenticatedStudentTestsRoute
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
@@ -284,12 +347,19 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/parent': typeof AuthenticatedParentRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/student/ai-tutor': typeof AuthenticatedStudentAiTutorRoute
   '/_authenticated/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
+  '/_authenticated/student/leaderboard': typeof AuthenticatedStudentLeaderboardRoute
   '/_authenticated/student/mastery': typeof AuthenticatedStudentMasteryRoute
+  '/_authenticated/student/notes': typeof AuthenticatedStudentNotesRoute
+  '/_authenticated/student/notifications': typeof AuthenticatedStudentNotificationsRoute
   '/_authenticated/student/progress': typeof AuthenticatedStudentProgressRoute
   '/_authenticated/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/_authenticated/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
   '/_authenticated/student/retention': typeof AuthenticatedStudentRetentionRoute
+  '/_authenticated/student/study-path': typeof AuthenticatedStudentStudyPathRoute
+  '/_authenticated/student/subjects': typeof AuthenticatedStudentSubjectsRoute
+  '/_authenticated/student/tests': typeof AuthenticatedStudentTestsRoute
   '/_authenticated/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/_authenticated/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/_authenticated/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
@@ -317,12 +387,19 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/parent'
     | '/settings'
+    | '/student/ai-tutor'
     | '/student/courses'
+    | '/student/leaderboard'
     | '/student/mastery'
+    | '/student/notes'
+    | '/student/notifications'
     | '/student/progress'
     | '/student/quizzes'
     | '/student/recommendations'
     | '/student/retention'
+    | '/student/study-path'
+    | '/student/subjects'
+    | '/student/tests'
     | '/student/learn/$microConceptId'
     | '/student/remediation/$microConceptId'
     | '/student/courses/$courseId/$lessonId'
@@ -348,12 +425,19 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/parent'
     | '/settings'
+    | '/student/ai-tutor'
     | '/student/courses'
+    | '/student/leaderboard'
     | '/student/mastery'
+    | '/student/notes'
+    | '/student/notifications'
     | '/student/progress'
     | '/student/quizzes'
     | '/student/recommendations'
     | '/student/retention'
+    | '/student/study-path'
+    | '/student/subjects'
+    | '/student/tests'
     | '/student/learn/$microConceptId'
     | '/student/remediation/$microConceptId'
     | '/student/courses/$courseId/$lessonId'
@@ -380,12 +464,19 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/parent'
     | '/_authenticated/settings'
+    | '/_authenticated/student/ai-tutor'
     | '/_authenticated/student/courses'
+    | '/_authenticated/student/leaderboard'
     | '/_authenticated/student/mastery'
+    | '/_authenticated/student/notes'
+    | '/_authenticated/student/notifications'
     | '/_authenticated/student/progress'
     | '/_authenticated/student/quizzes'
     | '/_authenticated/student/recommendations'
     | '/_authenticated/student/retention'
+    | '/_authenticated/student/study-path'
+    | '/_authenticated/student/subjects'
+    | '/_authenticated/student/tests'
     | '/_authenticated/student/learn/$microConceptId'
     | '/_authenticated/student/remediation/$microConceptId'
     | '/_authenticated/student/courses/$courseId/$lessonId'
@@ -560,6 +651,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/student/tests': {
+      id: '/_authenticated/student/tests'
+      path: '/student/tests'
+      fullPath: '/student/tests'
+      preLoaderRoute: typeof AuthenticatedStudentTestsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/student/subjects': {
+      id: '/_authenticated/student/subjects'
+      path: '/student/subjects'
+      fullPath: '/student/subjects'
+      preLoaderRoute: typeof AuthenticatedStudentSubjectsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/student/study-path': {
+      id: '/_authenticated/student/study-path'
+      path: '/student/study-path'
+      fullPath: '/student/study-path'
+      preLoaderRoute: typeof AuthenticatedStudentStudyPathRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/student/retention': {
       id: '/_authenticated/student/retention'
       path: '/student/retention'
@@ -588,6 +700,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentProgressRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/student/notifications': {
+      id: '/_authenticated/student/notifications'
+      path: '/student/notifications'
+      fullPath: '/student/notifications'
+      preLoaderRoute: typeof AuthenticatedStudentNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/student/notes': {
+      id: '/_authenticated/student/notes'
+      path: '/student/notes'
+      fullPath: '/student/notes'
+      preLoaderRoute: typeof AuthenticatedStudentNotesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/student/mastery': {
       id: '/_authenticated/student/mastery'
       path: '/student/mastery'
@@ -595,11 +721,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentMasteryRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/student/leaderboard': {
+      id: '/_authenticated/student/leaderboard'
+      path: '/student/leaderboard'
+      fullPath: '/student/leaderboard'
+      preLoaderRoute: typeof AuthenticatedStudentLeaderboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/student/courses': {
       id: '/_authenticated/student/courses'
       path: '/student/courses'
       fullPath: '/student/courses'
       preLoaderRoute: typeof AuthenticatedStudentCoursesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/student/ai-tutor': {
+      id: '/_authenticated/student/ai-tutor'
+      path: '/student/ai-tutor'
+      fullPath: '/student/ai-tutor'
+      preLoaderRoute: typeof AuthenticatedStudentAiTutorRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/student/remediation/$microConceptId': {
@@ -646,12 +786,19 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedParentRoute: typeof AuthenticatedParentRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedStudentAiTutorRoute: typeof AuthenticatedStudentAiTutorRoute
   AuthenticatedStudentCoursesRoute: typeof AuthenticatedStudentCoursesRouteWithChildren
+  AuthenticatedStudentLeaderboardRoute: typeof AuthenticatedStudentLeaderboardRoute
   AuthenticatedStudentMasteryRoute: typeof AuthenticatedStudentMasteryRoute
+  AuthenticatedStudentNotesRoute: typeof AuthenticatedStudentNotesRoute
+  AuthenticatedStudentNotificationsRoute: typeof AuthenticatedStudentNotificationsRoute
   AuthenticatedStudentProgressRoute: typeof AuthenticatedStudentProgressRoute
   AuthenticatedStudentQuizzesRoute: typeof AuthenticatedStudentQuizzesRoute
   AuthenticatedStudentRecommendationsRoute: typeof AuthenticatedStudentRecommendationsRoute
   AuthenticatedStudentRetentionRoute: typeof AuthenticatedStudentRetentionRoute
+  AuthenticatedStudentStudyPathRoute: typeof AuthenticatedStudentStudyPathRoute
+  AuthenticatedStudentSubjectsRoute: typeof AuthenticatedStudentSubjectsRoute
+  AuthenticatedStudentTestsRoute: typeof AuthenticatedStudentTestsRoute
   AuthenticatedStudentLearnMicroConceptIdRoute: typeof AuthenticatedStudentLearnMicroConceptIdRoute
   AuthenticatedStudentRemediationMicroConceptIdRoute: typeof AuthenticatedStudentRemediationMicroConceptIdRoute
 }
@@ -661,14 +808,22 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedParentRoute: AuthenticatedParentRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedStudentAiTutorRoute: AuthenticatedStudentAiTutorRoute,
   AuthenticatedStudentCoursesRoute:
     AuthenticatedStudentCoursesRouteWithChildren,
+  AuthenticatedStudentLeaderboardRoute: AuthenticatedStudentLeaderboardRoute,
   AuthenticatedStudentMasteryRoute: AuthenticatedStudentMasteryRoute,
+  AuthenticatedStudentNotesRoute: AuthenticatedStudentNotesRoute,
+  AuthenticatedStudentNotificationsRoute:
+    AuthenticatedStudentNotificationsRoute,
   AuthenticatedStudentProgressRoute: AuthenticatedStudentProgressRoute,
   AuthenticatedStudentQuizzesRoute: AuthenticatedStudentQuizzesRoute,
   AuthenticatedStudentRecommendationsRoute:
     AuthenticatedStudentRecommendationsRoute,
   AuthenticatedStudentRetentionRoute: AuthenticatedStudentRetentionRoute,
+  AuthenticatedStudentStudyPathRoute: AuthenticatedStudentStudyPathRoute,
+  AuthenticatedStudentSubjectsRoute: AuthenticatedStudentSubjectsRoute,
+  AuthenticatedStudentTestsRoute: AuthenticatedStudentTestsRoute,
   AuthenticatedStudentLearnMicroConceptIdRoute:
     AuthenticatedStudentLearnMicroConceptIdRoute,
   AuthenticatedStudentRemediationMicroConceptIdRoute:

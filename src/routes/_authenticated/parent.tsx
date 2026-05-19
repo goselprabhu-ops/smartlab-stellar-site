@@ -1,30 +1,41 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { listLinkedStudents } from "@/lib/progress.functions";
+import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
+import { Users, BarChart3, FileText, CalendarCheck } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/parent")({
-  component: Parent,
+  component: ParentLayout,
 });
 
-function Parent() {
-  const fn = useServerFn(listLinkedStudents);
-  const { data } = useQuery({ queryKey: ["linked-students"], queryFn: () => fn() });
+const tabs = [
+  { to: "/parent",            label: "Children",  icon: Users,         exact: true },
+  { to: "/parent/reports",    label: "Reports",   icon: FileText },
+  { to: "/parent/attendance", label: "Attendance",icon: CalendarCheck },
+  { to: "/parent/analytics",  label: "Analytics", icon: BarChart3 },
+] as const;
+
+function ParentLayout() {
   return (
-    <div>
-      <h1 className="font-display text-3xl font-semibold">My students</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Track progress and quiz attempts for linked students.</p>
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        {(data ?? []).map((s) => (
-          <div key={s.user_id} className="rounded-2xl border border-border bg-card p-6">
-            <div className="font-display text-lg font-semibold">{s.full_name ?? "Student"}</div>
-            <div className="text-sm text-muted-foreground">Grade {s.grade ?? "—"} · {s.school ?? ""}</div>
-          </div>
+    <div className="animate-fade-in space-y-8">
+      <header className="space-y-2">
+        <p className="font-display text-xs font-medium uppercase tracking-[0.2em] text-primary">Parent Dashboard</p>
+        <h1 className="font-display text-4xl font-semibold tracking-tight">Stay close to your child's learning</h1>
+        <p className="text-muted-foreground">Mastery, attendance, reports, and weekly digests for every linked student.</p>
+      </header>
+
+      <nav className="flex flex-wrap gap-1 rounded-xl border bg-card p-1 elev-1">
+        {tabs.map((t) => (
+          <Link
+            key={t.to}
+            to={t.to}
+            activeOptions={{ exact: !!t.exact }}
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-soft hover:bg-muted hover:text-foreground"
+            activeProps={{ className: "bg-primary text-primary-foreground hover:bg-primary" }}
+          >
+            <t.icon className="size-4" /> {t.label}
+          </Link>
         ))}
-        {(!data || data.length === 0) && (
-          <div className="text-sm text-muted-foreground">No students linked yet. Link a student by their account ID from settings.</div>
-        )}
-      </div>
+      </nav>
+
+      <Outlet />
     </div>
   );
 }

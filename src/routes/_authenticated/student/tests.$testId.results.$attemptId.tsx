@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+
 import { LoadingState } from "@/components/states/LoadingState";
 import { cn } from "@/lib/utils";
 import { getAttemptResult, getTestLeaderboard } from "@/lib/tests.functions";

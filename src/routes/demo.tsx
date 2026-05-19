@@ -1,12 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Calendar, Clock, Users, CheckCircle2 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { Calendar, Clock, Users, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { scheduleDemo } from "@/lib/launch.functions";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 
 export const Route = createFileRoute("/demo")({
   head: () => ({
@@ -22,11 +25,33 @@ export const Route = createFileRoute("/demo")({
 
 function DemoPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const submit = useServerFn(scheduleDemo);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
-    toast.success("Demo request received. Our team will reach out within one business day.");
+    const fd = new FormData(e.currentTarget);
+    setSubmitting(true);
+    try {
+      await submit({
+        data: {
+          name: String(fd.get("name") || ""),
+          email: String(fd.get("email") || ""),
+          phone: String(fd.get("phone") || "") || undefined,
+          role: (String(fd.get("role") || "parent") as "parent" | "student" | "teacher" | "school"),
+          grade: String(fd.get("grade") || "") || undefined,
+          preferredDate: String(fd.get("preferredDate") || "") || undefined,
+          preferredTime: String(fd.get("preferredTime") || "") || undefined,
+          notes: String(fd.get("notes") || "") || undefined,
+        },
+      });
+      setSubmitted(true);
+      toast.success("Demo request received. We'll reach out within one business day.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not submit");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (

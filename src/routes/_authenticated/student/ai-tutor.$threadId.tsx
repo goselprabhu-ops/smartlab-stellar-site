@@ -161,8 +161,8 @@ function AiTutorChat() {
     );
   }
 
-  const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
+  const handleSubmit = (_msg?: unknown, e?: { preventDefault?: () => void }) => {
+    e?.preventDefault?.();
     const text = input.trim();
     if (!text || isLoadingChat) return;
     sendMessage({ text });

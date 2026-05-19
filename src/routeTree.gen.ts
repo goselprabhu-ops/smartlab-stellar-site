@@ -29,6 +29,7 @@ import { Route as AuthenticatedStudentQuizzesRouteImport } from './routes/_authe
 import { Route as AuthenticatedStudentProgressRouteImport } from './routes/_authenticated/student/progress'
 import { Route as AuthenticatedStudentMasteryRouteImport } from './routes/_authenticated/student/mastery'
 import { Route as AuthenticatedStudentCoursesRouteImport } from './routes/_authenticated/student/courses'
+import { Route as AuthenticatedStudentRemediationMicroConceptIdRouteImport } from './routes/_authenticated/student/remediation.$microConceptId'
 import { Route as AuthenticatedStudentLearnMicroConceptIdRouteImport } from './routes/_authenticated/student/learn.$microConceptId'
 import { Route as AuthenticatedStudentCoursesCourseIdLessonIdRouteImport } from './routes/_authenticated/student/courses.$courseId.$lessonId'
 
@@ -136,6 +137,12 @@ const AuthenticatedStudentCoursesRoute =
     path: '/student/courses',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedStudentRemediationMicroConceptIdRoute =
+  AuthenticatedStudentRemediationMicroConceptIdRouteImport.update({
+    id: '/student/remediation/$microConceptId',
+    path: '/student/remediation/$microConceptId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedStudentLearnMicroConceptIdRoute =
   AuthenticatedStudentLearnMicroConceptIdRouteImport.update({
     id: '/student/learn/$microConceptId',
@@ -170,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
+  '/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRoutesByTo {
@@ -193,6 +201,7 @@ export interface FileRoutesByTo {
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
+  '/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRoutesById {
@@ -218,6 +227,7 @@ export interface FileRoutesById {
   '/_authenticated/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/_authenticated/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
   '/_authenticated/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
+  '/_authenticated/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/_authenticated/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRouteTypes {
@@ -243,6 +253,7 @@ export interface FileRouteTypes {
     | '/student/quizzes'
     | '/student/recommendations'
     | '/student/learn/$microConceptId'
+    | '/student/remediation/$microConceptId'
     | '/student/courses/$courseId/$lessonId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/student/quizzes'
     | '/student/recommendations'
     | '/student/learn/$microConceptId'
+    | '/student/remediation/$microConceptId'
     | '/student/courses/$courseId/$lessonId'
   id:
     | '__root__'
@@ -290,6 +302,7 @@ export interface FileRouteTypes {
     | '/_authenticated/student/quizzes'
     | '/_authenticated/student/recommendations'
     | '/_authenticated/student/learn/$microConceptId'
+    | '/_authenticated/student/remediation/$microConceptId'
     | '/_authenticated/student/courses/$courseId/$lessonId'
   fileRoutesById: FileRoutesById
 }
@@ -449,6 +462,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentCoursesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/student/remediation/$microConceptId': {
+      id: '/_authenticated/student/remediation/$microConceptId'
+      path: '/student/remediation/$microConceptId'
+      fullPath: '/student/remediation/$microConceptId'
+      preLoaderRoute: typeof AuthenticatedStudentRemediationMicroConceptIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/student/learn/$microConceptId': {
       id: '/_authenticated/student/learn/$microConceptId'
       path: '/student/learn/$microConceptId'
@@ -492,6 +512,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedStudentQuizzesRoute: typeof AuthenticatedStudentQuizzesRoute
   AuthenticatedStudentRecommendationsRoute: typeof AuthenticatedStudentRecommendationsRoute
   AuthenticatedStudentLearnMicroConceptIdRoute: typeof AuthenticatedStudentLearnMicroConceptIdRoute
+  AuthenticatedStudentRemediationMicroConceptIdRoute: typeof AuthenticatedStudentRemediationMicroConceptIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -508,6 +529,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedStudentRecommendationsRoute,
   AuthenticatedStudentLearnMicroConceptIdRoute:
     AuthenticatedStudentLearnMicroConceptIdRoute,
+  AuthenticatedStudentRemediationMicroConceptIdRoute:
+    AuthenticatedStudentRemediationMicroConceptIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -530,3 +553,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

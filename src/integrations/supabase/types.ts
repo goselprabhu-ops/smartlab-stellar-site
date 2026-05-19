@@ -991,6 +991,13 @@ export type Database = {
         | "practice"
         | "solution_walkthrough"
         | "diagram_prompt"
+        | "simplified_notes"
+        | "summary"
+        | "flashcards"
+        | "mcq"
+        | "revision_sheet"
+        | "micro_test"
+        | "visual_explanation"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1151,6 +1158,13 @@ export const Constants = {
         "practice",
         "solution_walkthrough",
         "diagram_prompt",
+        "simplified_notes",
+        "summary",
+        "flashcards",
+        "mcq",
+        "revision_sheet",
+        "micro_test",
+        "visual_explanation",
       ],
     },
   },

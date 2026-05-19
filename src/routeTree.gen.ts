@@ -28,6 +28,7 @@ import { Route as AuthenticatedStudentRecommendationsRouteImport } from './route
 import { Route as AuthenticatedStudentQuizzesRouteImport } from './routes/_authenticated/student/quizzes'
 import { Route as AuthenticatedStudentProgressRouteImport } from './routes/_authenticated/student/progress'
 import { Route as AuthenticatedStudentCoursesRouteImport } from './routes/_authenticated/student/courses'
+import { Route as AuthenticatedStudentLearnMicroConceptIdRouteImport } from './routes/_authenticated/student/learn.$microConceptId'
 import { Route as AuthenticatedStudentCoursesCourseIdLessonIdRouteImport } from './routes/_authenticated/student/courses.$courseId.$lessonId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -128,6 +129,12 @@ const AuthenticatedStudentCoursesRoute =
     path: '/student/courses',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedStudentLearnMicroConceptIdRoute =
+  AuthenticatedStudentLearnMicroConceptIdRouteImport.update({
+    id: '/student/learn/$microConceptId',
+    path: '/student/learn/$microConceptId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedStudentCoursesCourseIdLessonIdRoute =
   AuthenticatedStudentCoursesCourseIdLessonIdRouteImport.update({
     id: '/$courseId/$lessonId',
@@ -154,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/student/progress': typeof AuthenticatedStudentProgressRoute
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRoutesByTo {
@@ -175,6 +183,7 @@ export interface FileRoutesByTo {
   '/student/progress': typeof AuthenticatedStudentProgressRoute
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRoutesById {
@@ -198,6 +207,7 @@ export interface FileRoutesById {
   '/_authenticated/student/progress': typeof AuthenticatedStudentProgressRoute
   '/_authenticated/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/_authenticated/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/_authenticated/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/_authenticated/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRouteTypes {
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/student/progress'
     | '/student/quizzes'
     | '/student/recommendations'
+    | '/student/learn/$microConceptId'
     | '/student/courses/$courseId/$lessonId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/student/progress'
     | '/student/quizzes'
     | '/student/recommendations'
+    | '/student/learn/$microConceptId'
     | '/student/courses/$courseId/$lessonId'
   id:
     | '__root__'
@@ -264,6 +276,7 @@ export interface FileRouteTypes {
     | '/_authenticated/student/progress'
     | '/_authenticated/student/quizzes'
     | '/_authenticated/student/recommendations'
+    | '/_authenticated/student/learn/$microConceptId'
     | '/_authenticated/student/courses/$courseId/$lessonId'
   fileRoutesById: FileRoutesById
 }
@@ -416,6 +429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentCoursesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/student/learn/$microConceptId': {
+      id: '/_authenticated/student/learn/$microConceptId'
+      path: '/student/learn/$microConceptId'
+      fullPath: '/student/learn/$microConceptId'
+      preLoaderRoute: typeof AuthenticatedStudentLearnMicroConceptIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/student/courses/$courseId/$lessonId': {
       id: '/_authenticated/student/courses/$courseId/$lessonId'
       path: '/$courseId/$lessonId'
@@ -450,6 +470,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedStudentProgressRoute: typeof AuthenticatedStudentProgressRoute
   AuthenticatedStudentQuizzesRoute: typeof AuthenticatedStudentQuizzesRoute
   AuthenticatedStudentRecommendationsRoute: typeof AuthenticatedStudentRecommendationsRoute
+  AuthenticatedStudentLearnMicroConceptIdRoute: typeof AuthenticatedStudentLearnMicroConceptIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -463,6 +484,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedStudentQuizzesRoute: AuthenticatedStudentQuizzesRoute,
   AuthenticatedStudentRecommendationsRoute:
     AuthenticatedStudentRecommendationsRoute,
+  AuthenticatedStudentLearnMicroConceptIdRoute:
+    AuthenticatedStudentLearnMicroConceptIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

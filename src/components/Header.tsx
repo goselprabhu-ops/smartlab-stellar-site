@@ -41,21 +41,23 @@ function MenuDropdown({ label, items }: { label: string; items: NavItem[] }) {
       <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
         {label} <ChevronDown className="size-3.5 opacity-60 transition-transform group-hover:rotate-180" />
       </button>
-      <div className="invisible absolute left-1/2 top-full z-50 w-72 -translate-x-1/2 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
+      <div className={`invisible absolute left-1/2 top-full z-50 ${items.length > 5 ? "w-[640px]" : "w-72"} -translate-x-1/2 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100`}>
         <div className="elev-4 overflow-hidden rounded-2xl border bg-popover p-2 text-popover-foreground">
-          {items.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="block rounded-lg px-3 py-2.5 hover:bg-muted"
-              activeProps={{ className: "bg-muted" }}
-            >
-              <div className="text-sm font-medium">{item.label}</div>
-              {item.description && (
-                <div className="text-xs text-muted-foreground">{item.description}</div>
-              )}
-            </Link>
-          ))}
+          <div className={items.length > 5 ? "grid grid-cols-2 gap-1" : ""}>
+            {items.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="block rounded-lg px-3 py-2.5 hover:bg-muted"
+                activeProps={{ className: "bg-muted" }}
+              >
+                <div className="text-sm font-medium">{item.label}</div>
+                {item.description && (
+                  <div className="text-xs text-muted-foreground">{item.description}</div>
+                )}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>

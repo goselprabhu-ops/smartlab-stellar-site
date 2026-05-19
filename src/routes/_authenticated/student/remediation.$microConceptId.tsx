@@ -177,10 +177,10 @@ function RemediationPage() {
             </Card>
           )}
 
-          {data.related?.length > 0 && (
+          {(data.related ?? []).length > 0 && (
             <Card icon={ArrowRight} title="Related concepts to reinforce">
               <ul className="grid gap-2 sm:grid-cols-2">
-                {data.related.map((r) => (
+                {(data.related ?? []).map((r) => (
                   <li key={r.id}>
                     <Link
                       to="/student/learn/$microConceptId"

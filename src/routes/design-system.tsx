@@ -343,14 +343,14 @@ function DesignSystemPage() {
 
           <h3 className="mt-10 mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Data tiles</h3>
           <div className="grid gap-4 md:grid-cols-3">
-            <StatCard label="Mastery" value="78%" trend="up" hint="+6% this week" icon={Trophy} />
-            <StatCard label="Streak" value="12d" trend="up" hint="Personal best" icon={Zap} />
-            <StatCard label="Due now" value="4" trend="down" hint="-2 since yesterday" icon={Bell} />
+            <StatCard label="Mastery" value="78%" trend="up" hint="+6% this week" icon={<Trophy className="size-4" />} />
+            <StatCard label="Streak" value="12d" trend="up" hint="Personal best" icon={<Zap className="size-4" />} />
+            <StatCard label="Due now" value="4" trend="down" hint="-2 since yesterday" icon={<Bell className="size-4" />} />
           </div>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
-            <KpiTile label="Concepts mastered" value="142" caption="Across 6 subjects" accent="primary" icon={BookOpen} />
-            <KpiTile label="Quizzes taken" value="38" caption="Last 30 days" accent="cyan" icon={Star} />
-            <KpiTile label="Active learners" value="2.4k" caption="Today" accent="success" icon={Users} />
+            <KpiTile label="Concepts mastered" value="142" caption="Across 6 subjects" accent="primary" icon={<BookOpen className="size-4" />} />
+            <KpiTile label="Quizzes taken" value="38" caption="Last 30 days" accent="accent" icon={<Star className="size-4" />} />
+            <KpiTile label="Active learners" value="2.4k" caption="Today" accent="success" icon={<Users className="size-4" />} />
           </div>
         </section>
 

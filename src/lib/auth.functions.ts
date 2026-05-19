@@ -39,22 +39,30 @@ export const updateProfile = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/**
+ * Parent → student linking is admin-managed (P0 security fix: parents could
+ * previously self-link to any student UUID). Use the admin console or the
+ * admin-only server function to create links. This function is kept for API
+ * compatibility and will succeed only when called by an admin (RLS enforced).
+ */
 export const linkStudent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
-    z.object({ student_email: z.string().email() }).parse(input),
+    z.object({ student_id: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
-    // Look up the student via their profile's full_name search? We only have email in auth.users, not accessible.
-    // Instead, allow link by student_id passed directly. For email lookup, require server-side admin.
-    // Here we treat student_email as the student_id (UUID) for now to avoid admin client coupling.
     const { error } = await supabase
       .from("parent_student_links")
-      .insert({ parent_id: userId, student_id: data.student_email });
-    if (error) throw new Error(error.message);
+      .insert({ parent_id: userId, student_id: data.student_id });
+    if (error) {
+      throw new Error(
+        "Parent–student links can only be created by an administrator. Please contact support.",
+      );
+    }
     return { ok: true };
   });
+
 
 export const assignRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

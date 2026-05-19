@@ -121,7 +121,7 @@ export const getStudentDashboard = createServerFn({ method: "GET" })
         detail: `${Number(e.score)} / ${Number(e.total)}`,
       })),
       ...(sessions ?? [])
-        .filter((s) => s.state === "completed")
+        .filter((s) => s.state === "mastered")
         .map((s) => ({
           kind: "lesson" as const,
           when: s.last_event_at as string,

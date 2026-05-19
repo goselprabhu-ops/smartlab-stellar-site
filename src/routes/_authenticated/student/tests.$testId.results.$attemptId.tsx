@@ -209,7 +209,7 @@ function ScoreRing({ pct }: { pct: number }) {
           cy="60"
           r={r}
           fill="none"
-          stroke="hsl(var(--primary))"
+          stroke="var(--primary)"
           strokeWidth="10"
           strokeLinecap="round"
           strokeDasharray={c}

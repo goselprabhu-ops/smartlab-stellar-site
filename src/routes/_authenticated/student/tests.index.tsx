@@ -218,7 +218,7 @@ function Sparkline({ trend }: { trend: { i: number; pct: number }[] }) {
           <polyline
             points={points}
             fill="none"
-            stroke="hsl(var(--primary))"
+            stroke="var(--primary)"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"

@@ -144,6 +144,95 @@ export type Database = {
         }
         Relationships: []
       }
+      concept_mastery: {
+        Row: {
+          confidence: number
+          decay_at: string | null
+          id: string
+          last_practiced_at: string | null
+          mastery: number
+          micro_concept_id: string
+          streak: number
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          confidence?: number
+          decay_at?: string | null
+          id?: string
+          last_practiced_at?: string | null
+          mastery?: number
+          micro_concept_id: string
+          streak?: number
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          confidence?: number
+          decay_at?: string | null
+          id?: string
+          last_practiced_at?: string | null
+          mastery?: number
+          micro_concept_id?: string
+          streak?: number
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "concept_mastery_micro_concept_id_fkey"
+            columns: ["micro_concept_id"]
+            isOneToOne: false
+            referencedRelation: "micro_concepts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      concept_relations: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          relation: Database["public"]["Enums"]["relation_kind"]
+          source_id: string
+          target_id: string
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          relation: Database["public"]["Enums"]["relation_kind"]
+          source_id: string
+          target_id: string
+          weight?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          relation?: Database["public"]["Enums"]["relation_kind"]
+          source_id?: string
+          target_id?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "concept_relations_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "micro_concepts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "concept_relations_target_id_fkey"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "micro_concepts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       concepts: {
         Row: {
           created_at: string
@@ -398,38 +487,47 @@ export type Database = {
       }
       micro_concepts: {
         Row: {
+          bloom_level: Database["public"]["Enums"]["bloom_level"] | null
           concept_id: string
           content_md: string | null
           created_at: string
           difficulty: number
+          estimated_minutes: number
           id: string
           learning_objective: string | null
           order_index: number
           prerequisite_ids: string[]
+          tags: string[]
           title: string
           updated_at: string
         }
         Insert: {
+          bloom_level?: Database["public"]["Enums"]["bloom_level"] | null
           concept_id: string
           content_md?: string | null
           created_at?: string
           difficulty?: number
+          estimated_minutes?: number
           id?: string
           learning_objective?: string | null
           order_index?: number
           prerequisite_ids?: string[]
+          tags?: string[]
           title: string
           updated_at?: string
         }
         Update: {
+          bloom_level?: Database["public"]["Enums"]["bloom_level"] | null
           concept_id?: string
           content_md?: string | null
           created_at?: string
           difficulty?: number
+          estimated_minutes?: number
           id?: string
           learning_objective?: string | null
           order_index?: number
           prerequisite_ids?: string[]
+          tags?: string[]
           title?: string
           updated_at?: string
         }
@@ -864,6 +962,13 @@ export type Database = {
     }
     Enums: {
       app_role: "student" | "parent" | "admin"
+      bloom_level:
+        | "remember"
+        | "understand"
+        | "apply"
+        | "analyze"
+        | "evaluate"
+        | "create"
       learning_state:
         | "not_started"
         | "studying"
@@ -873,6 +978,14 @@ export type Database = {
         | "remediating"
         | "mastered"
       question_type: "mcq" | "multi" | "short"
+      relation_kind:
+        | "prerequisite"
+        | "builds_on"
+        | "related"
+        | "contrasts_with"
+        | "applies_to"
+        | "generalizes"
+        | "example_of"
       remediation_kind:
         | "reexplain"
         | "practice"
@@ -1006,6 +1119,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["student", "parent", "admin"],
+      bloom_level: [
+        "remember",
+        "understand",
+        "apply",
+        "analyze",
+        "evaluate",
+        "create",
+      ],
       learning_state: [
         "not_started",
         "studying",
@@ -1016,6 +1137,15 @@ export const Constants = {
         "mastered",
       ],
       question_type: ["mcq", "multi", "short"],
+      relation_kind: [
+        "prerequisite",
+        "builds_on",
+        "related",
+        "contrasts_with",
+        "applies_to",
+        "generalizes",
+        "example_of",
+      ],
       remediation_kind: [
         "reexplain",
         "practice",

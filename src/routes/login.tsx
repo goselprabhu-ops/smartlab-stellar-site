@@ -1,10 +1,20 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
+import { z } from "zod";
+import { Mail, Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
+import { AuthShell } from "@/components/auth/AuthShell";
+import { AuthField } from "@/components/auth/AuthField";
+import { GoogleButton } from "@/components/auth/GoogleButton";
+
+const loginSchema = z.object({
+  email: z.string().trim().email("Enter a valid email"),
+  password: z.string().min(8, "At least 8 characters"),
+});
 
 export const Route = createFileRoute("/login")({
+  validateSearch: (s) => ({ redirect: (s.redirect as string) || "/dashboard" }),
   head: () => ({
     meta: [
       { title: "Sign in — Smart Lab Online" },
@@ -16,54 +26,98 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const nav = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { redirect } = useSearch({ from: "/login" });
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    const parsed = loginSchema.safeParse(form);
+    if (!parsed.success) {
+      const map: Record<string, string> = {};
+      parsed.error.issues.forEach((i) => (map[i.path[0] as string] = i.message));
+      setErrors(map);
+      return;
+    }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword(parsed.data);
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      if (error.message.toLowerCase().includes("email not confirmed")) {
+        toast.error("Please verify your email first.");
+        nav({ to: "/verify-otp", search: { email: form.email } });
+        return;
+      }
+      return toast.error(error.message);
+    }
     toast.success("Welcome back");
-    nav({ to: "/dashboard" });
-  };
-
-  const google = async () => {
-    const r = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/dashboard",
-    });
-    if (r.error) toast.error(r.error.message);
-    if (!r.redirected && !r.error) nav({ to: "/dashboard" });
+    nav({ to: redirect });
   };
 
   return (
-    <div className="mx-auto flex min-h-[80vh] max-w-md flex-col justify-center px-6 py-16">
-      <h1 className="font-display text-3xl font-semibold">Welcome back</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Sign in to your Smart Lab.</p>
-      <form onSubmit={submit} className="mt-8 space-y-4">
-        <input
-          type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm"
+    <AuthShell
+      title="Welcome back"
+      subtitle="Sign in to continue your learning."
+      footer={
+        <>
+          New to Smart Lab?{" "}
+          <Link to="/signup" className="font-medium text-primary hover:underline">
+            Create an account
+          </Link>
+        </>
+      }
+    >
+      <form onSubmit={submit} className="space-y-4">
+        <AuthField
+          label="Email"
+          type="email"
+          autoComplete="email"
+          required
+          icon={<Mail className="h-4 w-4" />}
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          error={errors.email}
+          placeholder="you@school.com"
         />
-        <input
-          type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password" minLength={8}
-          className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm"
+        <AuthField
+          label="Password"
+          type="password"
+          autoComplete="current-password"
+          required
+          icon={<Lock className="h-4 w-4" />}
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          error={errors.password}
+          placeholder="••••••••"
         />
-        <button disabled={loading} className="w-full rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground disabled:opacity-60">
+        <div className="flex items-center justify-between text-sm">
+          <label className="inline-flex items-center gap-2 text-muted-foreground">
+            <input type="checkbox" className="h-4 w-4 rounded border-input" defaultChecked />
+            Remember me
+          </label>
+          <Link to="/forgot-password" className="text-primary hover:underline">
+            Forgot password?
+          </Link>
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-soft hover:opacity-95 disabled:opacity-60"
+        >
+          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
           {loading ? "Signing in…" : "Sign in"}
         </button>
       </form>
-      <button onClick={google} className="mt-3 w-full rounded-lg border border-input px-4 py-3 text-sm font-medium hover:bg-muted">
-        Continue with Google
-      </button>
-      <div className="mt-6 flex justify-between text-sm text-muted-foreground">
-        <Link to="/forgot-password" className="hover:text-foreground">Forgot password?</Link>
-        <Link to="/signup" className="hover:text-foreground">Create account</Link>
+
+      <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="h-px flex-1 bg-border" />
+        OR
+        <div className="h-px flex-1 bg-border" />
       </div>
-    </div>
+
+      <GoogleButton next={redirect} />
+    </AuthShell>
   );
 }

@@ -14,7 +14,7 @@ export const getMe = createServerFn({ method: "GET" })
     return {
       userId,
       profile: profile ?? null,
-      roles: (roleRows ?? []).map((r) => r.role as "student" | "parent" | "admin"),
+      roles: (roleRows ?? []).map((r) => r.role as "student" | "parent" | "teacher" | "admin"),
     };
   });
 

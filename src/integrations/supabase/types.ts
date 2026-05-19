@@ -961,7 +961,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "student" | "parent" | "admin"
+      app_role: "student" | "parent" | "admin" | "teacher"
       bloom_level:
         | "remember"
         | "understand"
@@ -1125,7 +1125,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["student", "parent", "admin"],
+      app_role: ["student", "parent", "admin", "teacher"],
       bloom_level: [
         "remember",
         "understand",

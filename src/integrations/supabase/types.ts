@@ -88,6 +88,7 @@ export type Database = {
           slug: string
           subject_id: string
           summary_md: string | null
+          tags: string[]
           title: string
           updated_at: string
         }
@@ -99,6 +100,7 @@ export type Database = {
           slug: string
           subject_id: string
           summary_md?: string | null
+          tags?: string[]
           title: string
           updated_at?: string
         }
@@ -110,6 +112,7 @@ export type Database = {
           slug?: string
           subject_id?: string
           summary_md?: string | null
+          tags?: string[]
           title?: string
           updated_at?: string
         }
@@ -369,6 +372,98 @@ export type Database = {
         }
         Relationships: []
       }
+      content_resources: {
+        Row: {
+          chapter_id: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          duration_seconds: number | null
+          id: string
+          kind: Database["public"]["Enums"]["resource_kind"]
+          lesson_id: string | null
+          micro_concept_id: string | null
+          order_index: number
+          paragraph_id: string | null
+          published: boolean
+          size_bytes: number | null
+          tags: string[]
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          chapter_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_seconds?: number | null
+          id?: string
+          kind: Database["public"]["Enums"]["resource_kind"]
+          lesson_id?: string | null
+          micro_concept_id?: string | null
+          order_index?: number
+          paragraph_id?: string | null
+          published?: boolean
+          size_bytes?: number | null
+          tags?: string[]
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          chapter_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_seconds?: number | null
+          id?: string
+          kind?: Database["public"]["Enums"]["resource_kind"]
+          lesson_id?: string | null
+          micro_concept_id?: string | null
+          order_index?: number
+          paragraph_id?: string | null
+          published?: boolean
+          size_bytes?: number | null
+          tags?: string[]
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_resources_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_resources_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_resources_micro_concept_id_fkey"
+            columns: ["micro_concept_id"]
+            isOneToOne: false
+            referencedRelation: "micro_concepts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_resources_paragraph_id_fkey"
+            columns: ["paragraph_id"]
+            isOneToOne: false
+            referencedRelation: "paragraphs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           cover_url: string | null
@@ -513,6 +608,7 @@ export type Database = {
           id: string
           micro_concept_id: string | null
           order_index: number
+          tags: string[]
           title: string
           updated_at: string
           video_url: string | null
@@ -524,6 +620,7 @@ export type Database = {
           id?: string
           micro_concept_id?: string | null
           order_index?: number
+          tags?: string[]
           title: string
           updated_at?: string
           video_url?: string | null
@@ -535,6 +632,7 @@ export type Database = {
           id?: string
           micro_concept_id?: string | null
           order_index?: number
+          tags?: string[]
           title?: string
           updated_at?: string
           video_url?: string | null
@@ -921,28 +1019,34 @@ export type Database = {
         Row: {
           class_id: string | null
           created_at: string
+          description: string | null
           icon: string | null
           id: string
           name: string
           slug: string
+          tags: string[]
           updated_at: string
         }
         Insert: {
           class_id?: string | null
           created_at?: string
+          description?: string | null
           icon?: string | null
           id?: string
           name: string
           slug: string
+          tags?: string[]
           updated_at?: string
         }
         Update: {
           class_id?: string | null
           created_at?: string
+          description?: string | null
           icon?: string | null
           id?: string
           name?: string
           slug?: string
+          tags?: string[]
           updated_at?: string
         }
         Relationships: [
@@ -1069,6 +1173,7 @@ export type Database = {
         | "revision_sheet"
         | "micro_test"
         | "visual_explanation"
+      resource_kind: "video" | "pdf" | "note" | "link"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1237,6 +1342,7 @@ export const Constants = {
         "micro_test",
         "visual_explanation",
       ],
+      resource_kind: ["video", "pdf", "note", "link"],
     },
   },
 } as const

@@ -1,12 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Calendar, Clock, Users, CheckCircle2 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { Calendar, Clock, Users, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { scheduleDemo } from "@/lib/launch.functions";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 
 export const Route = createFileRoute("/demo")({
   head: () => ({
@@ -22,11 +25,33 @@ export const Route = createFileRoute("/demo")({
 
 function DemoPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const submit = useServerFn(scheduleDemo);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
-    toast.success("Demo request received. Our team will reach out within one business day.");
+    const fd = new FormData(e.currentTarget);
+    setSubmitting(true);
+    try {
+      await submit({
+        data: {
+          name: String(fd.get("name") || ""),
+          email: String(fd.get("email") || ""),
+          phone: String(fd.get("phone") || "") || undefined,
+          role: (String(fd.get("role") || "parent") as "parent" | "student" | "teacher" | "school"),
+          grade: String(fd.get("grade") || "") || undefined,
+          preferredDate: String(fd.get("preferredDate") || "") || undefined,
+          preferredTime: String(fd.get("preferredTime") || "") || undefined,
+          notes: String(fd.get("notes") || "") || undefined,
+        },
+      });
+      setSubmitted(true);
+      toast.success("Demo request received. We'll reach out within one business day.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not submit");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -73,22 +98,22 @@ function DemoPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label htmlFor="name">Full name</Label>
-                  <Input id="name" required placeholder="Riya Sharma" />
+                  <Input id="name" name="name" required placeholder="Riya Sharma" />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" required placeholder="you@example.com" />
+                  <Input id="email" name="email" type="email" required placeholder="you@example.com" />
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" required placeholder="+91 9XXXXXXXXX" />
+                  <Input id="phone" name="phone" placeholder="+91 9XXXXXXXXX" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>I am a</Label>
-                  <Select defaultValue="parent">
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                  <Label htmlFor="role">I am a</Label>
+                  <Select name="role" defaultValue="parent">
+                    <SelectTrigger id="role"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="parent">Parent</SelectItem>
                       <SelectItem value="student">Student</SelectItem>
@@ -98,22 +123,45 @@ function DemoPage() {
                   </Select>
                 </div>
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="grade">Student class</Label>
-                <Select defaultValue="9">
-                  <SelectTrigger id="grade"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {[6, 7, 8, 9, 10, 11, 12].map((g) => (
-                      <SelectItem key={g} value={String(g)}>Class {g}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="grade">Student class</Label>
+                  <Select name="grade" defaultValue="9">
+                    <SelectTrigger id="grade"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {[6, 7, 8, 9, 10, 11, 12].map((g) => (
+                        <SelectItem key={g} value={String(g)}>Class {g}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="preferredDate">Preferred date</Label>
+                  <Input id="preferredDate" name="preferredDate" type="date" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="preferredTime">Time</Label>
+                  <Select name="preferredTime" defaultValue="evening">
+                    <SelectTrigger id="preferredTime"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="morning">Morning (10–12)</SelectItem>
+                      <SelectItem value="afternoon">Afternoon (12–4)</SelectItem>
+                      <SelectItem value="evening">Evening (4–7)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="notes">Anything else? (optional)</Label>
-                <Textarea id="notes" rows={3} placeholder="Subjects of focus, school name, preferred time…" />
+                <Textarea id="notes" name="notes" rows={3} placeholder="Subjects of focus, school name, preferred time…" />
               </div>
-              <Button type="submit" className="w-full">Request demo</Button>
+              <Button type="submit" className="w-full" disabled={submitting}>
+                {submitting ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
+                Request demo
+              </Button>
+              <div className="flex items-center justify-center gap-3 pt-2">
+                <WhatsAppButton label="Prefer WhatsApp?" />
+              </div>
               <p className="text-center text-xs text-muted-foreground">
                 By submitting, you agree to be contacted by our advisory team.
               </p>

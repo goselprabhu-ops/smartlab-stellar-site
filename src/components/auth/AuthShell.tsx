@@ -22,11 +22,9 @@ export function AuthShell({ title, subtitle, children, footer }: Props) {
       {/* Brand panel */}
       <aside className="relative hidden overflow-hidden bg-gradient-brand lg:flex lg:flex-col lg:justify-between lg:p-12 lg:text-primary-foreground">
         <div className="absolute inset-0 bg-gradient-hero opacity-60" aria-hidden />
-        <div className="relative">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <Logo className="h-8 w-8" />
-            <span className="font-display text-lg font-semibold">Smart Lab Online</span>
-          </Link>
+        <div className="relative inline-flex items-center gap-3">
+          <Logo />
+          <span className="font-display text-lg font-semibold">Smart Lab Online</span>
         </div>
 
         <div className="relative space-y-8">

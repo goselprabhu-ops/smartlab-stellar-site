@@ -24,6 +24,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedParentRouteImport } from './routes/_authenticated/parent'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedStudentRetentionRouteImport } from './routes/_authenticated/student/retention'
 import { Route as AuthenticatedStudentRecommendationsRouteImport } from './routes/_authenticated/student/recommendations'
 import { Route as AuthenticatedStudentQuizzesRouteImport } from './routes/_authenticated/student/quizzes'
 import { Route as AuthenticatedStudentProgressRouteImport } from './routes/_authenticated/student/progress'
@@ -107,6 +108,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedStudentRetentionRoute =
+  AuthenticatedStudentRetentionRouteImport.update({
+    id: '/student/retention',
+    path: '/student/retention',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedStudentRecommendationsRoute =
   AuthenticatedStudentRecommendationsRouteImport.update({
     id: '/student/recommendations',
@@ -176,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/student/progress': typeof AuthenticatedStudentProgressRoute
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/student/retention': typeof AuthenticatedStudentRetentionRoute
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
@@ -200,6 +208,7 @@ export interface FileRoutesByTo {
   '/student/progress': typeof AuthenticatedStudentProgressRoute
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/student/retention': typeof AuthenticatedStudentRetentionRoute
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
@@ -226,6 +235,7 @@ export interface FileRoutesById {
   '/_authenticated/student/progress': typeof AuthenticatedStudentProgressRoute
   '/_authenticated/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/_authenticated/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/_authenticated/student/retention': typeof AuthenticatedStudentRetentionRoute
   '/_authenticated/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/_authenticated/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/_authenticated/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
     | '/student/progress'
     | '/student/quizzes'
     | '/student/recommendations'
+    | '/student/retention'
     | '/student/learn/$microConceptId'
     | '/student/remediation/$microConceptId'
     | '/student/courses/$courseId/$lessonId'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/student/progress'
     | '/student/quizzes'
     | '/student/recommendations'
+    | '/student/retention'
     | '/student/learn/$microConceptId'
     | '/student/remediation/$microConceptId'
     | '/student/courses/$courseId/$lessonId'
@@ -301,6 +313,7 @@ export interface FileRouteTypes {
     | '/_authenticated/student/progress'
     | '/_authenticated/student/quizzes'
     | '/_authenticated/student/recommendations'
+    | '/_authenticated/student/retention'
     | '/_authenticated/student/learn/$microConceptId'
     | '/_authenticated/student/remediation/$microConceptId'
     | '/_authenticated/student/courses/$courseId/$lessonId'
@@ -427,6 +440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/student/retention': {
+      id: '/_authenticated/student/retention'
+      path: '/student/retention'
+      fullPath: '/student/retention'
+      preLoaderRoute: typeof AuthenticatedStudentRetentionRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/student/recommendations': {
       id: '/_authenticated/student/recommendations'
       path: '/student/recommendations'
@@ -511,6 +531,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedStudentProgressRoute: typeof AuthenticatedStudentProgressRoute
   AuthenticatedStudentQuizzesRoute: typeof AuthenticatedStudentQuizzesRoute
   AuthenticatedStudentRecommendationsRoute: typeof AuthenticatedStudentRecommendationsRoute
+  AuthenticatedStudentRetentionRoute: typeof AuthenticatedStudentRetentionRoute
   AuthenticatedStudentLearnMicroConceptIdRoute: typeof AuthenticatedStudentLearnMicroConceptIdRoute
   AuthenticatedStudentRemediationMicroConceptIdRoute: typeof AuthenticatedStudentRemediationMicroConceptIdRoute
 }
@@ -527,6 +548,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedStudentQuizzesRoute: AuthenticatedStudentQuizzesRoute,
   AuthenticatedStudentRecommendationsRoute:
     AuthenticatedStudentRecommendationsRoute,
+  AuthenticatedStudentRetentionRoute: AuthenticatedStudentRetentionRoute,
   AuthenticatedStudentLearnMicroConceptIdRoute:
     AuthenticatedStudentLearnMicroConceptIdRoute,
   AuthenticatedStudentRemediationMicroConceptIdRoute:
@@ -553,3 +575,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

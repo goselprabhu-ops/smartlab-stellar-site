@@ -250,7 +250,12 @@ export const adminUpdateLaunchConfig = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      launch_at?: string | null;
+      demo_mode_enabled?: boolean;
+      waitlist_open?: boolean;
+      referral_reward?: string;
+    } = {};
     if (data.launchAt !== undefined) patch.launch_at = data.launchAt;
     if (data.demoModeEnabled !== undefined) patch.demo_mode_enabled = data.demoModeEnabled;
     if (data.waitlistOpen !== undefined) patch.waitlist_open = data.waitlistOpen;

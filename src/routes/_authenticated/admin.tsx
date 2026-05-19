@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, Navigate } from "@tanstack/react-router";
-import { LayoutDashboard, Users, BookOpen, BarChart3, Brain, CreditCard, FolderTree, GraduationCap, Bell, FileBarChart, LifeBuoy, Activity } from "lucide-react";
+import { LayoutDashboard, Users, BookOpen, BarChart3, Brain, CreditCard, FolderTree, GraduationCap, Bell, FileBarChart, LifeBuoy, Activity, Rocket } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_authenticated/admin")({

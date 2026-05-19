@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_generated_material: {
+        Row: {
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["remediation_kind"]
+          model: string | null
+          payload: Json
+          prompt_hash: string | null
+          session_id: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["remediation_kind"]
+          model?: string | null
+          payload?: Json
+          prompt_hash?: string | null
+          session_id: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["remediation_kind"]
+          model?: string | null
+          payload?: Json
+          prompt_hash?: string | null
+          session_id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_generated_material_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "learning_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_recommendations: {
         Row: {
           created_at: string
@@ -37,6 +78,109 @@ export type Database = {
           student_id?: string
         }
         Relationships: []
+      }
+      chapters: {
+        Row: {
+          created_at: string
+          id: string
+          order_index: number
+          published: boolean
+          slug: string
+          subject_id: string
+          summary_md: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_index?: number
+          published?: boolean
+          slug: string
+          subject_id: string
+          summary_md?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_index?: number
+          published?: boolean
+          slug?: string
+          subject_id?: string
+          summary_md?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      classes: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          order_index: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          order_index?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          order_index?: number
+        }
+        Relationships: []
+      }
+      concepts: {
+        Row: {
+          created_at: string
+          id: string
+          order_index: number
+          paragraph_id: string
+          summary_md: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_index?: number
+          paragraph_id: string
+          summary_md?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_index?: number
+          paragraph_id?: string
+          summary_md?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "concepts_paragraph_id_fkey"
+            columns: ["paragraph_id"]
+            isOneToOne: false
+            referencedRelation: "paragraphs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contact_submissions: {
         Row: {
@@ -109,12 +253,105 @@ export type Database = {
           },
         ]
       }
+      evaluation_attempts: {
+        Row: {
+          created_at: string
+          id: string
+          per_question: Json
+          quiz_id: string | null
+          score: number
+          session_id: string
+          student_id: string
+          total: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          per_question?: Json
+          quiz_id?: string | null
+          score?: number
+          session_id: string
+          student_id: string
+          total?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          per_question?: Json
+          quiz_id?: string | null
+          score?: number
+          session_id?: string
+          student_id?: string
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evaluation_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evaluation_attempts_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "learning_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_sessions: {
+        Row: {
+          attempts: number
+          created_at: string
+          id: string
+          last_event_at: string
+          mastery: number
+          micro_concept_id: string
+          state: Database["public"]["Enums"]["learning_state"]
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          id?: string
+          last_event_at?: string
+          mastery?: number
+          micro_concept_id: string
+          state?: Database["public"]["Enums"]["learning_state"]
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          id?: string
+          last_event_at?: string
+          mastery?: number
+          micro_concept_id?: string
+          state?: Database["public"]["Enums"]["learning_state"]
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_sessions_micro_concept_id_fkey"
+            columns: ["micro_concept_id"]
+            isOneToOne: false
+            referencedRelation: "micro_concepts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lessons: {
         Row: {
           content_md: string | null
           course_id: string
           created_at: string
           id: string
+          micro_concept_id: string | null
           order_index: number
           title: string
           updated_at: string
@@ -125,6 +362,7 @@ export type Database = {
           course_id: string
           created_at?: string
           id?: string
+          micro_concept_id?: string | null
           order_index?: number
           title: string
           updated_at?: string
@@ -135,6 +373,7 @@ export type Database = {
           course_id?: string
           created_at?: string
           id?: string
+          micro_concept_id?: string | null
           order_index?: number
           title?: string
           updated_at?: string
@@ -146,6 +385,98 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_micro_concept_id_fkey"
+            columns: ["micro_concept_id"]
+            isOneToOne: false
+            referencedRelation: "micro_concepts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      micro_concepts: {
+        Row: {
+          concept_id: string
+          content_md: string | null
+          created_at: string
+          difficulty: number
+          id: string
+          learning_objective: string | null
+          order_index: number
+          prerequisite_ids: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          concept_id: string
+          content_md?: string | null
+          created_at?: string
+          difficulty?: number
+          id?: string
+          learning_objective?: string | null
+          order_index?: number
+          prerequisite_ids?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          concept_id?: string
+          content_md?: string | null
+          created_at?: string
+          difficulty?: number
+          id?: string
+          learning_objective?: string | null
+          order_index?: number
+          prerequisite_ids?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "micro_concepts_concept_id_fkey"
+            columns: ["concept_id"]
+            isOneToOne: false
+            referencedRelation: "concepts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      paragraphs: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          id: string
+          order_index: number
+          summary_md: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          summary_md?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          summary_md?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paragraphs_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
             referencedColumns: ["id"]
           },
         ]
@@ -282,6 +613,7 @@ export type Database = {
           correct: Json
           created_at: string
           id: string
+          micro_concept_id: string | null
           options: Json
           order_index: number
           points: number
@@ -293,6 +625,7 @@ export type Database = {
           correct?: Json
           created_at?: string
           id?: string
+          micro_concept_id?: string | null
           options?: Json
           order_index?: number
           points?: number
@@ -304,6 +637,7 @@ export type Database = {
           correct?: Json
           created_at?: string
           id?: string
+          micro_concept_id?: string | null
           options?: Json
           order_index?: number
           points?: number
@@ -312,6 +646,13 @@ export type Database = {
           type?: Database["public"]["Enums"]["question_type"]
         }
         Relationships: [
+          {
+            foreignKeyName: "quiz_questions_micro_concept_id_fkey"
+            columns: ["micro_concept_id"]
+            isOneToOne: false
+            referencedRelation: "micro_concepts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quiz_questions_quiz_id_fkey"
             columns: ["quiz_id"]
@@ -366,8 +707,50 @@ export type Database = {
           },
         ]
       }
+      recollection_attempts: {
+        Row: {
+          ai_feedback: Json
+          ai_score: number | null
+          created_at: string
+          id: string
+          prompt: string
+          session_id: string
+          student_id: string
+          student_response: string
+        }
+        Insert: {
+          ai_feedback?: Json
+          ai_score?: number | null
+          created_at?: string
+          id?: string
+          prompt: string
+          session_id: string
+          student_id: string
+          student_response: string
+        }
+        Update: {
+          ai_feedback?: Json
+          ai_score?: number | null
+          created_at?: string
+          id?: string
+          prompt?: string
+          session_id?: string
+          student_id?: string
+          student_response?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recollection_attempts_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "learning_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subjects: {
         Row: {
+          class_id: string | null
           created_at: string
           icon: string | null
           id: string
@@ -376,6 +759,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          class_id?: string | null
           created_at?: string
           icon?: string | null
           id?: string
@@ -384,6 +768,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          class_id?: string | null
           created_at?: string
           icon?: string | null
           id?: string
@@ -391,7 +776,15 @@ export type Database = {
           slug?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "subjects_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -414,6 +807,44 @@ export type Database = {
         }
         Relationships: []
       }
+      weakness_profile: {
+        Row: {
+          confidence: number
+          id: string
+          micro_concept_id: string
+          notes: string | null
+          student_id: string
+          updated_at: string
+          weakness_tags: string[]
+        }
+        Insert: {
+          confidence?: number
+          id?: string
+          micro_concept_id: string
+          notes?: string | null
+          student_id: string
+          updated_at?: string
+          weakness_tags?: string[]
+        }
+        Update: {
+          confidence?: number
+          id?: string
+          micro_concept_id?: string
+          notes?: string | null
+          student_id?: string
+          updated_at?: string
+          weakness_tags?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weakness_profile_micro_concept_id_fkey"
+            columns: ["micro_concept_id"]
+            isOneToOne: false
+            referencedRelation: "micro_concepts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -433,7 +864,20 @@ export type Database = {
     }
     Enums: {
       app_role: "student" | "parent" | "admin"
+      learning_state:
+        | "not_started"
+        | "studying"
+        | "recollecting"
+        | "evaluating"
+        | "weak"
+        | "remediating"
+        | "mastered"
       question_type: "mcq" | "multi" | "short"
+      remediation_kind:
+        | "reexplain"
+        | "practice"
+        | "solution_walkthrough"
+        | "diagram_prompt"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -562,7 +1006,22 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["student", "parent", "admin"],
+      learning_state: [
+        "not_started",
+        "studying",
+        "recollecting",
+        "evaluating",
+        "weak",
+        "remediating",
+        "mastered",
+      ],
       question_type: ["mcq", "multi", "short"],
+      remediation_kind: [
+        "reexplain",
+        "practice",
+        "solution_walkthrough",
+        "diagram_prompt",
+      ],
     },
   },
 } as const

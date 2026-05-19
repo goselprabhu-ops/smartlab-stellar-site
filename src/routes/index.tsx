@@ -21,9 +21,7 @@ import {
   PlayCircle,
   Layers,
   MessageSquare,
-  ChevronDown,
 } from "lucide-react";
-import { useState } from "react";
 
 import { CtaButton } from "@/components/CtaButton";
 import { SectionHeading } from "@/components/SectionHeading";

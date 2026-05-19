@@ -121,7 +121,7 @@ function AuthLayout() {
   const auth = useAuth();
   const nav = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const links = useNavLinks();
+  const groups = useNavGroups();
 
   if (!auth.ready) return <div className="p-10 text-sm text-muted-foreground">Loading…</div>;
   if (!auth.user) return null;
@@ -138,7 +138,7 @@ function AuthLayout() {
         <div className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
           Smart Lab
         </div>
-        <NavList links={links} />
+        <NavList groups={groups} />
         <button
           onClick={signOut}
           className="mt-4 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-soft hover:bg-muted hover:text-foreground"
@@ -160,7 +160,7 @@ function AuthLayout() {
               <SheetTitle className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                 Smart Lab
               </SheetTitle>
-              <NavList links={links} onNavigate={() => setMobileOpen(false)} />
+              <NavList groups={groups} onNavigate={() => setMobileOpen(false)} />
               <button
                 onClick={async () => {
                   setMobileOpen(false);

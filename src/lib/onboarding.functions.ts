@@ -93,7 +93,7 @@ export const generateStudyPath = createServerFn({ method: "POST" })
     const { error } = await supabase.from("ai_recommendations").insert({
       student_id: userId,
       model,
-      payload: { kind: "onboarding_study_path", prefs: data, path },
+      payload: { kind: "onboarding_study_path", prefs: data, path } as unknown as Record<string, unknown>,
     });
     if (error) throw new Error(error.message);
 

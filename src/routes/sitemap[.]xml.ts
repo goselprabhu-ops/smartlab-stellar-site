@@ -15,11 +15,24 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async () => {
         const entries: SitemapEntry[] = [
-          { path: "/", changefreq: "weekly", priority: "1.0" },
-          { path: "/features", changefreq: "monthly", priority: "0.8" },
-          { path: "/pricing", changefreq: "monthly", priority: "0.8" },
-          { path: "/about", changefreq: "monthly", priority: "0.6" },
-          { path: "/contact", changefreq: "yearly", priority: "0.5" },
+          { path: "/",                              changefreq: "weekly",  priority: "1.0" },
+          { path: "/features",                      changefreq: "monthly", priority: "0.9" },
+          { path: "/pricing",                       changefreq: "monthly", priority: "0.9" },
+          { path: "/courses",                       changefreq: "weekly",  priority: "0.8" },
+          { path: "/ai-learning",                   changefreq: "monthly", priority: "0.8" },
+          { path: "/schools",                       changefreq: "monthly", priority: "0.8" },
+          { path: "/about",                         changefreq: "monthly", priority: "0.6" },
+          { path: "/blog",                          changefreq: "weekly",  priority: "0.6" },
+          { path: "/contact",                       changefreq: "yearly",  priority: "0.5" },
+          { path: "/demo",                          changefreq: "monthly", priority: "0.6" },
+          { path: "/product/ai-tutor",              changefreq: "monthly", priority: "0.7" },
+          { path: "/product/study-path",            changefreq: "monthly", priority: "0.7" },
+          { path: "/product/test-engine",           changefreq: "monthly", priority: "0.7" },
+          { path: "/product/analytics",             changefreq: "monthly", priority: "0.7" },
+          { path: "/product/progress-tracking",     changefreq: "monthly", priority: "0.7" },
+          { path: "/product/personalized-learning", changefreq: "monthly", priority: "0.7" },
+          { path: "/product/student-dashboard",     changefreq: "monthly", priority: "0.7" },
+          { path: "/product/parent-dashboard",      changefreq: "monthly", priority: "0.7" },
         ];
 
         const urls = entries.map((e) =>

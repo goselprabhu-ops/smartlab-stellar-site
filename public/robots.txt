@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+
+# Private app surfaces
 Disallow: /dashboard
 Disallow: /settings
 Disallow: /student/
@@ -7,3 +9,14 @@ Disallow: /parent
 Disallow: /parent/
 Disallow: /admin
 Disallow: /admin/
+
+# Auth & onboarding flows (no SEO value)
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-otp
+Disallow: /onboarding
+
+# Internal developer surfaces
+Disallow: /design-system

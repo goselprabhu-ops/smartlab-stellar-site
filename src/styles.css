@@ -146,14 +146,24 @@
   --gradient-text: linear-gradient(135deg, oklch(0.56 0.22 264), oklch(0.74 0.14 210));
   --gradient-divider: linear-gradient(90deg, transparent, oklch(0.56 0.22 264 / 0.45), transparent);
 
+  /* Elevation scale (0 → 5) */
+  --shadow-xs:      0 1px 2px oklch(0.21 0.04 265 / 0.06);
   --shadow-sm:      0 1px 2px oklch(0.21 0.04 265 / 0.08);
+  --shadow-md:      0 4px 12px -2px oklch(0.21 0.04 265 / 0.10);
+  --shadow-lg:      0 12px 28px -8px oklch(0.21 0.04 265 / 0.18);
+  --shadow-xl:      0 24px 60px -16px oklch(0.21 0.04 265 / 0.28);
   --shadow-elegant: 0 20px 50px -20px oklch(0.21 0.04 265 / 0.25);
   --shadow-glow:    0 0 40px -8px oklch(0.56 0.22 264 / 0.55);
   --shadow-cyan:    0 0 40px -8px oklch(0.74 0.14 210 / 0.5);
 
+  /* Spacing scale reference (Tailwind 4 already exposes spacing) */
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+  --space-6: 1.5rem; --space-8: 2rem;   --space-12: 3rem;   --space-16: 4rem;
+
   /* Motion primitives */
   --ease-out-soft:  cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out:    cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
   --duration-fast:  150ms;
   --duration-base:  240ms;
   --duration-slow:  420ms;

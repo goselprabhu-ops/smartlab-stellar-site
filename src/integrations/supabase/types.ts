@@ -931,28 +931,52 @@ export type Database = {
       }
       quizzes: {
         Row: {
+          chapter_id: string | null
+          class_id: string | null
           course_id: string | null
           created_at: string
+          created_by: string | null
+          description: string | null
+          difficulty: number
           id: string
+          kind: string
           lesson_id: string | null
+          published: boolean
+          subject_id: string | null
           time_limit_seconds: number | null
           title: string
           updated_at: string
         }
         Insert: {
+          chapter_id?: string | null
+          class_id?: string | null
           course_id?: string | null
           created_at?: string
+          created_by?: string | null
+          description?: string | null
+          difficulty?: number
           id?: string
+          kind?: string
           lesson_id?: string | null
+          published?: boolean
+          subject_id?: string | null
           time_limit_seconds?: number | null
           title: string
           updated_at?: string
         }
         Update: {
+          chapter_id?: string | null
+          class_id?: string | null
           course_id?: string | null
           created_at?: string
+          created_by?: string | null
+          description?: string | null
+          difficulty?: number
           id?: string
+          kind?: string
           lesson_id?: string | null
+          published?: boolean
+          subject_id?: string | null
           time_limit_seconds?: number | null
           title?: string
           updated_at?: string

@@ -55,6 +55,12 @@
   --color-cyan: var(--cyan);
   --color-snow: var(--snow);
 
+  /* Backward-compat aliases (old Emerald Prestige tokens) */
+  --color-cream: var(--snow);
+  --color-gold: var(--cyan);
+  --color-gold-foreground: var(--ink);
+  --color-emerald-deep: var(--ink);
+
   --color-ring-offset-background: var(--background);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -75,9 +81,9 @@
   --cyan:  oklch(0.74 0.14 210);   /* #06B6D4 */
   --snow:  oklch(0.984 0.005 250); /* #F8FAFC */
 
-  /* Semantic — light (snow base) */
-  --background: oklch(0.984 0.005 250);
-  --foreground: oklch(0.21 0.04 265);
+  /* Semantic — light (snow base, slightly tinted for readability) */
+  --background: oklch(0.97 0.008 250);
+  --foreground: oklch(0.18 0.045 265);
 
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.21 0.04 265);
@@ -91,8 +97,8 @@
   --secondary: oklch(0.96 0.01 250);
   --secondary-foreground: oklch(0.21 0.04 265);
 
-  --muted: oklch(0.96 0.01 250);
-  --muted-foreground: oklch(0.48 0.02 260);
+  --muted: oklch(0.94 0.012 250);
+  --muted-foreground: oklch(0.38 0.03 260);
 
   --accent: oklch(0.74 0.14 210);
   --accent-foreground: oklch(0.18 0.04 265);
@@ -100,8 +106,8 @@
   --destructive: oklch(0.6 0.22 27);
   --destructive-foreground: oklch(0.98 0.01 90);
 
-  --border: oklch(0.92 0.01 250);
-  --input: oklch(0.92 0.01 250);
+  --border: oklch(0.88 0.012 250);
+  --input: oklch(0.88 0.012 250);
   --ring: oklch(0.56 0.22 264);
 
   /* Glass surfaces */
@@ -203,7 +209,9 @@
   .bg-gradient-hero  { background: var(--gradient-hero); }
   .bg-gradient-brand { background: var(--gradient-brand); }
   .bg-gradient-soft  { background: var(--gradient-soft); }
+  .bg-gradient-gold  { background: var(--gradient-brand); } /* alias */
   .divider-brand     { background: var(--gradient-divider); height: 1px; }
+  .divider-gold      { background: var(--gradient-divider); height: 1px; } /* alias */
 
   .text-gradient {
     background: var(--gradient-text);
@@ -215,6 +223,7 @@
   .shadow-elegant { box-shadow: var(--shadow-elegant); }
   .shadow-glow    { box-shadow: var(--shadow-glow); }
   .shadow-cyan    { box-shadow: var(--shadow-cyan); }
+  .shadow-gold    { box-shadow: var(--shadow-glow); } /* alias */
 
   .text-balance { text-wrap: balance; }
   .text-pretty  { text-wrap: pretty; }

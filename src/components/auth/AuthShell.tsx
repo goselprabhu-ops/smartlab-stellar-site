@@ -1,5 +1,4 @@
 import { Sparkles, Brain, LineChart, ShieldCheck } from "lucide-react";
-import { Sparkles, Brain, LineChart, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
 type Props = {

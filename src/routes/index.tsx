@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles, Brain, LineChart, Users } from "lucide-react";
 import heroImage from "@/assets/hero.jpg";
+import logoUrl from "@/assets/logo.png";
 import { CtaButton } from "@/components/CtaButton";
 import { SectionHeading } from "@/components/SectionHeading";
 
@@ -62,8 +63,13 @@ function Home() {
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,oklch(0.76_0.13_85_/_0.18),transparent_60%)]"
         />
-        <div className="relative mx-auto max-w-7xl px-6 py-28 sm:py-36 lg:px-10 lg:py-44">
+        <div className="relative mx-auto max-w-7xl px-6 py-20 sm:py-28 lg:px-10 lg:py-32">
           <div className="max-w-3xl">
+            <img
+              src={logoUrl}
+              alt="Smart Lab Online"
+              className="mb-10 h-28 w-auto drop-shadow-[0_8px_30px_oklch(0.56_0.22_264/0.45)] sm:h-36 lg:h-44"
+            />
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-xs font-medium tracking-wide text-accent">
               <Sparkles className="h-3.5 w-3.5" />
               AI-powered learning ecosystem

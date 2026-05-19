@@ -1,55 +1,48 @@
-import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { adminMetrics, listAllUsers } from "@/lib/admin.functions";
+import { createFileRoute, Outlet, Link, Navigate } from "@tanstack/react-router";
+import { LayoutDashboard, Users, BookOpen, BarChart3, Brain, CreditCard, FolderTree } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  component: Admin,
+  component: AdminLayout,
 });
 
-function Admin() {
-  const auth = useAuth();
-  const m = useServerFn(adminMetrics);
-  const u = useServerFn(listAllUsers);
-  const metrics = useQuery({ queryKey: ["admin-metrics"], queryFn: () => m(), enabled: auth.hasRole("admin") });
-  const users = useQuery({ queryKey: ["admin-users"], queryFn: () => u(), enabled: auth.hasRole("admin") });
+const tabs: Array<{ to: string; label: string; icon: typeof Users; exact?: boolean }> = [
+  { to: "/admin",                label: "Overview",     icon: LayoutDashboard, exact: true },
+  { to: "/admin/users",          label: "Users",        icon: Users },
+  { to: "/admin/content",        label: "Content",      icon: FolderTree },
+  { to: "/admin/courses",        label: "Courses",      icon: BookOpen },
+  { to: "/admin/analytics",      label: "Analytics",    icon: BarChart3 },
+  { to: "/admin/ai",             label: "AI",           icon: Brain },
+  { to: "/admin/subscriptions",  label: "Subscriptions",icon: CreditCard },
+];
 
+function AdminLayout() {
+  const auth = useAuth();
   if (!auth.hasRole("admin")) return <Navigate to="/dashboard" />;
 
   return (
-    <div>
-      <h1 className="font-display text-3xl font-semibold">Admin</h1>
-      <div className="mt-6 grid gap-4 sm:grid-cols-4">
-        {[
-          { k: "Users", v: metrics.data?.users },
-          { k: "Courses", v: metrics.data?.courses },
-          { k: "Quizzes", v: metrics.data?.quizzes },
-          { k: "Attempts", v: metrics.data?.attempts },
-        ].map((s) => (
-          <div key={s.k} className="rounded-2xl border border-border bg-card p-5">
-            <div className="text-xs uppercase tracking-wide text-muted-foreground">{s.k}</div>
-            <div className="mt-1 font-display text-3xl font-semibold">{s.v ?? "—"}</div>
-          </div>
+    <div className="animate-fade-in space-y-8">
+      <header className="space-y-2">
+        <p className="font-display text-xs font-medium uppercase tracking-[0.2em] text-primary">Admin Panel</p>
+        <h1 className="font-display text-4xl font-semibold tracking-tight">Operations console</h1>
+        <p className="text-muted-foreground">Users, content, AI usage, and platform health — all in one place.</p>
+      </header>
+
+      <nav className="flex flex-wrap gap-1 rounded-xl border bg-card p-1 elev-1">
+        {tabs.map((t) => (
+          <Link
+            key={t.to}
+            to={t.to}
+            activeOptions={{ exact: !!t.exact }}
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-soft hover:bg-muted hover:text-foreground"
+            activeProps={{ className: "bg-primary text-primary-foreground hover:bg-primary" }}
+          >
+            <t.icon className="size-4" /> {t.label}
+          </Link>
         ))}
-      </div>
-      <h2 className="mt-10 font-display text-xl font-semibold">Users</h2>
-      <div className="mt-4 overflow-hidden rounded-xl border border-border">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
-            <tr><th className="p-3">Name</th><th className="p-3">Grade</th><th className="p-3">Roles</th></tr>
-          </thead>
-          <tbody>
-            {(users.data ?? []).map((u) => (
-              <tr key={u.user_id} className="border-t border-border">
-                <td className="p-3">{u.full_name ?? "—"}</td>
-                <td className="p-3">{u.grade ?? "—"}</td>
-                <td className="p-3 text-xs text-muted-foreground">{u.roles.join(", ")}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      </nav>
+
+      <Outlet />
     </div>
   );
 }

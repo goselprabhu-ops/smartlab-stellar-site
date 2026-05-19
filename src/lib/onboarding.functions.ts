@@ -73,7 +73,7 @@ export const generateStudyPath = createServerFn({ method: "POST" })
           const txt = json?.choices?.[0]?.message?.content;
           if (typeof txt === "string") {
             try {
-              path = JSON.parse(txt);
+              path = JSON.parse(txt) as StudyPath;
               model = "google/gemini-3-flash-preview";
             } catch {
               /* keep fallback */

@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
 const emailSchema = z.string().trim().toLowerCase().email().max(255);
 
@@ -169,7 +170,7 @@ export const getOrCreateMyReferralCode = createServerFn({ method: "POST" })
 
 /** Admin: list waitlist signups. */
 export const adminListWaitlist = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .inputValidator((input) =>
     z
       .object({
@@ -194,7 +195,7 @@ export const adminListWaitlist = createServerFn({ method: "POST" })
 
 /** Admin: list demo requests. */
 export const adminListDemoRequests = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("demo_requests")
@@ -207,7 +208,7 @@ export const adminListDemoRequests = createServerFn({ method: "GET" })
 
 /** Admin: checklist list + update. */
 export const adminListChecklist = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("launch_checklist")
@@ -218,7 +219,7 @@ export const adminListChecklist = createServerFn({ method: "GET" })
   });
 
 export const adminUpdateChecklistItem = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .inputValidator((input) =>
     z
       .object({
@@ -238,7 +239,7 @@ export const adminUpdateChecklistItem = createServerFn({ method: "POST" })
 
 /** Admin: launch config update. */
 export const adminUpdateLaunchConfig = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .inputValidator((input) =>
     z
       .object({

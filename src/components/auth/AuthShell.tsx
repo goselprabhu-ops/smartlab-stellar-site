@@ -17,7 +17,7 @@ const highlights = [
 
 export function AuthShell({ title, subtitle, children, footer }: Props) {
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
+    <div className="grid min-h-dvh lg:grid-cols-2">
       {/* Brand panel */}
       <aside className="relative hidden overflow-hidden bg-gradient-brand lg:flex lg:flex-col lg:justify-between lg:p-12 lg:text-primary-foreground">
         <div className="absolute inset-0 bg-gradient-hero opacity-60" aria-hidden />
@@ -57,7 +57,7 @@ export function AuthShell({ title, subtitle, children, footer }: Props) {
       </aside>
 
       {/* Form panel */}
-      <main className="flex min-h-screen flex-col bg-background">
+      <section className="flex min-h-dvh flex-col bg-background">
         <header className="flex items-center justify-between px-6 py-5 lg:hidden">
           <div className="inline-flex items-center gap-2">
             <Logo />
@@ -75,7 +75,7 @@ export function AuthShell({ title, subtitle, children, footer }: Props) {
             {footer && <div className="mt-8 text-center text-sm text-muted-foreground">{footer}</div>}
           </div>
         </div>
-      </main>
+      </section>
     </div>
   );
 }

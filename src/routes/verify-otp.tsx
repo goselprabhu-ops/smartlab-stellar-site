@@ -74,8 +74,9 @@ function VerifyOtpPage() {
       subtitle={
         email ? (
           <>We sent a 6-digit code to <span className="font-medium text-foreground">{email}</span>.</>
-        ) as unknown as string
-          : "Enter the 6-digit code we sent to your email."
+        ) : (
+          "Enter the 6-digit code we sent to your email."
+        )
       }
       footer={
         <Link to="/login" className="inline-flex items-center gap-1 text-primary hover:underline">

@@ -3,7 +3,7 @@ import { Logo } from "@/components/Logo";
 
 type Props = {
   title: string;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   children: React.ReactNode;
   footer?: React.ReactNode;
 };

@@ -6,7 +6,7 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 
 /** Summary KPIs for the AI Control Center. */
 export const aiOverview = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .handler(async ({ context }) => {
     const { supabase } = context;
     const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -69,7 +69,7 @@ export const aiOverview = createServerFn({ method: "GET" })
   });
 
 export const aiRecentRuns = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .handler(async ({ context }) => {
     const { supabase } = context;
     const { data } = await supabase
@@ -81,7 +81,7 @@ export const aiRecentRuns = createServerFn({ method: "GET" })
   });
 
 export const aiListPrompts = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .handler(async ({ context }) => {
     const { supabase } = context;
     const { data } = await supabase
@@ -93,7 +93,7 @@ export const aiListPrompts = createServerFn({ method: "GET" })
   });
 
 export const aiUpsertPrompt = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .inputValidator((input) =>
     z
       .object({
@@ -129,7 +129,7 @@ export const aiUpsertPrompt = createServerFn({ method: "POST" })
   });
 
 export const aiSetActivePrompt = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .inputValidator((input) =>
     z.object({ module: z.string().min(1), promptId: z.string().uuid() }).parse(input),
   )

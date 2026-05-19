@@ -8,9 +8,17 @@ import { ThemeToggle } from "./ThemeToggle";
 type NavItem = { to: string; label: string; description?: string };
 
 const PRODUCT: NavItem[] = [
-  { to: "/features",    label: "Features",    description: "Everything inside Smart Lab Online." },
-  { to: "/ai-learning", label: "AI Learning", description: "How our adaptive engine works." },
-  { to: "/courses",     label: "Courses",     description: "Full CBSE coverage, Classes 6–12." },
+  { to: "/features",                     label: "Features overview",   description: "Everything inside Smart Lab Online." },
+  { to: "/ai-learning",                  label: "AI Learning",         description: "How our adaptive engine works." },
+  { to: "/product/ai-tutor",             label: "AI Tutor",            description: "Socratic, 24/7, CBSE-aware." },
+  { to: "/product/study-path",           label: "Smart Study Path",    description: "A daily plan that rebuilds itself." },
+  { to: "/product/personalized-learning",label: "Personalized Learning", description: "Curriculum tuned to every student." },
+  { to: "/product/test-engine",          label: "Test Engine",         description: "Adaptive tests with AI grading." },
+  { to: "/product/progress-tracking",    label: "Progress Tracking",   description: "Mastery, concept by concept." },
+  { to: "/product/analytics",            label: "Analytics",           description: "Heatmaps & AI insights." },
+  { to: "/product/student-dashboard",    label: "Student Dashboard",   description: "The calm home screen." },
+  { to: "/product/parent-dashboard",     label: "Parent Dashboard",    description: "Visibility, not surveillance." },
+  { to: "/courses",                      label: "Courses",             description: "Full CBSE coverage, Classes 6–12." },
 ];
 
 const COMPANY: NavItem[] = [

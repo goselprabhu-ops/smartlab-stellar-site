@@ -300,7 +300,7 @@ function PricingPage() {
       <StickyPricingCta />
 
       {/* FLOATING WHATSAPP */}
-      <WhatsAppButton floating message="Hi Smart Lab Online — I'm on your pricing page and have a question." />
+      <WhatsAppButton floating className="bottom-24 sm:bottom-6" message="Hi Smart Lab Online — I'm on your pricing page and have a question." />
     </>
   );
 }

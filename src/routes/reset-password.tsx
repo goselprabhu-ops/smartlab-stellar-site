@@ -4,7 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/reset-password")({
-  head: () => ({ meta: [{ title: "Set new password — Smart Lab Online" }] }),
+  head: () => ({
+    meta: [
+      { title: "Set new password — Smart Lab Online" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: ResetPage,
 });
 

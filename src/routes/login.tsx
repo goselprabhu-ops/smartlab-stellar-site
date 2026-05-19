@@ -5,7 +5,12 @@ import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Sign in — Smart Lab Online" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in — Smart Lab Online" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: LoginPage,
 });
 

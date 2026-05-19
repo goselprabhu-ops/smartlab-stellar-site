@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -27,7 +28,13 @@ import { Route as AuthenticatedStudentRecommendationsRouteImport } from './route
 import { Route as AuthenticatedStudentQuizzesRouteImport } from './routes/_authenticated/student/quizzes'
 import { Route as AuthenticatedStudentProgressRouteImport } from './routes/_authenticated/student/progress'
 import { Route as AuthenticatedStudentCoursesRouteImport } from './routes/_authenticated/student/courses'
+import { Route as AuthenticatedStudentCoursesCourseIdLessonIdRouteImport } from './routes/_authenticated/student/courses.$courseId.$lessonId'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -121,6 +128,12 @@ const AuthenticatedStudentCoursesRoute =
     path: '/student/courses',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedStudentCoursesCourseIdLessonIdRoute =
+  AuthenticatedStudentCoursesCourseIdLessonIdRouteImport.update({
+    id: '/$courseId/$lessonId',
+    path: '/$courseId/$lessonId',
+    getParentRoute: () => AuthenticatedStudentCoursesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -132,14 +145,16 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/parent': typeof AuthenticatedParentRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/student/courses': typeof AuthenticatedStudentCoursesRoute
+  '/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
   '/student/progress': typeof AuthenticatedStudentProgressRoute
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -151,14 +166,16 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/parent': typeof AuthenticatedParentRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/student/courses': typeof AuthenticatedStudentCoursesRoute
+  '/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
   '/student/progress': typeof AuthenticatedStudentProgressRoute
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -172,14 +189,16 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/parent': typeof AuthenticatedParentRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
-  '/_authenticated/student/courses': typeof AuthenticatedStudentCoursesRoute
+  '/_authenticated/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
   '/_authenticated/student/progress': typeof AuthenticatedStudentProgressRoute
   '/_authenticated/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/_authenticated/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/_authenticated/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -193,6 +212,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/signup'
+    | '/sitemap.xml'
     | '/admin'
     | '/dashboard'
     | '/parent'
@@ -201,6 +221,7 @@ export interface FileRouteTypes {
     | '/student/progress'
     | '/student/quizzes'
     | '/student/recommendations'
+    | '/student/courses/$courseId/$lessonId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -212,6 +233,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/signup'
+    | '/sitemap.xml'
     | '/admin'
     | '/dashboard'
     | '/parent'
@@ -220,6 +242,7 @@ export interface FileRouteTypes {
     | '/student/progress'
     | '/student/quizzes'
     | '/student/recommendations'
+    | '/student/courses/$courseId/$lessonId'
   id:
     | '__root__'
     | '/'
@@ -232,6 +255,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/signup'
+    | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/parent'
@@ -240,6 +264,7 @@ export interface FileRouteTypes {
     | '/_authenticated/student/progress'
     | '/_authenticated/student/quizzes'
     | '/_authenticated/student/recommendations'
+    | '/_authenticated/student/courses/$courseId/$lessonId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -253,10 +278,18 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -383,15 +416,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentCoursesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/student/courses/$courseId/$lessonId': {
+      id: '/_authenticated/student/courses/$courseId/$lessonId'
+      path: '/$courseId/$lessonId'
+      fullPath: '/student/courses/$courseId/$lessonId'
+      preLoaderRoute: typeof AuthenticatedStudentCoursesCourseIdLessonIdRouteImport
+      parentRoute: typeof AuthenticatedStudentCoursesRoute
+    }
   }
 }
+
+interface AuthenticatedStudentCoursesRouteChildren {
+  AuthenticatedStudentCoursesCourseIdLessonIdRoute: typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
+}
+
+const AuthenticatedStudentCoursesRouteChildren: AuthenticatedStudentCoursesRouteChildren =
+  {
+    AuthenticatedStudentCoursesCourseIdLessonIdRoute:
+      AuthenticatedStudentCoursesCourseIdLessonIdRoute,
+  }
+
+const AuthenticatedStudentCoursesRouteWithChildren =
+  AuthenticatedStudentCoursesRoute._addFileChildren(
+    AuthenticatedStudentCoursesRouteChildren,
+  )
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedParentRoute: typeof AuthenticatedParentRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
-  AuthenticatedStudentCoursesRoute: typeof AuthenticatedStudentCoursesRoute
+  AuthenticatedStudentCoursesRoute: typeof AuthenticatedStudentCoursesRouteWithChildren
   AuthenticatedStudentProgressRoute: typeof AuthenticatedStudentProgressRoute
   AuthenticatedStudentQuizzesRoute: typeof AuthenticatedStudentQuizzesRoute
   AuthenticatedStudentRecommendationsRoute: typeof AuthenticatedStudentRecommendationsRoute
@@ -402,7 +457,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedParentRoute: AuthenticatedParentRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedStudentCoursesRoute: AuthenticatedStudentCoursesRoute,
+  AuthenticatedStudentCoursesRoute:
+    AuthenticatedStudentCoursesRouteWithChildren,
   AuthenticatedStudentProgressRoute: AuthenticatedStudentProgressRoute,
   AuthenticatedStudentQuizzesRoute: AuthenticatedStudentQuizzesRoute,
   AuthenticatedStudentRecommendationsRoute:
@@ -424,6 +480,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

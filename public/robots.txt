@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /student/
+Disallow: /parent
+Disallow: /parent/
+Disallow: /admin
+Disallow: /admin/

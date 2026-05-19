@@ -38,7 +38,8 @@ export const generateStudyPath = createServerFn({ method: "POST" })
       ],
     };
 
-    let path: unknown = fallback;
+    type StudyPath = typeof fallback;
+    let path: StudyPath = fallback;
     let model = "fallback";
 
     if (key) {

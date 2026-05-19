@@ -11,13 +11,18 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SchoolsRouteImport } from './routes/schools'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as DesignSystemRouteImport } from './routes/design-system'
+import { Route as DemoRouteImport } from './routes/demo'
+import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AiLearningRouteImport } from './routes/ai-learning'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -43,6 +48,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchoolsRoute = SchoolsRouteImport.update({
+  id: '/schools',
+  path: '/schools',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -75,9 +85,29 @@ const DesignSystemRoute = DesignSystemRouteImport.update({
   path: '/design-system',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoursesRoute = CoursesRouteImport.update({
+  id: '/courses',
+  path: '/courses',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiLearningRoute = AiLearningRouteImport.update({
+  id: '/ai-learning',
+  path: '/ai-learning',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -172,13 +202,18 @@ const AuthenticatedStudentCoursesCourseIdLessonIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/ai-learning': typeof AiLearningRoute
+  '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
+  '/courses': typeof CoursesRoute
+  '/demo': typeof DemoRoute
   '/design-system': typeof DesignSystemRoute
   '/features': typeof FeaturesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/schools': typeof SchoolsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -198,13 +233,18 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/ai-learning': typeof AiLearningRoute
+  '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
+  '/courses': typeof CoursesRoute
+  '/demo': typeof DemoRoute
   '/design-system': typeof DesignSystemRoute
   '/features': typeof FeaturesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/schools': typeof SchoolsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -226,13 +266,18 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
+  '/ai-learning': typeof AiLearningRoute
+  '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
+  '/courses': typeof CoursesRoute
+  '/demo': typeof DemoRoute
   '/design-system': typeof DesignSystemRoute
   '/features': typeof FeaturesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/schools': typeof SchoolsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -254,13 +299,18 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/ai-learning'
+    | '/blog'
     | '/contact'
+    | '/courses'
+    | '/demo'
     | '/design-system'
     | '/features'
     | '/forgot-password'
     | '/login'
     | '/pricing'
     | '/reset-password'
+    | '/schools'
     | '/signup'
     | '/sitemap.xml'
     | '/admin'
@@ -280,13 +330,18 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/ai-learning'
+    | '/blog'
     | '/contact'
+    | '/courses'
+    | '/demo'
     | '/design-system'
     | '/features'
     | '/forgot-password'
     | '/login'
     | '/pricing'
     | '/reset-password'
+    | '/schools'
     | '/signup'
     | '/sitemap.xml'
     | '/admin'
@@ -307,13 +362,18 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/ai-learning'
+    | '/blog'
     | '/contact'
+    | '/courses'
+    | '/demo'
     | '/design-system'
     | '/features'
     | '/forgot-password'
     | '/login'
     | '/pricing'
     | '/reset-password'
+    | '/schools'
     | '/signup'
     | '/sitemap.xml'
     | '/_authenticated/admin'
@@ -335,13 +395,18 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AiLearningRoute: typeof AiLearningRoute
+  BlogRoute: typeof BlogRoute
   ContactRoute: typeof ContactRoute
+  CoursesRoute: typeof CoursesRoute
+  DemoRoute: typeof DemoRoute
   DesignSystemRoute: typeof DesignSystemRoute
   FeaturesRoute: typeof FeaturesRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SchoolsRoute: typeof SchoolsRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
@@ -360,6 +425,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schools': {
+      id: '/schools'
+      path: '/schools'
+      fullPath: '/schools'
+      preLoaderRoute: typeof SchoolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -404,11 +476,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DesignSystemRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/courses': {
+      id: '/courses'
+      path: '/courses'
+      fullPath: '/courses'
+      preLoaderRoute: typeof CoursesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-learning': {
+      id: '/ai-learning'
+      path: '/ai-learning'
+      fullPath: '/ai-learning'
+      preLoaderRoute: typeof AiLearningRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -583,16 +683,31 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
+  AiLearningRoute: AiLearningRoute,
+  BlogRoute: BlogRoute,
   ContactRoute: ContactRoute,
+  CoursesRoute: CoursesRoute,
+  DemoRoute: DemoRoute,
   DesignSystemRoute: DesignSystemRoute,
   FeaturesRoute: FeaturesRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SchoolsRoute: SchoolsRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

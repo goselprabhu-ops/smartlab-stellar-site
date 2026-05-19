@@ -504,25 +504,23 @@ function ComparisonTable({ yearly }: { yearly: boolean }) {
           </tr>
         </thead>
         <tbody>
-          {groups.map(([group, rows]) => (
-            <>
-              <tr key={`g-${group}`} className="bg-muted/20">
-                <td colSpan={5} className="px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
-                  {group}
-                </td>
+          {groups.flatMap(([group, rows]) => [
+            <tr key={`g-${group}`} className="bg-muted/20">
+              <td colSpan={5} className="px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
+                {group}
+              </td>
+            </tr>,
+            ...rows.map((r, i) => (
+              <tr key={`${group}-${r.label}`} className={cn("border-t", i % 2 === 1 && "bg-muted/10")}>
+                <td className="px-5 py-3 font-medium">{r.label}</td>
+                {PLANS.map((p) => (
+                  <td key={p.id} className="px-3 py-3 text-center">
+                    {renderCell(r.values[p.id])}
+                  </td>
+                ))}
               </tr>
-              {rows.map((r, i) => (
-                <tr key={`${group}-${r.label}`} className={cn("border-t", i % 2 === 1 && "bg-muted/10")}>
-                  <td className="px-5 py-3 font-medium">{r.label}</td>
-                  {PLANS.map((p) => (
-                    <td key={p.id} className="px-3 py-3 text-center">
-                      {renderCell(r.values[p.id])}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </>
-          ))}
+            )),
+          ])}
         </tbody>
       </table>
     </div>

@@ -250,5 +250,3 @@ function Mini({
   );
 }
 
-// Optional indeterminate fill for compatibility
-export const _ = Progress;

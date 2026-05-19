@@ -9,11 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SchoolsRouteImport } from './routes/schools'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeaturesRouteImport } from './routes/features'
@@ -66,6 +68,11 @@ import { Route as AuthenticatedStudentRemediationMicroConceptIdRouteImport } fro
 import { Route as AuthenticatedStudentLearnMicroConceptIdRouteImport } from './routes/_authenticated/student/learn.$microConceptId'
 import { Route as AuthenticatedStudentCoursesCourseIdLessonIdRouteImport } from './routes/_authenticated/student/courses.$courseId.$lessonId'
 
+const VerifyOtpRoute = VerifyOtpRouteImport.update({
+  id: '/verify-otp',
+  path: '/verify-otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -89,6 +96,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -383,11 +395,13 @@ export interface FileRoutesByFullPath {
   '/features': typeof FeaturesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/schools': typeof SchoolsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/verify-otp': typeof VerifyOtpRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/parent': typeof AuthenticatedParentRouteWithChildren
@@ -440,11 +454,13 @@ export interface FileRoutesByTo {
   '/features': typeof FeaturesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/schools': typeof SchoolsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/verify-otp': typeof VerifyOtpRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/product/ai-tutor': typeof ProductAiTutorRoute
@@ -497,11 +513,13 @@ export interface FileRoutesById {
   '/features': typeof FeaturesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/schools': typeof SchoolsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/verify-otp': typeof VerifyOtpRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/parent': typeof AuthenticatedParentRouteWithChildren
@@ -556,11 +574,13 @@ export interface FileRouteTypes {
     | '/features'
     | '/forgot-password'
     | '/login'
+    | '/onboarding'
     | '/pricing'
     | '/reset-password'
     | '/schools'
     | '/signup'
     | '/sitemap.xml'
+    | '/verify-otp'
     | '/admin'
     | '/dashboard'
     | '/parent'
@@ -613,11 +633,13 @@ export interface FileRouteTypes {
     | '/features'
     | '/forgot-password'
     | '/login'
+    | '/onboarding'
     | '/pricing'
     | '/reset-password'
     | '/schools'
     | '/signup'
     | '/sitemap.xml'
+    | '/verify-otp'
     | '/dashboard'
     | '/settings'
     | '/product/ai-tutor'
@@ -669,11 +691,13 @@ export interface FileRouteTypes {
     | '/features'
     | '/forgot-password'
     | '/login'
+    | '/onboarding'
     | '/pricing'
     | '/reset-password'
     | '/schools'
     | '/signup'
     | '/sitemap.xml'
+    | '/verify-otp'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/parent'
@@ -728,11 +752,13 @@ export interface RootRouteChildren {
   FeaturesRoute: typeof FeaturesRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  OnboardingRoute: typeof OnboardingRoute
   PricingRoute: typeof PricingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SchoolsRoute: typeof SchoolsRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  VerifyOtpRoute: typeof VerifyOtpRoute
   ProductAiTutorRoute: typeof ProductAiTutorRoute
   ProductAnalyticsRoute: typeof ProductAnalyticsRoute
   ProductParentDashboardRoute: typeof ProductParentDashboardRoute
@@ -745,6 +771,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify-otp': {
+      id: '/verify-otp'
+      path: '/verify-otp'
+      fullPath: '/verify-otp'
+      preLoaderRoute: typeof VerifyOtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -778,6 +811,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -1261,11 +1301,13 @@ const rootRouteChildren: RootRouteChildren = {
   FeaturesRoute: FeaturesRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  OnboardingRoute: OnboardingRoute,
   PricingRoute: PricingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SchoolsRoute: SchoolsRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  VerifyOtpRoute: VerifyOtpRoute,
   ProductAiTutorRoute: ProductAiTutorRoute,
   ProductAnalyticsRoute: ProductAnalyticsRoute,
   ProductParentDashboardRoute: ProductParentDashboardRoute,

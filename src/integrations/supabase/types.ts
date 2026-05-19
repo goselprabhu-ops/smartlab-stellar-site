@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_recommendations: {
+        Row: {
+          created_at: string
+          id: string
+          model: string | null
+          payload: Json
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          model?: string | null
+          payload?: Json
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          model?: string | null
+          payload?: Json
+          student_id?: string
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           created_at: string
@@ -41,15 +65,375 @@ export type Database = {
         }
         Relationships: []
       }
+      courses: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          grade: string | null
+          id: string
+          published: boolean
+          subject_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          grade?: string | null
+          id?: string
+          published?: boolean
+          subject_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          grade?: string | null
+          id?: string
+          published?: boolean
+          subject_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "courses_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          content_md: string | null
+          course_id: string
+          created_at: string
+          id: string
+          order_index: number
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          content_md?: string | null
+          course_id: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          content_md?: string | null
+          course_id?: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parent_student_links: {
+        Row: {
+          created_at: string
+          id: string
+          parent_id: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          parent_id: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          parent_id?: string
+          student_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          grade: string | null
+          id: string
+          school: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          grade?: string | null
+          id?: string
+          school?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          grade?: string | null
+          id?: string
+          school?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      progress: {
+        Row: {
+          completed_at: string | null
+          id: string
+          lesson_id: string
+          mastery: number
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          id?: string
+          lesson_id: string
+          mastery?: number
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          lesson_id?: string
+          mastery?: number
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_attempts: {
+        Row: {
+          answers: Json
+          id: string
+          quiz_id: string
+          score: number
+          student_id: string
+          submitted_at: string
+          total: number
+        }
+        Insert: {
+          answers?: Json
+          id?: string
+          quiz_id: string
+          score?: number
+          student_id: string
+          submitted_at?: string
+          total?: number
+        }
+        Update: {
+          answers?: Json
+          id?: string
+          quiz_id?: string
+          score?: number
+          student_id?: string
+          submitted_at?: string
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_questions: {
+        Row: {
+          correct: Json
+          created_at: string
+          id: string
+          options: Json
+          order_index: number
+          points: number
+          prompt: string
+          quiz_id: string
+          type: Database["public"]["Enums"]["question_type"]
+        }
+        Insert: {
+          correct?: Json
+          created_at?: string
+          id?: string
+          options?: Json
+          order_index?: number
+          points?: number
+          prompt: string
+          quiz_id: string
+          type?: Database["public"]["Enums"]["question_type"]
+        }
+        Update: {
+          correct?: Json
+          created_at?: string
+          id?: string
+          options?: Json
+          order_index?: number
+          points?: number
+          prompt?: string
+          quiz_id?: string
+          type?: Database["public"]["Enums"]["question_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quizzes: {
+        Row: {
+          course_id: string | null
+          created_at: string
+          id: string
+          lesson_id: string | null
+          time_limit_seconds: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          lesson_id?: string | null
+          time_limit_seconds?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          lesson_id?: string | null
+          time_limit_seconds?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quizzes_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quizzes_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subjects: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_linked_parent: {
+        Args: { _parent: string; _student: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "student" | "parent" | "admin"
+      question_type: "mcq" | "multi" | "short"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -176,6 +560,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["student", "parent", "admin"],
+      question_type: ["mcq", "multi", "short"],
+    },
   },
 } as const

@@ -60,10 +60,10 @@ export function AuthShell({ title, subtitle, children, footer }: Props) {
       {/* Form panel */}
       <main className="flex min-h-screen flex-col bg-background">
         <header className="flex items-center justify-between px-6 py-5 lg:hidden">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <Logo className="h-7 w-7" />
+          <div className="inline-flex items-center gap-2">
+            <Logo />
             <span className="font-display text-base font-semibold">Smart Lab</span>
-          </Link>
+          </div>
         </header>
 
         <div className="flex flex-1 items-center justify-center px-6 py-8 sm:px-10">

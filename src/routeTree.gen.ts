@@ -28,6 +28,7 @@ import { Route as AuthenticatedStudentRecommendationsRouteImport } from './route
 import { Route as AuthenticatedStudentQuizzesRouteImport } from './routes/_authenticated/student/quizzes'
 import { Route as AuthenticatedStudentProgressRouteImport } from './routes/_authenticated/student/progress'
 import { Route as AuthenticatedStudentCoursesRouteImport } from './routes/_authenticated/student/courses'
+import { Route as AuthenticatedStudentCoursesCourseIdLessonIdRouteImport } from './routes/_authenticated/student/courses.$courseId.$lessonId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -127,6 +128,12 @@ const AuthenticatedStudentCoursesRoute =
     path: '/student/courses',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedStudentCoursesCourseIdLessonIdRoute =
+  AuthenticatedStudentCoursesCourseIdLessonIdRouteImport.update({
+    id: '/$courseId/$lessonId',
+    path: '/$courseId/$lessonId',
+    getParentRoute: () => AuthenticatedStudentCoursesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -143,10 +150,11 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/parent': typeof AuthenticatedParentRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/student/courses': typeof AuthenticatedStudentCoursesRoute
+  '/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
   '/student/progress': typeof AuthenticatedStudentProgressRoute
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -163,10 +171,11 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/parent': typeof AuthenticatedParentRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/student/courses': typeof AuthenticatedStudentCoursesRoute
+  '/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
   '/student/progress': typeof AuthenticatedStudentProgressRoute
   '/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -185,10 +194,11 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/parent': typeof AuthenticatedParentRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
-  '/_authenticated/student/courses': typeof AuthenticatedStudentCoursesRoute
+  '/_authenticated/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
   '/_authenticated/student/progress': typeof AuthenticatedStudentProgressRoute
   '/_authenticated/student/quizzes': typeof AuthenticatedStudentQuizzesRoute
   '/_authenticated/student/recommendations': typeof AuthenticatedStudentRecommendationsRoute
+  '/_authenticated/student/courses/$courseId/$lessonId': typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/student/progress'
     | '/student/quizzes'
     | '/student/recommendations'
+    | '/student/courses/$courseId/$lessonId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/student/progress'
     | '/student/quizzes'
     | '/student/recommendations'
+    | '/student/courses/$courseId/$lessonId'
   id:
     | '__root__'
     | '/'
@@ -252,6 +264,7 @@ export interface FileRouteTypes {
     | '/_authenticated/student/progress'
     | '/_authenticated/student/quizzes'
     | '/_authenticated/student/recommendations'
+    | '/_authenticated/student/courses/$courseId/$lessonId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -403,15 +416,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentCoursesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/student/courses/$courseId/$lessonId': {
+      id: '/_authenticated/student/courses/$courseId/$lessonId'
+      path: '/$courseId/$lessonId'
+      fullPath: '/student/courses/$courseId/$lessonId'
+      preLoaderRoute: typeof AuthenticatedStudentCoursesCourseIdLessonIdRouteImport
+      parentRoute: typeof AuthenticatedStudentCoursesRoute
+    }
   }
 }
+
+interface AuthenticatedStudentCoursesRouteChildren {
+  AuthenticatedStudentCoursesCourseIdLessonIdRoute: typeof AuthenticatedStudentCoursesCourseIdLessonIdRoute
+}
+
+const AuthenticatedStudentCoursesRouteChildren: AuthenticatedStudentCoursesRouteChildren =
+  {
+    AuthenticatedStudentCoursesCourseIdLessonIdRoute:
+      AuthenticatedStudentCoursesCourseIdLessonIdRoute,
+  }
+
+const AuthenticatedStudentCoursesRouteWithChildren =
+  AuthenticatedStudentCoursesRoute._addFileChildren(
+    AuthenticatedStudentCoursesRouteChildren,
+  )
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedParentRoute: typeof AuthenticatedParentRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
-  AuthenticatedStudentCoursesRoute: typeof AuthenticatedStudentCoursesRoute
+  AuthenticatedStudentCoursesRoute: typeof AuthenticatedStudentCoursesRouteWithChildren
   AuthenticatedStudentProgressRoute: typeof AuthenticatedStudentProgressRoute
   AuthenticatedStudentQuizzesRoute: typeof AuthenticatedStudentQuizzesRoute
   AuthenticatedStudentRecommendationsRoute: typeof AuthenticatedStudentRecommendationsRoute
@@ -422,7 +457,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedParentRoute: AuthenticatedParentRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedStudentCoursesRoute: AuthenticatedStudentCoursesRoute,
+  AuthenticatedStudentCoursesRoute:
+    AuthenticatedStudentCoursesRouteWithChildren,
   AuthenticatedStudentProgressRoute: AuthenticatedStudentProgressRoute,
   AuthenticatedStudentQuizzesRoute: AuthenticatedStudentQuizzesRoute,
   AuthenticatedStudentRecommendationsRoute:

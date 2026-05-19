@@ -181,7 +181,7 @@ export const runRemediationPipeline = createServerFn({ method: "POST" })
           }),
         },
       ],
-      { model: AI_MODEL_DEFAULT },
+      AI_MODEL_DEFAULT,
     );
     const parsed = PackSchema.parse(pack);
 

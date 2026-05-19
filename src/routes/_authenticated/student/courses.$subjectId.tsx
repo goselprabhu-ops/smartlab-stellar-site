@@ -78,7 +78,7 @@ function SubjectPage() {
       </div>
 
       {chapters.isLoading ? (
-        <LoadingState label="Loading chapters" />
+        <LoadingState />
       ) : (chapters.data ?? []).length === 0 ? (
         <EmptyState icon={BookOpen} title="No chapters" description="Try a different search or tag." />
       ) : (

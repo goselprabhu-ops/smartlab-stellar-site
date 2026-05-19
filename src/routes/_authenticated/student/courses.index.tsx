@@ -153,7 +153,7 @@ function CoursesCatalog() {
 
       {/* Subjects grouped by class */}
       {subjects.isLoading ? (
-        <LoadingState label="Loading subjects" />
+        <LoadingState />
       ) : grouped.length === 0 ? (
         <EmptyState icon={BookOpen} title="No subjects yet" description="Try clearing filters." />
       ) : (

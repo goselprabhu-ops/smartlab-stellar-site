@@ -30,7 +30,7 @@ function ChapterReader() {
     queryFn: () => fn({ data: { chapterId } }),
   });
 
-  if (isLoading) return <LoadingState label="Loading chapter" />;
+  if (isLoading) return <LoadingState />;
   if (!data?.chapter) {
     return (
       <EmptyState icon={BookOpen} title="Chapter not found"

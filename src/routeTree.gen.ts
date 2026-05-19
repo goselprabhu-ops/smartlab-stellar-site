@@ -43,7 +43,6 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedParentIndexRouteImport } from './routes/_authenticated/parent.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as AuthenticatedStudentTestsRouteImport } from './routes/_authenticated/student/tests'
 import { Route as AuthenticatedStudentSubjectsRouteImport } from './routes/_authenticated/student/subjects'
 import { Route as AuthenticatedStudentStudyPathRouteImport } from './routes/_authenticated/student/study-path'
 import { Route as AuthenticatedStudentRetentionRouteImport } from './routes/_authenticated/student/retention'
@@ -65,13 +64,16 @@ import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminContentRouteImport } from './routes/_authenticated/admin.content'
 import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
 import { Route as AuthenticatedAdminAiRouteImport } from './routes/_authenticated/admin.ai'
+import { Route as AuthenticatedStudentTestsIndexRouteImport } from './routes/_authenticated/student/tests.index'
 import { Route as AuthenticatedStudentCoursesIndexRouteImport } from './routes/_authenticated/student/courses.index'
 import { Route as AuthenticatedStudentAiTutorIndexRouteImport } from './routes/_authenticated/student/ai-tutor.index'
+import { Route as AuthenticatedStudentTestsTestIdRouteImport } from './routes/_authenticated/student/tests.$testId'
 import { Route as AuthenticatedStudentRemediationMicroConceptIdRouteImport } from './routes/_authenticated/student/remediation.$microConceptId'
 import { Route as AuthenticatedStudentLearnMicroConceptIdRouteImport } from './routes/_authenticated/student/learn.$microConceptId'
 import { Route as AuthenticatedStudentCoursesSubjectIdRouteImport } from './routes/_authenticated/student/courses.$subjectId'
 import { Route as AuthenticatedStudentAiTutorThreadIdRouteImport } from './routes/_authenticated/student/ai-tutor.$threadId'
 import { Route as AuthenticatedStudentCoursesSubjectIdChapterIdRouteImport } from './routes/_authenticated/student/courses.$subjectId.$chapterId'
+import { Route as AuthenticatedStudentTestsTestIdResultsAttemptIdRouteImport } from './routes/_authenticated/student/tests.$testId.results.$attemptId'
 
 const VerifyOtpRoute = VerifyOtpRouteImport.update({
   id: '/verify-otp',
@@ -244,12 +246,6 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedStudentTestsRoute =
-  AuthenticatedStudentTestsRouteImport.update({
-    id: '/student/tests',
-    path: '/student/tests',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedStudentSubjectsRoute =
   AuthenticatedStudentSubjectsRouteImport.update({
     id: '/student/subjects',
@@ -374,6 +370,12 @@ const AuthenticatedAdminAiRoute = AuthenticatedAdminAiRouteImport.update({
   path: '/ai',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedStudentTestsIndexRoute =
+  AuthenticatedStudentTestsIndexRouteImport.update({
+    id: '/student/tests/',
+    path: '/student/tests/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedStudentCoursesIndexRoute =
   AuthenticatedStudentCoursesIndexRouteImport.update({
     id: '/',
@@ -385,6 +387,12 @@ const AuthenticatedStudentAiTutorIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedStudentAiTutorRoute,
+  } as any)
+const AuthenticatedStudentTestsTestIdRoute =
+  AuthenticatedStudentTestsTestIdRouteImport.update({
+    id: '/student/tests/$testId',
+    path: '/student/tests/$testId',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedStudentRemediationMicroConceptIdRoute =
   AuthenticatedStudentRemediationMicroConceptIdRouteImport.update({
@@ -415,6 +423,12 @@ const AuthenticatedStudentCoursesSubjectIdChapterIdRoute =
     id: '/$chapterId',
     path: '/$chapterId',
     getParentRoute: () => AuthenticatedStudentCoursesSubjectIdRoute,
+  } as any)
+const AuthenticatedStudentTestsTestIdResultsAttemptIdRoute =
+  AuthenticatedStudentTestsTestIdResultsAttemptIdRouteImport.update({
+    id: '/results/$attemptId',
+    path: '/results/$attemptId',
+    getParentRoute: () => AuthenticatedStudentTestsTestIdRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -470,16 +484,18 @@ export interface FileRoutesByFullPath {
   '/student/retention': typeof AuthenticatedStudentRetentionRoute
   '/student/study-path': typeof AuthenticatedStudentStudyPathRoute
   '/student/subjects': typeof AuthenticatedStudentSubjectsRoute
-  '/student/tests': typeof AuthenticatedStudentTestsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/parent/': typeof AuthenticatedParentIndexRoute
   '/student/ai-tutor/$threadId': typeof AuthenticatedStudentAiTutorThreadIdRoute
   '/student/courses/$subjectId': typeof AuthenticatedStudentCoursesSubjectIdRouteWithChildren
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
+  '/student/tests/$testId': typeof AuthenticatedStudentTestsTestIdRouteWithChildren
   '/student/ai-tutor/': typeof AuthenticatedStudentAiTutorIndexRoute
   '/student/courses/': typeof AuthenticatedStudentCoursesIndexRoute
+  '/student/tests/': typeof AuthenticatedStudentTestsIndexRoute
   '/student/courses/$subjectId/$chapterId': typeof AuthenticatedStudentCoursesSubjectIdChapterIdRoute
+  '/student/tests/$testId/results/$attemptId': typeof AuthenticatedStudentTestsTestIdResultsAttemptIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -530,16 +546,18 @@ export interface FileRoutesByTo {
   '/student/retention': typeof AuthenticatedStudentRetentionRoute
   '/student/study-path': typeof AuthenticatedStudentStudyPathRoute
   '/student/subjects': typeof AuthenticatedStudentSubjectsRoute
-  '/student/tests': typeof AuthenticatedStudentTestsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/parent': typeof AuthenticatedParentIndexRoute
   '/student/ai-tutor/$threadId': typeof AuthenticatedStudentAiTutorThreadIdRoute
   '/student/courses/$subjectId': typeof AuthenticatedStudentCoursesSubjectIdRouteWithChildren
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
+  '/student/tests/$testId': typeof AuthenticatedStudentTestsTestIdRouteWithChildren
   '/student/ai-tutor': typeof AuthenticatedStudentAiTutorIndexRoute
   '/student/courses': typeof AuthenticatedStudentCoursesIndexRoute
+  '/student/tests': typeof AuthenticatedStudentTestsIndexRoute
   '/student/courses/$subjectId/$chapterId': typeof AuthenticatedStudentCoursesSubjectIdChapterIdRoute
+  '/student/tests/$testId/results/$attemptId': typeof AuthenticatedStudentTestsTestIdResultsAttemptIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -596,16 +614,18 @@ export interface FileRoutesById {
   '/_authenticated/student/retention': typeof AuthenticatedStudentRetentionRoute
   '/_authenticated/student/study-path': typeof AuthenticatedStudentStudyPathRoute
   '/_authenticated/student/subjects': typeof AuthenticatedStudentSubjectsRoute
-  '/_authenticated/student/tests': typeof AuthenticatedStudentTestsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/parent/': typeof AuthenticatedParentIndexRoute
   '/_authenticated/student/ai-tutor/$threadId': typeof AuthenticatedStudentAiTutorThreadIdRoute
   '/_authenticated/student/courses/$subjectId': typeof AuthenticatedStudentCoursesSubjectIdRouteWithChildren
   '/_authenticated/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/_authenticated/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
+  '/_authenticated/student/tests/$testId': typeof AuthenticatedStudentTestsTestIdRouteWithChildren
   '/_authenticated/student/ai-tutor/': typeof AuthenticatedStudentAiTutorIndexRoute
   '/_authenticated/student/courses/': typeof AuthenticatedStudentCoursesIndexRoute
+  '/_authenticated/student/tests/': typeof AuthenticatedStudentTestsIndexRoute
   '/_authenticated/student/courses/$subjectId/$chapterId': typeof AuthenticatedStudentCoursesSubjectIdChapterIdRoute
+  '/_authenticated/student/tests/$testId/results/$attemptId': typeof AuthenticatedStudentTestsTestIdResultsAttemptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -662,16 +682,18 @@ export interface FileRouteTypes {
     | '/student/retention'
     | '/student/study-path'
     | '/student/subjects'
-    | '/student/tests'
     | '/admin/'
     | '/parent/'
     | '/student/ai-tutor/$threadId'
     | '/student/courses/$subjectId'
     | '/student/learn/$microConceptId'
     | '/student/remediation/$microConceptId'
+    | '/student/tests/$testId'
     | '/student/ai-tutor/'
     | '/student/courses/'
+    | '/student/tests/'
     | '/student/courses/$subjectId/$chapterId'
+    | '/student/tests/$testId/results/$attemptId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -722,16 +744,18 @@ export interface FileRouteTypes {
     | '/student/retention'
     | '/student/study-path'
     | '/student/subjects'
-    | '/student/tests'
     | '/admin'
     | '/parent'
     | '/student/ai-tutor/$threadId'
     | '/student/courses/$subjectId'
     | '/student/learn/$microConceptId'
     | '/student/remediation/$microConceptId'
+    | '/student/tests/$testId'
     | '/student/ai-tutor'
     | '/student/courses'
+    | '/student/tests'
     | '/student/courses/$subjectId/$chapterId'
+    | '/student/tests/$testId/results/$attemptId'
   id:
     | '__root__'
     | '/'
@@ -787,16 +811,18 @@ export interface FileRouteTypes {
     | '/_authenticated/student/retention'
     | '/_authenticated/student/study-path'
     | '/_authenticated/student/subjects'
-    | '/_authenticated/student/tests'
     | '/_authenticated/admin/'
     | '/_authenticated/parent/'
     | '/_authenticated/student/ai-tutor/$threadId'
     | '/_authenticated/student/courses/$subjectId'
     | '/_authenticated/student/learn/$microConceptId'
     | '/_authenticated/student/remediation/$microConceptId'
+    | '/_authenticated/student/tests/$testId'
     | '/_authenticated/student/ai-tutor/'
     | '/_authenticated/student/courses/'
+    | '/_authenticated/student/tests/'
     | '/_authenticated/student/courses/$subjectId/$chapterId'
+    | '/_authenticated/student/tests/$testId/results/$attemptId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1070,13 +1096,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/student/tests': {
-      id: '/_authenticated/student/tests'
-      path: '/student/tests'
-      fullPath: '/student/tests'
-      preLoaderRoute: typeof AuthenticatedStudentTestsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/student/subjects': {
       id: '/_authenticated/student/subjects'
       path: '/student/subjects'
@@ -1224,6 +1243,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAiRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/student/tests/': {
+      id: '/_authenticated/student/tests/'
+      path: '/student/tests'
+      fullPath: '/student/tests/'
+      preLoaderRoute: typeof AuthenticatedStudentTestsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/student/courses/': {
       id: '/_authenticated/student/courses/'
       path: '/'
@@ -1237,6 +1263,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/student/ai-tutor/'
       preLoaderRoute: typeof AuthenticatedStudentAiTutorIndexRouteImport
       parentRoute: typeof AuthenticatedStudentAiTutorRoute
+    }
+    '/_authenticated/student/tests/$testId': {
+      id: '/_authenticated/student/tests/$testId'
+      path: '/student/tests/$testId'
+      fullPath: '/student/tests/$testId'
+      preLoaderRoute: typeof AuthenticatedStudentTestsTestIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/student/remediation/$microConceptId': {
       id: '/_authenticated/student/remediation/$microConceptId'
@@ -1272,6 +1305,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/student/courses/$subjectId/$chapterId'
       preLoaderRoute: typeof AuthenticatedStudentCoursesSubjectIdChapterIdRouteImport
       parentRoute: typeof AuthenticatedStudentCoursesSubjectIdRoute
+    }
+    '/_authenticated/student/tests/$testId/results/$attemptId': {
+      id: '/_authenticated/student/tests/$testId/results/$attemptId'
+      path: '/results/$attemptId'
+      fullPath: '/student/tests/$testId/results/$attemptId'
+      preLoaderRoute: typeof AuthenticatedStudentTestsTestIdResultsAttemptIdRouteImport
+      parentRoute: typeof AuthenticatedStudentTestsTestIdRoute
     }
   }
 }
@@ -1367,6 +1407,21 @@ const AuthenticatedStudentCoursesRouteWithChildren =
     AuthenticatedStudentCoursesRouteChildren,
   )
 
+interface AuthenticatedStudentTestsTestIdRouteChildren {
+  AuthenticatedStudentTestsTestIdResultsAttemptIdRoute: typeof AuthenticatedStudentTestsTestIdResultsAttemptIdRoute
+}
+
+const AuthenticatedStudentTestsTestIdRouteChildren: AuthenticatedStudentTestsTestIdRouteChildren =
+  {
+    AuthenticatedStudentTestsTestIdResultsAttemptIdRoute:
+      AuthenticatedStudentTestsTestIdResultsAttemptIdRoute,
+  }
+
+const AuthenticatedStudentTestsTestIdRouteWithChildren =
+  AuthenticatedStudentTestsTestIdRoute._addFileChildren(
+    AuthenticatedStudentTestsTestIdRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
@@ -1384,9 +1439,10 @@ interface AuthenticatedRouteChildren {
   AuthenticatedStudentRetentionRoute: typeof AuthenticatedStudentRetentionRoute
   AuthenticatedStudentStudyPathRoute: typeof AuthenticatedStudentStudyPathRoute
   AuthenticatedStudentSubjectsRoute: typeof AuthenticatedStudentSubjectsRoute
-  AuthenticatedStudentTestsRoute: typeof AuthenticatedStudentTestsRoute
   AuthenticatedStudentLearnMicroConceptIdRoute: typeof AuthenticatedStudentLearnMicroConceptIdRoute
   AuthenticatedStudentRemediationMicroConceptIdRoute: typeof AuthenticatedStudentRemediationMicroConceptIdRoute
+  AuthenticatedStudentTestsTestIdRoute: typeof AuthenticatedStudentTestsTestIdRouteWithChildren
+  AuthenticatedStudentTestsIndexRoute: typeof AuthenticatedStudentTestsIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -1410,11 +1466,13 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedStudentRetentionRoute: AuthenticatedStudentRetentionRoute,
   AuthenticatedStudentStudyPathRoute: AuthenticatedStudentStudyPathRoute,
   AuthenticatedStudentSubjectsRoute: AuthenticatedStudentSubjectsRoute,
-  AuthenticatedStudentTestsRoute: AuthenticatedStudentTestsRoute,
   AuthenticatedStudentLearnMicroConceptIdRoute:
     AuthenticatedStudentLearnMicroConceptIdRoute,
   AuthenticatedStudentRemediationMicroConceptIdRoute:
     AuthenticatedStudentRemediationMicroConceptIdRoute,
+  AuthenticatedStudentTestsTestIdRoute:
+    AuthenticatedStudentTestsTestIdRouteWithChildren,
+  AuthenticatedStudentTestsIndexRoute: AuthenticatedStudentTestsIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -1454,13 +1512,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

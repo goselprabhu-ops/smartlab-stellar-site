@@ -1,8 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
 export const adminMetrics = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .handler(async ({ context }) => {
     const { supabase } = context;
     const [users, courses, quizzes, attempts] = await Promise.all([
@@ -20,7 +20,7 @@ export const adminMetrics = createServerFn({ method: "GET" })
   });
 
 export const listAllUsers = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAdmin])
   .handler(async ({ context }) => {
     const { supabase } = context;
     const [{ data: profiles }, { data: roles }] = await Promise.all([

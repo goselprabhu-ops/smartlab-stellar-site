@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireAdmin } from "@/lib/auth/require-admin";
+
+
 
 /** Summary KPIs for the AI Control Center. */
 export const aiOverview = createServerFn({ method: "GET" })

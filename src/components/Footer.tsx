@@ -7,48 +7,48 @@ export function Footer() {
     <footer className="relative mt-32 bg-gradient-hero text-cream">
       <div className="divider-gold" />
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-10">
-        <div className="grid gap-12 md:grid-cols-4">
+        <div className="grid gap-12 md:grid-cols-5">
           <div className="md:col-span-2">
             <Logo variant="light" />
             <p className="mt-5 max-w-md text-sm text-cream/70">
               An AI-powered learning ecosystem that transforms studying into measurable
               academic progress for students of Classes 6–12 CBSE.
             </p>
+            <div className="mt-6 space-y-2 text-sm text-cream/80">
+              <a href="mailto:support@smartlabonline.com" className="inline-flex items-center gap-2 hover:text-accent">
+                <Mail className="h-4 w-4" /> support@smartlabonline.com
+              </a>
+              <br />
+              <a href="https://wa.me/919000000000" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-accent">
+                <MessageCircle className="h-4 w-4" /> WhatsApp +91 9XXXXXXXXX
+              </a>
+            </div>
           </div>
           <div>
-            <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-accent">
-              Explore
-            </h3>
+            <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-accent">Product</h3>
             <ul className="mt-4 space-y-2.5 text-sm text-cream/80">
               <li><Link to="/features" className="hover:text-accent">Features</Link></li>
+              <li><Link to="/ai-learning" className="hover:text-accent">AI Learning</Link></li>
+              <li><Link to="/courses" className="hover:text-accent">Courses</Link></li>
               <li><Link to="/pricing" className="hover:text-accent">Pricing</Link></li>
+              <li><Link to="/demo" className="hover:text-accent">Book demo</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-accent">Company</h3>
+            <ul className="mt-4 space-y-2.5 text-sm text-cream/80">
               <li><Link to="/about" className="hover:text-accent">About</Link></li>
+              <li><Link to="/schools" className="hover:text-accent">For schools</Link></li>
+              <li><Link to="/blog" className="hover:text-accent">Blog</Link></li>
               <li><Link to="/contact" className="hover:text-accent">Contact</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-accent">
-              Reach us
-            </h3>
+            <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-accent">Get started</h3>
             <ul className="mt-4 space-y-2.5 text-sm text-cream/80">
-              <li>
-                <a
-                  href="mailto:support@smartlabonline.com"
-                  className="inline-flex items-center gap-2 hover:text-accent"
-                >
-                  <Mail className="h-4 w-4" /> support@smartlabonline.com
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://wa.me/919000000000"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 hover:text-accent"
-                >
-                  <MessageCircle className="h-4 w-4" /> WhatsApp +91 9XXXXXXXXX
-                </a>
-              </li>
+              <li><Link to="/signup" className="hover:text-accent">Sign up free</Link></li>
+              <li><Link to="/login" className="hover:text-accent">Sign in</Link></li>
+              <li><Link to="/design-system" className="hover:text-accent">Design system</Link></li>
             </ul>
           </div>
         </div>

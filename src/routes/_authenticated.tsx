@@ -5,16 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import {
-  LayoutDashboard,
-  BookOpen,
-  ClipboardCheck,
-  LineChart,
-  Sparkles,
-  Users,
-  Settings,
-  LogOut,
-  Shield,
-  Menu,
+  LayoutDashboard, BookOpen, Map, Sparkles, ClipboardCheck, LineChart,
+  StickyNote, Trophy, Bell, MessageSquare, Library, Settings, LogOut,
+  Shield, Users, Menu,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -34,36 +27,91 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 type NavLink = { to: string; label: string; icon: typeof LayoutDashboard };
+type NavGroup = { title: string; links: NavLink[] };
 
-function useNavLinks(): NavLink[] {
+function useNavGroups(): NavGroup[] {
   const auth = useAuth();
   const isAdmin = auth.hasRole("admin");
   const isParent = auth.hasRole("parent");
+
+  if (isParent) {
+    return [
+      {
+        title: "Parent",
+        links: [
+          { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
+          { to: "/parent",    label: "My students", icon: Users },
+        ],
+      },
+      {
+        title: "Account",
+        links: [{ to: "/settings", label: "Settings", icon: Settings }],
+      },
+    ];
+  }
+
   return [
-    { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
-    !isParent && { to: "/student/courses", label: "Courses", icon: BookOpen },
-    !isParent && { to: "/student/quizzes", label: "Quizzes", icon: ClipboardCheck },
-    !isParent && { to: "/student/progress", label: "Progress", icon: LineChart },
-    !isParent && { to: "/student/recommendations", label: "Recommendations", icon: Sparkles },
-    isParent && { to: "/parent", label: "My students", icon: Users },
-    isAdmin && { to: "/admin", label: "Admin", icon: Shield },
-    { to: "/settings", label: "Settings", icon: Settings },
-  ].filter(Boolean) as NavLink[];
+    {
+      title: "Learn",
+      links: [
+        { to: "/dashboard",            label: "Dashboard",   icon: LayoutDashboard },
+        { to: "/student/subjects",     label: "Subjects",    icon: Library },
+        { to: "/student/courses",      label: "Courses",     icon: BookOpen },
+        { to: "/student/study-path",   label: "Study path",  icon: Map },
+        { to: "/student/ai-tutor",     label: "AI tutor",    icon: MessageSquare },
+      ],
+    },
+    {
+      title: "Practice",
+      links: [
+        { to: "/student/tests",        label: "Tests",       icon: ClipboardCheck },
+        { to: "/student/quizzes",      label: "Quizzes",     icon: ClipboardCheck },
+        { to: "/student/notes",        label: "Notes",       icon: StickyNote },
+      ],
+    },
+    {
+      title: "Progress",
+      links: [
+        { to: "/student/mastery",      label: "Mastery",     icon: LineChart },
+        { to: "/student/progress",     label: "Progress",    icon: LineChart },
+        { to: "/student/retention",    label: "Retention",   icon: Sparkles },
+        { to: "/student/recommendations", label: "For you",  icon: Sparkles },
+        { to: "/student/leaderboard",  label: "Leaderboard", icon: Trophy },
+      ],
+    },
+    {
+      title: "Account",
+      links: [
+        { to: "/student/notifications",label: "Notifications", icon: Bell },
+        { to: "/settings",             label: "Settings",      icon: Settings },
+        ...(isAdmin ? [{ to: "/admin", label: "Admin", icon: Shield } as NavLink] : []),
+      ],
+    },
+  ];
 }
 
-function NavList({ links, onNavigate }: { links: NavLink[]; onNavigate?: () => void }) {
+function NavList({ groups, onNavigate }: { groups: NavGroup[]; onNavigate?: () => void }) {
   return (
-    <nav className="space-y-1">
-      {links.map((l) => (
-        <Link
-          key={l.to}
-          to={l.to}
-          onClick={onNavigate}
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-soft hover:bg-muted hover:text-foreground"
-          activeProps={{ className: "bg-primary/10 text-primary" }}
-        >
-          <l.icon className="h-4 w-4" /> {l.label}
-        </Link>
+    <nav className="space-y-6">
+      {groups.map((g) => (
+        <div key={g.title}>
+          <div className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            {g.title}
+          </div>
+          <div className="space-y-0.5">
+            {g.links.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                onClick={onNavigate}
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-soft hover:bg-muted hover:text-foreground"
+                activeProps={{ className: "bg-primary/10 text-primary" }}
+              >
+                <l.icon className="h-4 w-4" /> {l.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       ))}
     </nav>
   );
@@ -73,7 +121,7 @@ function AuthLayout() {
   const auth = useAuth();
   const nav = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const links = useNavLinks();
+  const groups = useNavGroups();
 
   if (!auth.ready) return <div className="p-10 text-sm text-muted-foreground">Loading…</div>;
   if (!auth.user) return null;
@@ -90,7 +138,7 @@ function AuthLayout() {
         <div className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
           Smart Lab
         </div>
-        <NavList links={links} />
+        <NavList groups={groups} />
         <button
           onClick={signOut}
           className="mt-4 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-soft hover:bg-muted hover:text-foreground"
@@ -112,7 +160,7 @@ function AuthLayout() {
               <SheetTitle className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                 Smart Lab
               </SheetTitle>
-              <NavList links={links} onNavigate={() => setMobileOpen(false)} />
+              <NavList groups={groups} onNavigate={() => setMobileOpen(false)} />
               <button
                 onClick={async () => {
                   setMobileOpen(false);

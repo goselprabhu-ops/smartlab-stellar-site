@@ -36,6 +36,7 @@ import { Route as ProductPersonalizedLearningRouteImport } from './routes/produc
 import { Route as ProductParentDashboardRouteImport } from './routes/product.parent-dashboard'
 import { Route as ProductAnalyticsRouteImport } from './routes/product.analytics'
 import { Route as ProductAiTutorRouteImport } from './routes/product.ai-tutor'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedParentRouteImport } from './routes/_authenticated/parent'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -201,6 +202,11 @@ const ProductAnalyticsRoute = ProductAnalyticsRouteImport.update({
 const ProductAiTutorRoute = ProductAiTutorRouteImport.update({
   id: '/product/ai-tutor',
   path: '/product/ai-tutor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -406,6 +412,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/parent': typeof AuthenticatedParentRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
+  '/api/chat': typeof ApiChatRoute
   '/product/ai-tutor': typeof ProductAiTutorRoute
   '/product/analytics': typeof ProductAnalyticsRoute
   '/product/parent-dashboard': typeof ProductParentDashboardRoute
@@ -463,6 +470,7 @@ export interface FileRoutesByTo {
   '/verify-otp': typeof VerifyOtpRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/api/chat': typeof ApiChatRoute
   '/product/ai-tutor': typeof ProductAiTutorRoute
   '/product/analytics': typeof ProductAnalyticsRoute
   '/product/parent-dashboard': typeof ProductParentDashboardRoute
@@ -524,6 +532,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/parent': typeof AuthenticatedParentRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/api/chat': typeof ApiChatRoute
   '/product/ai-tutor': typeof ProductAiTutorRoute
   '/product/analytics': typeof ProductAnalyticsRoute
   '/product/parent-dashboard': typeof ProductParentDashboardRoute
@@ -585,6 +594,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/parent'
     | '/settings'
+    | '/api/chat'
     | '/product/ai-tutor'
     | '/product/analytics'
     | '/product/parent-dashboard'
@@ -642,6 +652,7 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/dashboard'
     | '/settings'
+    | '/api/chat'
     | '/product/ai-tutor'
     | '/product/analytics'
     | '/product/parent-dashboard'
@@ -702,6 +713,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/parent'
     | '/_authenticated/settings'
+    | '/api/chat'
     | '/product/ai-tutor'
     | '/product/analytics'
     | '/product/parent-dashboard'
@@ -759,6 +771,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VerifyOtpRoute: typeof VerifyOtpRoute
+  ApiChatRoute: typeof ApiChatRoute
   ProductAiTutorRoute: typeof ProductAiTutorRoute
   ProductAnalyticsRoute: typeof ProductAnalyticsRoute
   ProductParentDashboardRoute: typeof ProductParentDashboardRoute
@@ -958,6 +971,13 @@ declare module '@tanstack/react-router' {
       path: '/product/ai-tutor'
       fullPath: '/product/ai-tutor'
       preLoaderRoute: typeof ProductAiTutorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/settings': {
@@ -1308,6 +1328,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   VerifyOtpRoute: VerifyOtpRoute,
+  ApiChatRoute: ApiChatRoute,
   ProductAiTutorRoute: ProductAiTutorRoute,
   ProductAnalyticsRoute: ProductAnalyticsRoute,
   ProductParentDashboardRoute: ProductParentDashboardRoute,
@@ -1320,13 +1341,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

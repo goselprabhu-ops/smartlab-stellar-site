@@ -277,6 +277,11 @@
   .shadow-glow    { box-shadow: var(--shadow-glow); }
   .shadow-cyan    { box-shadow: var(--shadow-cyan); }
   .shadow-gold    { box-shadow: var(--shadow-glow); } /* alias */
+  .elev-1 { box-shadow: var(--shadow-xs); }
+  .elev-2 { box-shadow: var(--shadow-sm); }
+  .elev-3 { box-shadow: var(--shadow-md); }
+  .elev-4 { box-shadow: var(--shadow-lg); }
+  .elev-5 { box-shadow: var(--shadow-xl); }
 
   .text-balance { text-wrap: balance; }
   .text-pretty  { text-wrap: pretty; }

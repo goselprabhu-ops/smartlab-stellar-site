@@ -77,40 +77,16 @@ export const submitAttempt = createServerFn({ method: "POST" })
   .inputValidator((input) => submitAttemptSchema.parse(input))
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
-    // Server-side scoring: fetch correct answers
-    const { data: questions, error: qErr } = await supabase
-      .from("quiz_questions")
-      .select("id, type, correct, points")
-      .eq("quiz_id", data.quiz_id);
-    if (qErr) throw new Error(qErr.message);
 
-    let score = 0;
-    let total = 0;
-    for (const q of questions ?? []) {
-      total += q.points;
-      const given = data.answers[q.id];
-      const correctArr = Array.isArray(q.correct) ? q.correct : [];
-      const normalized = (v: unknown): string =>
-        typeof v === "string" ? v.trim().toLowerCase() : String(v ?? "").trim().toLowerCase();
-
-      if (q.type === "mcq" || q.type === "short") {
-        if (
-          given !== undefined &&
-          !Array.isArray(given) &&
-          correctArr.some((c) => normalized(c) === normalized(given))
-        ) {
-          score += q.points;
-        }
-      } else if (q.type === "multi") {
-        if (Array.isArray(given)) {
-          const g = given.map(normalized).sort();
-          const c = correctArr.map(normalized).sort();
-          if (g.length === c.length && g.every((v, i) => v === c[i])) {
-            score += q.points;
-          }
-        }
-      }
-    }
+    // Server-side scoring via SECURITY DEFINER RPC (answer keys never leave the DB).
+    const { data: scored, error: scoreErr } = await supabase.rpc("score_quiz_attempt", {
+      _quiz_id: data.quiz_id,
+      _answers: data.answers,
+    });
+    if (scoreErr) throw new Error(scoreErr.message);
+    const row = Array.isArray(scored) ? scored[0] : scored;
+    const score = Number(row?.score ?? 0);
+    const total = Number(row?.total ?? 0);
 
     const { data: attempt, error } = await supabase
       .from("quiz_attempts")
@@ -126,6 +102,7 @@ export const submitAttempt = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { attempt, score, total };
   });
+
 
 export const listMyAttempts = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

@@ -89,7 +89,7 @@ export const getAttemptResult = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!attempt || attempt.student_id !== userId) throw new Error("Attempt not found");
 
-    const [{ data: quiz }, { data: questions }] = await Promise.all([
+    const [{ data: quiz }, { data: questions }, { data: keyRows }] = await Promise.all([
       supabase
         .from("quizzes")
         .select("id, title, kind, difficulty, time_limit_seconds, subject_id, chapter_id")
@@ -97,17 +97,23 @@ export const getAttemptResult = createServerFn({ method: "POST" })
         .maybeSingle(),
       supabase
         .from("quiz_questions")
-        .select("id, prompt, type, options, correct, points, order_index")
+        .select("id, prompt, type, options, points, order_index")
         .eq("quiz_id", attempt.quiz_id)
         .order("order_index"),
+      supabase.rpc("get_attempt_answer_key", { _attempt_id: data.id }),
     ]);
+
+    const keyMap = new Map<string, unknown[]>();
+    for (const row of (keyRows ?? []) as Array<{ question_id: string; correct: unknown }>) {
+      keyMap.set(row.question_id, Array.isArray(row.correct) ? row.correct : []);
+    }
 
     const normalize = (v: unknown) =>
       typeof v === "string" ? v.trim().toLowerCase() : String(v ?? "").trim().toLowerCase();
     const answers = (attempt.answers ?? {}) as Record<string, string | string[]>;
     const review = (questions ?? []).map((q) => {
       const given = answers[q.id];
-      const correctArr = Array.isArray(q.correct) ? (q.correct as unknown[]) : [];
+      const correctArr = (keyMap.get(q.id) ?? []) as unknown[];
       let isCorrect = false;
       if (q.type === "multi" && Array.isArray(given)) {
         const g = given.map(normalize).sort();
@@ -133,6 +139,7 @@ export const getAttemptResult = createServerFn({ method: "POST" })
 
     return { attempt, quiz, review, weakAreas: wrong.slice(0, 5) };
   });
+
 
 export const getTestLeaderboard = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

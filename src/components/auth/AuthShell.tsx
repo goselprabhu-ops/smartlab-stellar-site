@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Sparkles, Brain, LineChart, ShieldCheck } from "lucide-react";
 import { Sparkles, Brain, LineChart, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/Logo";
 

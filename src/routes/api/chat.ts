@@ -92,7 +92,7 @@ export const Route = createFileRoute("/api/chat")({
             student_id: userId,
             role: "user",
             content: userText,
-            parts: lastUser.parts ?? [],
+            parts: (lastUser.parts ?? []) as unknown as never,
           });
 
           // If thread is still default title, derive one from the first user message.
@@ -137,7 +137,7 @@ export const Route = createFileRoute("/api/chat")({
                   student_id: userId,
                   role: "assistant",
                   content: text,
-                  parts: responseMessage.parts ?? [],
+                  parts: (responseMessage.parts ?? []) as unknown as never,
                   model: DEFAULT_TUTOR_MODEL,
                 });
                 await supabase

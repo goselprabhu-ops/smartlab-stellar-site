@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_cache: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          input_hash: string
+          model: string | null
+          module: string
+          output: Json
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          input_hash: string
+          model?: string | null
+          module: string
+          output: Json
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          input_hash?: string
+          model?: string | null
+          module?: string
+          output?: Json
+        }
+        Relationships: []
+      }
       ai_generated_material: {
         Row: {
           created_at: string
@@ -55,6 +82,63 @@ export type Database = {
           },
         ]
       }
+      ai_prompts: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          id: string
+          module: string
+          template: string
+          version: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          module: string
+          template: string
+          version: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          module?: string
+          template?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      ai_quotas: {
+        Row: {
+          daily_limit: number
+          module: string
+          period_start: string
+          updated_at: string
+          used: number
+          user_id: string
+        }
+        Insert: {
+          daily_limit?: number
+          module: string
+          period_start?: string
+          updated_at?: string
+          used?: number
+          user_id: string
+        }
+        Update: {
+          daily_limit?: number
+          module?: string
+          period_start?: string
+          updated_at?: string
+          used?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_recommendations: {
         Row: {
           created_at: string
@@ -76,6 +160,54 @@ export type Database = {
           model?: string | null
           payload?: Json
           student_id?: string
+        }
+        Relationships: []
+      }
+      ai_runs: {
+        Row: {
+          cost_cents: number | null
+          created_at: string
+          error: string | null
+          id: string
+          input_hash: string | null
+          latency_ms: number | null
+          model: string
+          module: string
+          prompt_version: string | null
+          status: string
+          tokens_in: number | null
+          tokens_out: number | null
+          user_id: string | null
+        }
+        Insert: {
+          cost_cents?: number | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          input_hash?: string | null
+          latency_ms?: number | null
+          model: string
+          module: string
+          prompt_version?: string | null
+          status?: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          cost_cents?: number | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          input_hash?: string | null
+          latency_ms?: number | null
+          model?: string
+          module?: string
+          prompt_version?: string | null
+          status?: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -664,6 +796,33 @@ export type Database = {
           referral_reward?: string | null
           updated_at?: string
           waitlist_open?: boolean
+        }
+        Relationships: []
+      }
+      learner_state: {
+        Row: {
+          mastery: Json
+          recent_accuracy: number | null
+          time_on_task_seconds: number
+          updated_at: string
+          user_id: string
+          weak_tags: string[]
+        }
+        Insert: {
+          mastery?: Json
+          recent_accuracy?: number | null
+          time_on_task_seconds?: number
+          updated_at?: string
+          user_id: string
+          weak_tags?: string[]
+        }
+        Update: {
+          mastery?: Json
+          recent_accuracy?: number | null
+          time_on_task_seconds?: number
+          updated_at?: string
+          user_id?: string
+          weak_tags?: string[]
         }
         Relationships: []
       }

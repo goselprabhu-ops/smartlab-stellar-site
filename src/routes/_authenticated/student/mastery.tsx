@@ -202,7 +202,7 @@ function MasteryDashboard() {
                         {w.title}
                       </Link>
                       <div className="flex flex-wrap gap-1">
-                        {w.tags.slice(0, 4).map((t) => (
+                        {w.tags.slice(0, 4).map((t: string) => (
                           <span key={t} className="rounded-full bg-muted px-2 py-0.5 text-xs">{t}</span>
                         ))}
                       </div>

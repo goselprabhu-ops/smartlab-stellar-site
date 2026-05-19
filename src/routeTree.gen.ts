@@ -26,6 +26,14 @@ import { Route as AiLearningRouteImport } from './routes/ai-learning'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProductTestEngineRouteImport } from './routes/product.test-engine'
+import { Route as ProductStudyPathRouteImport } from './routes/product.study-path'
+import { Route as ProductStudentDashboardRouteImport } from './routes/product.student-dashboard'
+import { Route as ProductProgressTrackingRouteImport } from './routes/product.progress-tracking'
+import { Route as ProductPersonalizedLearningRouteImport } from './routes/product.personalized-learning'
+import { Route as ProductParentDashboardRouteImport } from './routes/product.parent-dashboard'
+import { Route as ProductAnalyticsRouteImport } from './routes/product.analytics'
+import { Route as ProductAiTutorRouteImport } from './routes/product.ai-tutor'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedParentRouteImport } from './routes/_authenticated/parent'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -140,6 +148,47 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductTestEngineRoute = ProductTestEngineRouteImport.update({
+  id: '/product/test-engine',
+  path: '/product/test-engine',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductStudyPathRoute = ProductStudyPathRouteImport.update({
+  id: '/product/study-path',
+  path: '/product/study-path',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductStudentDashboardRoute = ProductStudentDashboardRouteImport.update({
+  id: '/product/student-dashboard',
+  path: '/product/student-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductProgressTrackingRoute = ProductProgressTrackingRouteImport.update({
+  id: '/product/progress-tracking',
+  path: '/product/progress-tracking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductPersonalizedLearningRoute =
+  ProductPersonalizedLearningRouteImport.update({
+    id: '/product/personalized-learning',
+    path: '/product/personalized-learning',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ProductParentDashboardRoute = ProductParentDashboardRouteImport.update({
+  id: '/product/parent-dashboard',
+  path: '/product/parent-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductAnalyticsRoute = ProductAnalyticsRouteImport.update({
+  id: '/product/analytics',
+  path: '/product/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductAiTutorRoute = ProductAiTutorRouteImport.update({
+  id: '/product/ai-tutor',
+  path: '/product/ai-tutor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -343,6 +392,14 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/parent': typeof AuthenticatedParentRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
+  '/product/ai-tutor': typeof ProductAiTutorRoute
+  '/product/analytics': typeof ProductAnalyticsRoute
+  '/product/parent-dashboard': typeof ProductParentDashboardRoute
+  '/product/personalized-learning': typeof ProductPersonalizedLearningRoute
+  '/product/progress-tracking': typeof ProductProgressTrackingRoute
+  '/product/student-dashboard': typeof ProductStudentDashboardRoute
+  '/product/study-path': typeof ProductStudyPathRoute
+  '/product/test-engine': typeof ProductTestEngineRoute
   '/admin/ai': typeof AuthenticatedAdminAiRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
@@ -390,6 +447,14 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/product/ai-tutor': typeof ProductAiTutorRoute
+  '/product/analytics': typeof ProductAnalyticsRoute
+  '/product/parent-dashboard': typeof ProductParentDashboardRoute
+  '/product/personalized-learning': typeof ProductPersonalizedLearningRoute
+  '/product/progress-tracking': typeof ProductProgressTrackingRoute
+  '/product/student-dashboard': typeof ProductStudentDashboardRoute
+  '/product/study-path': typeof ProductStudyPathRoute
+  '/product/test-engine': typeof ProductTestEngineRoute
   '/admin/ai': typeof AuthenticatedAdminAiRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
@@ -441,6 +506,14 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/parent': typeof AuthenticatedParentRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/product/ai-tutor': typeof ProductAiTutorRoute
+  '/product/analytics': typeof ProductAnalyticsRoute
+  '/product/parent-dashboard': typeof ProductParentDashboardRoute
+  '/product/personalized-learning': typeof ProductPersonalizedLearningRoute
+  '/product/progress-tracking': typeof ProductProgressTrackingRoute
+  '/product/student-dashboard': typeof ProductStudentDashboardRoute
+  '/product/study-path': typeof ProductStudyPathRoute
+  '/product/test-engine': typeof ProductTestEngineRoute
   '/_authenticated/admin/ai': typeof AuthenticatedAdminAiRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/content': typeof AuthenticatedAdminContentRoute
@@ -492,6 +565,14 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/parent'
     | '/settings'
+    | '/product/ai-tutor'
+    | '/product/analytics'
+    | '/product/parent-dashboard'
+    | '/product/personalized-learning'
+    | '/product/progress-tracking'
+    | '/product/student-dashboard'
+    | '/product/study-path'
+    | '/product/test-engine'
     | '/admin/ai'
     | '/admin/analytics'
     | '/admin/content'
@@ -539,6 +620,14 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/dashboard'
     | '/settings'
+    | '/product/ai-tutor'
+    | '/product/analytics'
+    | '/product/parent-dashboard'
+    | '/product/personalized-learning'
+    | '/product/progress-tracking'
+    | '/product/student-dashboard'
+    | '/product/study-path'
+    | '/product/test-engine'
     | '/admin/ai'
     | '/admin/analytics'
     | '/admin/content'
@@ -589,6 +678,14 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/parent'
     | '/_authenticated/settings'
+    | '/product/ai-tutor'
+    | '/product/analytics'
+    | '/product/parent-dashboard'
+    | '/product/personalized-learning'
+    | '/product/progress-tracking'
+    | '/product/student-dashboard'
+    | '/product/study-path'
+    | '/product/test-engine'
     | '/_authenticated/admin/ai'
     | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/content'
@@ -636,6 +733,14 @@ export interface RootRouteChildren {
   SchoolsRoute: typeof SchoolsRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ProductAiTutorRoute: typeof ProductAiTutorRoute
+  ProductAnalyticsRoute: typeof ProductAnalyticsRoute
+  ProductParentDashboardRoute: typeof ProductParentDashboardRoute
+  ProductPersonalizedLearningRoute: typeof ProductPersonalizedLearningRoute
+  ProductProgressTrackingRoute: typeof ProductProgressTrackingRoute
+  ProductStudentDashboardRoute: typeof ProductStudentDashboardRoute
+  ProductStudyPathRoute: typeof ProductStudyPathRoute
+  ProductTestEngineRoute: typeof ProductTestEngineRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -757,6 +862,62 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/test-engine': {
+      id: '/product/test-engine'
+      path: '/product/test-engine'
+      fullPath: '/product/test-engine'
+      preLoaderRoute: typeof ProductTestEngineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/study-path': {
+      id: '/product/study-path'
+      path: '/product/study-path'
+      fullPath: '/product/study-path'
+      preLoaderRoute: typeof ProductStudyPathRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/student-dashboard': {
+      id: '/product/student-dashboard'
+      path: '/product/student-dashboard'
+      fullPath: '/product/student-dashboard'
+      preLoaderRoute: typeof ProductStudentDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/progress-tracking': {
+      id: '/product/progress-tracking'
+      path: '/product/progress-tracking'
+      fullPath: '/product/progress-tracking'
+      preLoaderRoute: typeof ProductProgressTrackingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/personalized-learning': {
+      id: '/product/personalized-learning'
+      path: '/product/personalized-learning'
+      fullPath: '/product/personalized-learning'
+      preLoaderRoute: typeof ProductPersonalizedLearningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/parent-dashboard': {
+      id: '/product/parent-dashboard'
+      path: '/product/parent-dashboard'
+      fullPath: '/product/parent-dashboard'
+      preLoaderRoute: typeof ProductParentDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/analytics': {
+      id: '/product/analytics'
+      path: '/product/analytics'
+      fullPath: '/product/analytics'
+      preLoaderRoute: typeof ProductAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/ai-tutor': {
+      id: '/product/ai-tutor'
+      path: '/product/ai-tutor'
+      fullPath: '/product/ai-tutor'
+      preLoaderRoute: typeof ProductAiTutorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/settings': {
@@ -1105,6 +1266,14 @@ const rootRouteChildren: RootRouteChildren = {
   SchoolsRoute: SchoolsRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ProductAiTutorRoute: ProductAiTutorRoute,
+  ProductAnalyticsRoute: ProductAnalyticsRoute,
+  ProductParentDashboardRoute: ProductParentDashboardRoute,
+  ProductPersonalizedLearningRoute: ProductPersonalizedLearningRoute,
+  ProductProgressTrackingRoute: ProductProgressTrackingRoute,
+  ProductStudentDashboardRoute: ProductStudentDashboardRoute,
+  ProductStudyPathRoute: ProductStudyPathRoute,
+  ProductTestEngineRoute: ProductTestEngineRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

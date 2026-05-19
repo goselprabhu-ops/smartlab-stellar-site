@@ -1,117 +1,151 @@
-# SmartLab Online — Marketing Website Plan
+# Smart Lab Online — Full App Scaffold
 
-A premium, investor-ready marketing site built on the default TanStack Start template, with a Lovable Cloud–backed contact form.
+Layered on top of the existing marketing site (kept as-is at `/`, `/features`, `/pricing`, `/about`, `/contact`). All app surfaces go behind auth.
 
-## Design system
+## 1. Database (Lovable Cloud — one migration)
 
-Update `src/styles.css` with the Emerald Prestige palette in oklch:
-- `--background` cream `#f5f0e0`, `--foreground` deep emerald `#064e3b`
-- `--primary` emerald `#064e3b` / `--primary-foreground` cream
-- `--accent` gold `#c9a84c` / `--accent-foreground` emerald
-- Dark variant for hero sections (deep emerald bg, cream text, gold accents)
-- Gradients: `--gradient-hero` emerald → near-black; `--gradient-gold` for subtle accent lines
-- Shadows: soft gold-tinted elevation
-- Typography: load Space Grotesk (headings) + DM Sans (body) via Google Fonts `<link>` in `__root.tsx` head; set `--font-display` and `--font-body`, apply via Tailwind utility classes
+New tables (all with RLS, `created_at`/`updated_at`):
 
-Generous whitespace (large section padding), thin gold dividers, restrained motion (fade/slide on scroll only).
+- `profiles` — `user_id` (FK auth.users), `full_name`, `grade`, `school`, `avatar_url`. Auto-created via trigger on signup.
+- `app_role` enum: `student`, `parent`, `admin`.
+- `user_roles` — `user_id`, `role` (separate table; never on profiles to prevent privilege escalation).
+- `parent_student_links` — `parent_id`, `student_id` (many-to-many).
+- `subjects` — `name`, `slug`, `icon`.
+- `courses` — `subject_id`, `title`, `description`, `grade`, `cover_url`, `published`.
+- `lessons` — `course_id`, `title`, `content_md`, `video_url`, `order_index`.
+- `quizzes` — `lesson_id` (nullable), `course_id`, `title`, `time_limit_seconds`.
+- `quiz_questions` — `quiz_id`, `prompt`, `type` (mcq/multi/short), `options jsonb`, `correct jsonb`, `points`, `order_index`.
+- `quiz_attempts` — `quiz_id`, `student_id`, `score`, `total`, `answers jsonb`, `submitted_at`.
+- `progress` — `student_id`, `lesson_id`, `completed_at`, `mastery numeric`.
+- `ai_recommendations` — `student_id`, `payload jsonb`, `model`, `created_at` (placeholder feed).
 
-## Routes (each a separate file with its own `head()` meta)
+Security helpers:
+- `has_role(_user_id uuid, _role app_role)` SECURITY DEFINER function.
+- `is_linked_parent(_parent uuid, _student uuid)` SECURITY DEFINER.
 
+RLS pattern:
+- Students: read own progress/attempts; insert own attempts; read published courses/lessons/quizzes.
+- Parents: read linked-student progress/attempts via `is_linked_parent`.
+- Admins: full CRUD on courses/lessons/quizzes/subjects via `has_role(..., 'admin')`.
+- Profiles: each user reads/updates own; admins read all.
+
+Trigger: `handle_new_user` → inserts into `profiles` + `user_roles` (default `student`, or role from signup metadata).
+
+## 2. Auth
+
+- Email/password + Google OAuth (via Lovable Cloud broker + `configure_social_auth`).
+- `auto_confirm_email: false`, `password_hibp_enabled: true`.
+- `src/integrations/lovable` generated for Google.
+- Routes: `/login`, `/signup` (with role selector student/parent), `/forgot-password`, `/reset-password`.
+- `onAuthStateChange` wired once in `__root.tsx` → invalidates router + queryClient.
+
+## 3. Route architecture (TanStack file-based)
+
+Marketing (unchanged, public):
 ```
-src/routes/
-  __root.tsx        — adds shared <Header/> + <Footer/>, fonts, sitewide meta defaults, Toaster
-  index.tsx         — Home (dark hero + pitch + dual CTA + feature teaser + pricing teaser)
-  features.tsx      — 3 feature blocks
-  pricing.tsx       — 3 tiers + annual discount + bulk note
-  about.tsx         — Mission + tagline + audience
-  contact.tsx       — Form (Cloud-backed) + support email + WhatsApp
-```
-
-Each route's `head()` sets unique `title`, `description`, `og:title`, `og:description`. Canonical only on leaves.
-
-## Shared components
-
-- `src/components/Header.tsx` — logo (left), nav links, "Experience Smart Lab" gold button (right)
-- `src/components/Footer.tsx` — logo, nav, contact, copyright, gold top-border
-- `src/components/CtaButton.tsx` — primary gold→emerald button linking to `https://smartlabonline.app` (opens new tab)
-- `src/components/SectionHeading.tsx` — eyebrow + heading + subhead pattern
-- Logo: user will attach `logo.png` → I'll save under `src/assets/logo.png` and import in Header/Footer
-
-## Page content
-
-**Home (`/`)** — Dark hero (emerald gradient + faint gold grid), eyebrow "AI-powered learning ecosystem", H1 with gold-accented phrase "intelligent progress", pitch paragraph, dual CTAs: "Experience Smart Lab" (primary, → smartlabonline.app) and "Book a Free Smart Learning Demo" (secondary, → smartlabonline.app). Below: 3-up feature teaser, pricing teaser, audience strip (Classes 6–12 CBSE • Strongest fit 8–10), final CTA band. Placeholder hero illustration generated and saved to `src/assets/`.
-
-**Features (`/features`)** — 3 alternating blocks (zigzag):
-1. AI Personalized Study Plans
-2. Smart Revision & Concept Mastery
-3. Parent & Teacher Visibility
-Each: icon, headline, 2-sentence description, bullet list of capabilities.
-
-**Pricing (`/pricing`)** — 3 cards (Smart Plus highlighted with gold border + "Most popular"):
-- Starter — ₹499/mo
-- Smart Plus — ₹999/mo
-- Premium Pro — ₹1999/mo
-Below cards: note "Save 20% with annual billing" + "School & tuition bulk pricing — contact us" linking to `/contact`. CTA on each card → smartlabonline.app.
-
-**About (`/about`)** — Mission section, hero tagline "transforms studying into intelligent progress", who it's for, closing CTA band.
-
-**Contact (`/contact`)** — Two-column: form (left) + contact info (right).
-Form fields: name, email, grade (select 6–12), message. Validated with Zod, submitted to a Cloud table via `createServerFn`.
-Right column: `support@smartlabonline.com`, WhatsApp `+91 9XXXXXXXXX` (placeholder, user to replace), response-time note.
-
-## Lovable Cloud — contact form
-
-Enable Lovable Cloud, then create:
-
-```sql
-create table public.contact_submissions (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  email text not null,
-  grade text not null,
-  message text not null,
-  created_at timestamptz not null default now()
-);
-alter table public.contact_submissions enable row level security;
-
--- Public can insert (form submissions); no select policy = no public read
-create policy "anyone can submit"
-on public.contact_submissions for insert
-to anon, authenticated
-with check (true);
+/  /features  /pricing  /about  /contact
+/login  /signup  /forgot-password  /reset-password
 ```
 
-Server function `src/lib/contact.functions.ts`:
-- `createServerFn({ method: "POST" })` with Zod input validation (length limits, email format, grade enum 6–12, message ≤ 1000 chars)
-- Inserts via authenticated supabase client; returns `{ ok: true }` or error
-Called from contact form via `useServerFn` + toast feedback (sonner).
+Authenticated layout (`src/routes/_authenticated.tsx` — `beforeLoad` redirects to `/login` if no session):
+```
+/_authenticated/dashboard         → role-aware redirect to /student | /parent | /admin
+/_authenticated/student.tsx       (layout w/ sidebar)
+  ├ student.index.tsx             overview
+  ├ student.courses.tsx           enrolled courses
+  ├ student.courses.$courseId.tsx course detail + lessons
+  ├ student.quizzes.tsx
+  ├ student.quizzes.$quizId.tsx   take-quiz engine
+  ├ student.progress.tsx
+  └ student.recommendations.tsx   AI placeholder feed
+/_authenticated/parent.tsx        (layout)
+  ├ parent.index.tsx              linked students overview
+  ├ parent.students.$studentId.tsx progress + attempts
+  └ parent.link.tsx               request to link a student
+/_authenticated/_admin.tsx        (pathless guard: hasRole('admin'))
+  └ admin/
+    ├ admin.index.tsx             metrics
+    ├ admin.users.tsx             users + role assignment
+    ├ admin.subjects.tsx
+    ├ admin.courses.tsx           list
+    ├ admin.courses.new.tsx       create
+    ├ admin.courses.$courseId.tsx edit (+ lesson manager)
+    ├ admin.quizzes.tsx
+    └ admin.quizzes.$quizId.tsx   question builder
+/_authenticated/settings.tsx      profile + password
+```
 
-## SEO
+Router context exposes `auth = { isAuthenticated, user, roles, hasRole, hasAnyRole }` sourced from a `useAuth` hook that calls a `getMe` server fn.
 
-- Per-route `head()` with unique title/description/og tags
-- JSON-LD `Organization` in `__root.tsx`
-- Single H1 per page, semantic sections, alt text on logo/hero
-- `/about` adds JSON-LD `AboutPage`; `/pricing` adds `Product`+`Offer` blocks
+## 4. Modular folder structure
+
+```
+src/
+  routes/                  file-based routes (above)
+  components/
+    ui/                    shadcn (existing)
+    layout/                Header, Footer, DashboardShell, SidebarNav
+    marketing/             CtaButton, SectionHeading, FeatureCard
+    app/                   StatCard, ProgressBar, CourseCard, LessonItem
+    quiz/                  QuizPlayer, QuestionCard, ResultSummary, Timer
+    admin/                 DataTable, CourseForm, LessonForm, QuestionBuilder
+    auth/                  AuthCard, RoleSelector, GoogleButton
+  lib/
+    auth.functions.ts      getMe, signUpWithRole
+    courses.functions.ts   listCourses, getCourse, upsertCourse (admin), upsertLesson
+    quizzes.functions.ts   getQuiz, submitAttempt, listAttempts
+    progress.functions.ts  recordProgress, getStudentProgress
+    admin.functions.ts     listUsers, assignRole, metrics
+    ai.functions.ts        getRecommendations (stub returning canned items)
+    schemas.ts             shared Zod schemas
+  hooks/
+    use-auth.ts            wraps getMe + onAuthStateChange
+    use-role.ts            convenience helpers
+  integrations/supabase/   (existing, do not edit)
+  integrations/lovable/    (generated by configure_social_auth)
+  styles.css               (current brand system)
+```
+
+Every server fn lives in `*.functions.ts` (thin), validates with Zod, uses `requireSupabaseAuth` middleware, and returns serialization-safe DTOs. Admin-only fns add an inline `hasRole('admin')` check on top of RLS.
+
+## 5. Quiz engine (MVP)
+
+- `QuizPlayer` loads quiz + questions, runs client timer, stores answers locally, submits via `submitAttempt` server fn.
+- Server scores against `quiz_questions.correct`, writes to `quiz_attempts`, updates `progress.mastery` (simple weighted avg).
+- Supports MCQ (single), multi-select, short text (exact match for now).
+- Result screen with per-question feedback + retake link.
+
+## 6. AI recommendation placeholder
+
+- `getRecommendations` server fn returns 3 canned cards (e.g. "Revise Algebra · Linear Equations", "Practice quiz: Light & Reflection") tagged with subject + reason.
+- UI on `student.recommendations.tsx` renders cards with "Start" buttons linking to relevant course/quiz.
+- Hookable: later swap stub body for a Lovable AI Gateway call (`google/gemini-2.5-flash`) using `progress` + `quiz_attempts` as context.
+
+## 7. Responsive / mobile-first
+
+- All dashboards use a collapsible sidebar (`Sheet` on mobile, fixed on `lg`).
+- Tables use card-list fallback under `md`.
+- Quiz player single-column on mobile, two-column (question + nav) on `md+`.
+- Reuses current brand tokens (`--blue`, `--cyan`, glass) — light mode default, dark-ready.
+
+## 8. Build order (single loop, lots of tool calls)
+
+1. Migration: tables + enum + helpers + RLS + signup trigger.
+2. `configure_social_auth(["google"])` + `configure_auth` (no auto-confirm, HIBP on).
+3. Server fns: `auth`, `courses`, `quizzes`, `progress`, `admin`, `ai`.
+4. Hooks + router context wiring + `__root.tsx` auth listener.
+5. Auth pages (login/signup/forgot/reset).
+6. `_authenticated` + `_admin` guard layouts + `DashboardShell`.
+7. Student, parent, admin route files with skeletons + real data wiring.
+8. Quiz player + admin question builder.
+9. Seed a couple of demo subjects/courses/quizzes via `insert` so dashboards aren't empty.
 
 ## Technical notes
 
-- Stack: TanStack Start (existing template), Tailwind v4 tokens in `src/styles.css`
-- All colors via semantic tokens — no raw hex in components
-- Fonts loaded via Google Fonts link in root `head.links`
-- Contact form uses `createServerFn` (NOT a loader) with `requireSupabaseAuth` omitted since form is public; uses `supabaseAdmin` server-side after Zod validation, or anon client respecting RLS insert policy (preferred — keeps service role unused)
-- All "Experience Smart Lab" CTAs use `<a href="https://smartlabonline.app" target="_blank" rel="noopener noreferrer">`
-- Hero image: generated placeholder (abstract emerald/gold geometric) saved to `src/assets/hero.jpg`, swappable later
+- `attachSupabaseAuth` already in `src/start.ts` (verify).
+- Public routes never call protected server fns from loaders (would 401 in prerender).
+- `_authenticated.tsx` gates with `beforeLoad` + `supabase.auth.getUser()` for session hydration before loader runs.
+- No Supabase Edge Functions — all server logic via `createServerFn`.
+- Role assignment to `admin` is admin-only; signup form only offers `student`/`parent`.
 
-## Build order
-
-1. Enable Lovable Cloud + create `contact_submissions` table
-2. Update `src/styles.css` tokens + load fonts
-3. Save attached `logo.png` to `src/assets/`
-4. Generate placeholder hero image
-5. Build `Header`, `Footer`, `CtaButton`, `SectionHeading`
-6. Update `__root.tsx` with layout, fonts, sitewide meta, JSON-LD
-7. Implement 5 route files with content + per-route `head()`
-8. Implement contact server function + wire form
-9. Verify build, sanity-check each route
-
-Ready to implement on approval.
+Marketing site stays untouched. Approve and I'll execute end-to-end.

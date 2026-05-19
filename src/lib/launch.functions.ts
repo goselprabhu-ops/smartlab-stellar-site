@@ -67,12 +67,18 @@ export const joinWaitlist = createServerFn({ method: "POST" })
 
     // Bump referrer signups if applicable
     if (data.referredByCode) {
-      await supabaseAdmin.rpc("noop_ignore" as never).catch(() => {});
-      await supabaseAdmin
+      const code = data.referredByCode.toUpperCase();
+      const { data: ref } = await supabaseAdmin
         .from("referral_codes")
-        .update({ signups: 1 as never }) // best-effort tracking; admins can recompute
-        .eq("code", data.referredByCode.toUpperCase())
-        .then(() => null, () => null);
+        .select("id, signups")
+        .eq("code", code)
+        .maybeSingle();
+      if (ref) {
+        await supabaseAdmin
+          .from("referral_codes")
+          .update({ signups: (ref.signups ?? 0) + 1 })
+          .eq("id", ref.id);
+      }
     }
 
     // Count for social proof

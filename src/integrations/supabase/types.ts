@@ -1134,8 +1134,6 @@ export type Database = {
         Args: { _parent: string; _student: string }
         Returns: boolean
       }
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       app_role: "student" | "parent" | "admin" | "teacher"

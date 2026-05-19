@@ -99,8 +99,8 @@ async function computeForStudent(supabase: any, studentId: string, days = 30) {
 
   // KPIs
   const totalAttempts = (attempts ?? []).length;
-  const totalScore = (attempts ?? []).reduce((s, a) => s + Number(a.score || 0), 0);
-  const totalMax = (attempts ?? []).reduce((s, a) => s + Number(a.total || 0), 0);
+  const totalScore = ((attempts ?? []) as any[]).reduce((s: number, a: any) => s + Number(a.score || 0), 0);
+  const totalMax = ((attempts ?? []) as any[]).reduce((s: number, a: any) => s + Number(a.total || 0), 0);
   const accuracy = totalMax ? totalScore / totalMax : 0;
   const totalMinutes = buckets.reduce((s, b) => s + b.minutes, 0);
   const masteryAvg = (mastery ?? []).length

@@ -508,6 +508,54 @@ export type Database = {
           },
         ]
       }
+      demo_requests: {
+        Row: {
+          created_at: string
+          email: string
+          grade: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          preferred_date: string | null
+          preferred_time: string | null
+          role: string | null
+          school: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          grade?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          role?: string | null
+          school?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          grade?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          role?: string | null
+          school?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       evaluation_attempts: {
         Row: {
           created_at: string
@@ -555,6 +603,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      launch_checklist: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          label: string
+          notes: string | null
+          order_index: number | null
+          owner: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          label: string
+          notes?: string | null
+          order_index?: number | null
+          owner?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          label?: string
+          notes?: string | null
+          order_index?: number | null
+          owner?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      launch_config: {
+        Row: {
+          demo_mode_enabled: boolean
+          id: number
+          launch_at: string | null
+          referral_reward: string | null
+          updated_at: string
+          waitlist_open: boolean
+        }
+        Insert: {
+          demo_mode_enabled?: boolean
+          id?: number
+          launch_at?: string | null
+          referral_reward?: string | null
+          updated_at?: string
+          waitlist_open?: boolean
+        }
+        Update: {
+          demo_mode_enabled?: boolean
+          id?: number
+          launch_at?: string | null
+          referral_reward?: string | null
+          updated_at?: string
+          waitlist_open?: boolean
+        }
+        Relationships: []
       }
       learning_sessions: {
         Row: {
@@ -1039,6 +1150,36 @@ export type Database = {
           },
         ]
       }
+      referral_codes: {
+        Row: {
+          clicks: number
+          code: string
+          created_at: string
+          id: string
+          owner_email: string | null
+          owner_user_id: string | null
+          signups: number
+        }
+        Insert: {
+          clicks?: number
+          code: string
+          created_at?: string
+          id?: string
+          owner_email?: string | null
+          owner_user_id?: string | null
+          signups?: number
+        }
+        Update: {
+          clicks?: number
+          code?: string
+          created_at?: string
+          id?: string
+          owner_email?: string | null
+          owner_user_id?: string | null
+          signups?: number
+        }
+        Relationships: []
+      }
       subjects: {
         Row: {
           class_id: string | null
@@ -1101,6 +1242,54 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      waitlist_signups: {
+        Row: {
+          city: string | null
+          created_at: string
+          email: string
+          grade: string | null
+          id: string
+          name: string | null
+          referral_code: string | null
+          referred_by_code: string | null
+          role: string | null
+          source: string | null
+          status: string
+          updated_at: string
+          utm: Json | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          email: string
+          grade?: string | null
+          id?: string
+          name?: string | null
+          referral_code?: string | null
+          referred_by_code?: string | null
+          role?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          utm?: Json | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          email?: string
+          grade?: string | null
+          id?: string
+          name?: string | null
+          referral_code?: string | null
+          referred_by_code?: string | null
+          role?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          utm?: Json | null
         }
         Relationships: []
       }

@@ -228,7 +228,7 @@ export async function aiCall<T = string>(
       await supabaseAdmin.from("ai_cache").upsert({
         module: opts.module,
         input_hash: inputHash,
-        output: output as object,
+        output: output as never,
         model,
         expires_at: expiresAt,
       });

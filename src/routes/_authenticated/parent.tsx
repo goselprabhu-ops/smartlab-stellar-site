@@ -5,12 +5,12 @@ export const Route = createFileRoute("/_authenticated/parent")({
   component: ParentLayout,
 });
 
-const tabs = [
+const tabs: Array<{ to: string; label: string; icon: typeof Users; exact?: boolean }> = [
   { to: "/parent",            label: "Children",  icon: Users,         exact: true },
   { to: "/parent/reports",    label: "Reports",   icon: FileText },
   { to: "/parent/attendance", label: "Attendance",icon: CalendarCheck },
   { to: "/parent/analytics",  label: "Analytics", icon: BarChart3 },
-] as const;
+];
 
 function ParentLayout() {
   return (

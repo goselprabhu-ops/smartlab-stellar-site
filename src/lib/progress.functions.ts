@@ -45,12 +45,32 @@ export const getStudentProgress = createServerFn({ method: "POST" })
     z.object({ student_id: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    // Authorization: caller must be the student, an admin, or a linked parent.
+    if (data.student_id !== userId) {
+      const [{ data: isAdmin }, { data: link }] = await Promise.all([
+        supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", userId)
+          .eq("role", "admin")
+          .maybeSingle(),
+        supabase
+          .from("parent_student_links")
+          .select("id")
+          .eq("parent_id", userId)
+          .eq("student_id", data.student_id)
+          .maybeSingle(),
+      ]);
+      if (!isAdmin && !link) throw new Error("Forbidden");
+    }
+
     const [progress, attempts] = await Promise.all([
-      context.supabase
+      supabase
         .from("progress")
         .select("*, lessons(title, course_id, courses(title))")
         .eq("student_id", data.student_id),
-      context.supabase
+      supabase
         .from("quiz_attempts")
         .select("*, quizzes(title)")
         .eq("student_id", data.student_id)
@@ -62,6 +82,7 @@ export const getStudentProgress = createServerFn({ method: "POST" })
       attempts: attempts.data ?? [],
     };
   });
+
 
 export const listLinkedStudents = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

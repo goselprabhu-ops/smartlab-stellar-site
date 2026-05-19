@@ -296,4 +296,23 @@
   }
 
   .transition-base { transition: all var(--transition-base); }
+  .transition-soft { transition: all var(--duration-base) var(--ease-out-soft); }
+  .shadow-soft     { box-shadow: var(--shadow-sm); }
+
+  /* Animated entrance primitives used by state components and pages */
+  .animate-fade-in {
+    animation: lov-fade-in var(--duration-slow) var(--ease-out-soft) both;
+  }
+  .animate-rise-in {
+    animation: lov-rise-in var(--duration-slow) var(--ease-out-soft) both;
+  }
+
+  @keyframes lov-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes lov-rise-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 }

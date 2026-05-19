@@ -203,7 +203,7 @@ function ScoreRing({ pct }: { pct: number }) {
   return (
     <div className="relative size-32 sm:size-36">
       <svg viewBox="0 0 120 120" className="size-full -rotate-90">
-        <circle cx="60" cy="60" r={r} fill="none" stroke="hsl(var(--muted))" strokeWidth="10" />
+        <circle cx="60" cy="60" r={r} fill="none" stroke="var(--muted)" strokeWidth="10" />
         <circle
           cx="60"
           cy="60"

@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_authenticated/school")({
   component: SchoolLayout,
 });
 
-const tabs = [
+const tabs: Array<{ to: string; label: string; icon: typeof Users; exact?: boolean }> = [
   { to: "/school", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/school/batches", label: "Batches", icon: BookOpen },
   { to: "/school/students", label: "Students", icon: Users },
@@ -19,7 +19,7 @@ const tabs = [
   { to: "/school/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/school/insights", label: "AI Insights", icon: Sparkles },
   { to: "/school/settings", label: "Settings", icon: Settings },
-] as const;
+];
 
 function SchoolLayout() {
   const { ready } = useAuth();

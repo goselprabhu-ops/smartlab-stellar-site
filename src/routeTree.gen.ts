@@ -40,6 +40,7 @@ import { Route as ProductAnalyticsRouteImport } from './routes/product.analytics
 import { Route as ProductAiTutorRouteImport } from './routes/product.ai-tutor'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSchoolRouteImport } from './routes/_authenticated/school'
 import { Route as AuthenticatedParentRouteImport } from './routes/_authenticated/parent'
 import { Route as AuthenticatedMRouteImport } from './routes/_authenticated/m'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -249,6 +250,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedSchoolRoute = AuthenticatedSchoolRouteImport.update({
+  id: '/school',
+  path: '/school',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedParentRoute = AuthenticatedParentRouteImport.update({
@@ -592,6 +598,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/m': typeof AuthenticatedMRouteWithChildren
   '/parent': typeof AuthenticatedParentRouteWithChildren
+  '/school': typeof AuthenticatedSchoolRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/product/ai-tutor': typeof ProductAiTutorRoute
@@ -676,6 +683,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/school': typeof AuthenticatedSchoolRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/product/ai-tutor': typeof ProductAiTutorRoute
@@ -763,6 +771,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/m': typeof AuthenticatedMRouteWithChildren
   '/_authenticated/parent': typeof AuthenticatedParentRouteWithChildren
+  '/_authenticated/school': typeof AuthenticatedSchoolRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/product/ai-tutor': typeof ProductAiTutorRoute
@@ -852,6 +861,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/m'
     | '/parent'
+    | '/school'
     | '/settings'
     | '/api/chat'
     | '/product/ai-tutor'
@@ -936,6 +946,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/verify-otp'
     | '/dashboard'
+    | '/school'
     | '/settings'
     | '/api/chat'
     | '/product/ai-tutor'
@@ -1022,6 +1033,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/m'
     | '/_authenticated/parent'
+    | '/_authenticated/school'
     | '/_authenticated/settings'
     | '/api/chat'
     | '/product/ai-tutor'
@@ -1335,6 +1347,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/school': {
+      id: '/_authenticated/school'
+      path: '/school'
+      fullPath: '/school'
+      preLoaderRoute: typeof AuthenticatedSchoolRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/parent': {
@@ -1876,6 +1895,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedMRoute: typeof AuthenticatedMRouteWithChildren
   AuthenticatedParentRoute: typeof AuthenticatedParentRouteWithChildren
+  AuthenticatedSchoolRoute: typeof AuthenticatedSchoolRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStudentAiTutorRoute: typeof AuthenticatedStudentAiTutorRouteWithChildren
   AuthenticatedStudentAnalyticsRoute: typeof AuthenticatedStudentAnalyticsRoute
@@ -1903,6 +1923,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedMRoute: AuthenticatedMRouteWithChildren,
   AuthenticatedParentRoute: AuthenticatedParentRouteWithChildren,
+  AuthenticatedSchoolRoute: AuthenticatedSchoolRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStudentAiTutorRoute:
     AuthenticatedStudentAiTutorRouteWithChildren,

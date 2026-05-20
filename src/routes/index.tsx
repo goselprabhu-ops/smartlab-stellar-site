@@ -918,10 +918,10 @@ function FinalCtaSection() {
             14-day free trial · No credit card · Cancel anytime
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <CtaButton>
+            <CtaButton href="/signup" external={false}>
               Start Free Trial <ArrowRight className="ml-2 h-4 w-4" />
             </CtaButton>
-            <CtaButton variant="secondary" className="text-cream">
+            <CtaButton href="/demo" external={false} variant="secondary" className="text-cream">
               Book a School Demo
             </CtaButton>
           </div>

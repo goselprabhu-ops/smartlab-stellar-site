@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_authenticated/m/learn")({
 function MobileLearn() {
   const fetchDash = useServerFn(getStudentDashboard);
   const { data, isOffline } = useOfflineQuery("student-dash", () => fetchDash());
-  const recs = (data?.recommendations ?? []) as any[];
+  const recs = (data?.weeklyPlan ?? []) as any[];
 
   return (
     <MobileShell title="Micro lessons" tabs={TABS}>

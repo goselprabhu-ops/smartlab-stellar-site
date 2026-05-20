@@ -30,7 +30,7 @@ function StudentMobileHome() {
   const { status, request } = usePushNotifications();
 
   // Use recommendations as "due reviews" surrogate if retention list isn't loaded here.
-  const due = (data?.recommendations ?? []).slice(0, 5).map((r: any, i: number) => ({
+  const due = (data?.weeklyPlan ?? []).slice(0, 5).map((r: any, i: number) => ({
     id: r.id ?? `rec-${i}`,
     title: r.topic ?? "Review concept",
     dueAt: r.dueAt ?? new Date(Date.now() - 1000).toISOString(),

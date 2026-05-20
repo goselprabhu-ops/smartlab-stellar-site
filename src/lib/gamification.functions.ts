@@ -607,7 +607,7 @@ export const generateChallenges = createServerFn({ method: "POST" })
 
     const { data: inserted } = await supabase
       .from("smart_challenges")
-      .insert(rows)
+      .insert(rows as any)
       .select("*");
     return { created: inserted?.length ?? 0, challenges: inserted ?? [] };
   });

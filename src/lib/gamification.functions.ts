@@ -32,11 +32,9 @@ const DAY = 86_400_000;
 // Helpers
 // -------------------------------------------------------------
 
-type SupaClient = Awaited<
-  ReturnType<typeof import("@/integrations/supabase/auth-middleware").requireSupabaseAuth.server>
-> extends { supabase: infer S }
-  ? S
-  : never;
+// (intentionally untyped: supabase generated types tighten jsonb to never-style unions
+// which fights insert/update on dynamic shapes — use `any` locally.)
+
 
 function todayISO(): string {
   return new Date().toISOString().slice(0, 10);

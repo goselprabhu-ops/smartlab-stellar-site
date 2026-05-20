@@ -409,15 +409,15 @@ async function computeIntelligence(
     });
   if (clusters[0])
     insights.push({ kind: "info", message: `Dominant weakness: "${clusters[0].tag}" across ${clusters[0].count} concepts.` });
-  if (behavior.fatigue > 0.6)
+  if (behavior.fatigueRisk > 0.6)
     insights.push({ kind: "risk", message: `Fatigue signal high — shorter sessions may help.` });
 
-  const recommendations = sequence.slice(0, 4).map((s) => ({
+  const recommendations = sequence.slice(0, 4).map((s: any) => ({
     microConceptId: s.microConceptId,
     title: s.title,
     priority: s.priority,
-    reason: s.reasons[0] ?? "Recommended next step",
-    estimatedMinutes: s.estimatedMinutes,
+    reason: s.reason ?? "Recommended next step",
+    estimatedMinutes: s.recommendedMinutes ?? 8,
   }));
 
   return {

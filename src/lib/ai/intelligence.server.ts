@@ -414,7 +414,7 @@ export function behaviorSignals(args: {
     d.setDate(d.getDate() - (horizon - 1 - i));
     return d.toISOString().slice(0, 10);
   });
-  const counts = new Map(dayKeys.map((k) => [k, 0] as const));
+  const counts = new Map<string, number>(dayKeys.map((k) => [k, 0]));
   const scoresByDay = new Map<string, number[]>();
 
   const push = (createdAt: string, score: number | null) => {

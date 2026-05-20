@@ -45,6 +45,7 @@ import { Route as AuthenticatedParentRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedMRouteImport } from './routes/_authenticated/m'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedSchoolIndexRouteImport } from './routes/_authenticated/school.index'
 import { Route as AuthenticatedParentIndexRouteImport } from './routes/_authenticated/parent.index'
 import { Route as AuthenticatedMIndexRouteImport } from './routes/_authenticated/m.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -63,6 +64,15 @@ import { Route as AuthenticatedStudentEngagementRouteImport } from './routes/_au
 import { Route as AuthenticatedStudentCoursesRouteImport } from './routes/_authenticated/student/courses'
 import { Route as AuthenticatedStudentAnalyticsRouteImport } from './routes/_authenticated/student/analytics'
 import { Route as AuthenticatedStudentAiTutorRouteImport } from './routes/_authenticated/student/ai-tutor'
+import { Route as AuthenticatedSchoolsOnboardRouteImport } from './routes/_authenticated/schools.onboard'
+import { Route as AuthenticatedSchoolTeachersRouteImport } from './routes/_authenticated/school.teachers'
+import { Route as AuthenticatedSchoolStudentsRouteImport } from './routes/_authenticated/school.students'
+import { Route as AuthenticatedSchoolSettingsRouteImport } from './routes/_authenticated/school.settings'
+import { Route as AuthenticatedSchoolInsightsRouteImport } from './routes/_authenticated/school.insights'
+import { Route as AuthenticatedSchoolBatchesRouteImport } from './routes/_authenticated/school.batches'
+import { Route as AuthenticatedSchoolAttendanceRouteImport } from './routes/_authenticated/school.attendance'
+import { Route as AuthenticatedSchoolAssignmentsRouteImport } from './routes/_authenticated/school.assignments'
+import { Route as AuthenticatedSchoolAnalyticsRouteImport } from './routes/_authenticated/school.analytics'
 import { Route as AuthenticatedParentReportsRouteImport } from './routes/_authenticated/parent.reports'
 import { Route as AuthenticatedParentIntelligenceRouteImport } from './routes/_authenticated/parent.intelligence'
 import { Route as AuthenticatedParentAttendanceRouteImport } from './routes/_authenticated/parent.attendance'
@@ -277,6 +287,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedSchoolIndexRoute =
+  AuthenticatedSchoolIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSchoolRoute,
+  } as any)
 const AuthenticatedParentIndexRoute =
   AuthenticatedParentIndexRouteImport.update({
     id: '/',
@@ -382,6 +398,60 @@ const AuthenticatedStudentAiTutorRoute =
     id: '/student/ai-tutor',
     path: '/student/ai-tutor',
     getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSchoolsOnboardRoute =
+  AuthenticatedSchoolsOnboardRouteImport.update({
+    id: '/schools/onboard',
+    path: '/schools/onboard',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSchoolTeachersRoute =
+  AuthenticatedSchoolTeachersRouteImport.update({
+    id: '/teachers',
+    path: '/teachers',
+    getParentRoute: () => AuthenticatedSchoolRoute,
+  } as any)
+const AuthenticatedSchoolStudentsRoute =
+  AuthenticatedSchoolStudentsRouteImport.update({
+    id: '/students',
+    path: '/students',
+    getParentRoute: () => AuthenticatedSchoolRoute,
+  } as any)
+const AuthenticatedSchoolSettingsRoute =
+  AuthenticatedSchoolSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedSchoolRoute,
+  } as any)
+const AuthenticatedSchoolInsightsRoute =
+  AuthenticatedSchoolInsightsRouteImport.update({
+    id: '/insights',
+    path: '/insights',
+    getParentRoute: () => AuthenticatedSchoolRoute,
+  } as any)
+const AuthenticatedSchoolBatchesRoute =
+  AuthenticatedSchoolBatchesRouteImport.update({
+    id: '/batches',
+    path: '/batches',
+    getParentRoute: () => AuthenticatedSchoolRoute,
+  } as any)
+const AuthenticatedSchoolAttendanceRoute =
+  AuthenticatedSchoolAttendanceRouteImport.update({
+    id: '/attendance',
+    path: '/attendance',
+    getParentRoute: () => AuthenticatedSchoolRoute,
+  } as any)
+const AuthenticatedSchoolAssignmentsRoute =
+  AuthenticatedSchoolAssignmentsRouteImport.update({
+    id: '/assignments',
+    path: '/assignments',
+    getParentRoute: () => AuthenticatedSchoolRoute,
+  } as any)
+const AuthenticatedSchoolAnalyticsRoute =
+  AuthenticatedSchoolAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedSchoolRoute,
   } as any)
 const AuthenticatedParentReportsRoute =
   AuthenticatedParentReportsRouteImport.update({
@@ -598,7 +668,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/m': typeof AuthenticatedMRouteWithChildren
   '/parent': typeof AuthenticatedParentRouteWithChildren
-  '/school': typeof AuthenticatedSchoolRoute
+  '/school': typeof AuthenticatedSchoolRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/product/ai-tutor': typeof ProductAiTutorRoute
@@ -632,6 +702,15 @@ export interface FileRoutesByFullPath {
   '/parent/attendance': typeof AuthenticatedParentAttendanceRoute
   '/parent/intelligence': typeof AuthenticatedParentIntelligenceRoute
   '/parent/reports': typeof AuthenticatedParentReportsRoute
+  '/school/analytics': typeof AuthenticatedSchoolAnalyticsRoute
+  '/school/assignments': typeof AuthenticatedSchoolAssignmentsRoute
+  '/school/attendance': typeof AuthenticatedSchoolAttendanceRoute
+  '/school/batches': typeof AuthenticatedSchoolBatchesRoute
+  '/school/insights': typeof AuthenticatedSchoolInsightsRoute
+  '/school/settings': typeof AuthenticatedSchoolSettingsRoute
+  '/school/students': typeof AuthenticatedSchoolStudentsRoute
+  '/school/teachers': typeof AuthenticatedSchoolTeachersRoute
+  '/schools/onboard': typeof AuthenticatedSchoolsOnboardRoute
   '/student/ai-tutor': typeof AuthenticatedStudentAiTutorRouteWithChildren
   '/student/analytics': typeof AuthenticatedStudentAnalyticsRoute
   '/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
@@ -650,6 +729,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/m/': typeof AuthenticatedMIndexRoute
   '/parent/': typeof AuthenticatedParentIndexRoute
+  '/school/': typeof AuthenticatedSchoolIndexRoute
   '/student/ai-tutor/$threadId': typeof AuthenticatedStudentAiTutorThreadIdRoute
   '/student/courses/$subjectId': typeof AuthenticatedStudentCoursesSubjectIdRouteWithChildren
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
@@ -683,7 +763,6 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/school': typeof AuthenticatedSchoolRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/product/ai-tutor': typeof ProductAiTutorRoute
@@ -717,6 +796,15 @@ export interface FileRoutesByTo {
   '/parent/attendance': typeof AuthenticatedParentAttendanceRoute
   '/parent/intelligence': typeof AuthenticatedParentIntelligenceRoute
   '/parent/reports': typeof AuthenticatedParentReportsRoute
+  '/school/analytics': typeof AuthenticatedSchoolAnalyticsRoute
+  '/school/assignments': typeof AuthenticatedSchoolAssignmentsRoute
+  '/school/attendance': typeof AuthenticatedSchoolAttendanceRoute
+  '/school/batches': typeof AuthenticatedSchoolBatchesRoute
+  '/school/insights': typeof AuthenticatedSchoolInsightsRoute
+  '/school/settings': typeof AuthenticatedSchoolSettingsRoute
+  '/school/students': typeof AuthenticatedSchoolStudentsRoute
+  '/school/teachers': typeof AuthenticatedSchoolTeachersRoute
+  '/schools/onboard': typeof AuthenticatedSchoolsOnboardRoute
   '/student/analytics': typeof AuthenticatedStudentAnalyticsRoute
   '/student/engagement': typeof AuthenticatedStudentEngagementRoute
   '/student/intelligence': typeof AuthenticatedStudentIntelligenceRoute
@@ -733,6 +821,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/m': typeof AuthenticatedMIndexRoute
   '/parent': typeof AuthenticatedParentIndexRoute
+  '/school': typeof AuthenticatedSchoolIndexRoute
   '/student/ai-tutor/$threadId': typeof AuthenticatedStudentAiTutorThreadIdRoute
   '/student/courses/$subjectId': typeof AuthenticatedStudentCoursesSubjectIdRouteWithChildren
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
@@ -771,7 +860,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/m': typeof AuthenticatedMRouteWithChildren
   '/_authenticated/parent': typeof AuthenticatedParentRouteWithChildren
-  '/_authenticated/school': typeof AuthenticatedSchoolRoute
+  '/_authenticated/school': typeof AuthenticatedSchoolRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/product/ai-tutor': typeof ProductAiTutorRoute
@@ -805,6 +894,15 @@ export interface FileRoutesById {
   '/_authenticated/parent/attendance': typeof AuthenticatedParentAttendanceRoute
   '/_authenticated/parent/intelligence': typeof AuthenticatedParentIntelligenceRoute
   '/_authenticated/parent/reports': typeof AuthenticatedParentReportsRoute
+  '/_authenticated/school/analytics': typeof AuthenticatedSchoolAnalyticsRoute
+  '/_authenticated/school/assignments': typeof AuthenticatedSchoolAssignmentsRoute
+  '/_authenticated/school/attendance': typeof AuthenticatedSchoolAttendanceRoute
+  '/_authenticated/school/batches': typeof AuthenticatedSchoolBatchesRoute
+  '/_authenticated/school/insights': typeof AuthenticatedSchoolInsightsRoute
+  '/_authenticated/school/settings': typeof AuthenticatedSchoolSettingsRoute
+  '/_authenticated/school/students': typeof AuthenticatedSchoolStudentsRoute
+  '/_authenticated/school/teachers': typeof AuthenticatedSchoolTeachersRoute
+  '/_authenticated/schools/onboard': typeof AuthenticatedSchoolsOnboardRoute
   '/_authenticated/student/ai-tutor': typeof AuthenticatedStudentAiTutorRouteWithChildren
   '/_authenticated/student/analytics': typeof AuthenticatedStudentAnalyticsRoute
   '/_authenticated/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
@@ -823,6 +921,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/m/': typeof AuthenticatedMIndexRoute
   '/_authenticated/parent/': typeof AuthenticatedParentIndexRoute
+  '/_authenticated/school/': typeof AuthenticatedSchoolIndexRoute
   '/_authenticated/student/ai-tutor/$threadId': typeof AuthenticatedStudentAiTutorThreadIdRoute
   '/_authenticated/student/courses/$subjectId': typeof AuthenticatedStudentCoursesSubjectIdRouteWithChildren
   '/_authenticated/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
@@ -895,6 +994,15 @@ export interface FileRouteTypes {
     | '/parent/attendance'
     | '/parent/intelligence'
     | '/parent/reports'
+    | '/school/analytics'
+    | '/school/assignments'
+    | '/school/attendance'
+    | '/school/batches'
+    | '/school/insights'
+    | '/school/settings'
+    | '/school/students'
+    | '/school/teachers'
+    | '/schools/onboard'
     | '/student/ai-tutor'
     | '/student/analytics'
     | '/student/courses'
@@ -913,6 +1021,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/m/'
     | '/parent/'
+    | '/school/'
     | '/student/ai-tutor/$threadId'
     | '/student/courses/$subjectId'
     | '/student/learn/$microConceptId'
@@ -946,7 +1055,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/verify-otp'
     | '/dashboard'
-    | '/school'
     | '/settings'
     | '/api/chat'
     | '/product/ai-tutor'
@@ -980,6 +1088,15 @@ export interface FileRouteTypes {
     | '/parent/attendance'
     | '/parent/intelligence'
     | '/parent/reports'
+    | '/school/analytics'
+    | '/school/assignments'
+    | '/school/attendance'
+    | '/school/batches'
+    | '/school/insights'
+    | '/school/settings'
+    | '/school/students'
+    | '/school/teachers'
+    | '/schools/onboard'
     | '/student/analytics'
     | '/student/engagement'
     | '/student/intelligence'
@@ -996,6 +1113,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/m'
     | '/parent'
+    | '/school'
     | '/student/ai-tutor/$threadId'
     | '/student/courses/$subjectId'
     | '/student/learn/$microConceptId'
@@ -1067,6 +1185,15 @@ export interface FileRouteTypes {
     | '/_authenticated/parent/attendance'
     | '/_authenticated/parent/intelligence'
     | '/_authenticated/parent/reports'
+    | '/_authenticated/school/analytics'
+    | '/_authenticated/school/assignments'
+    | '/_authenticated/school/attendance'
+    | '/_authenticated/school/batches'
+    | '/_authenticated/school/insights'
+    | '/_authenticated/school/settings'
+    | '/_authenticated/school/students'
+    | '/_authenticated/school/teachers'
+    | '/_authenticated/schools/onboard'
     | '/_authenticated/student/ai-tutor'
     | '/_authenticated/student/analytics'
     | '/_authenticated/student/courses'
@@ -1085,6 +1212,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/m/'
     | '/_authenticated/parent/'
+    | '/_authenticated/school/'
     | '/_authenticated/student/ai-tutor/$threadId'
     | '/_authenticated/student/courses/$subjectId'
     | '/_authenticated/student/learn/$microConceptId'
@@ -1384,6 +1512,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/school/': {
+      id: '/_authenticated/school/'
+      path: '/'
+      fullPath: '/school/'
+      preLoaderRoute: typeof AuthenticatedSchoolIndexRouteImport
+      parentRoute: typeof AuthenticatedSchoolRoute
+    }
     '/_authenticated/parent/': {
       id: '/_authenticated/parent/'
       path: '/'
@@ -1509,6 +1644,69 @@ declare module '@tanstack/react-router' {
       fullPath: '/student/ai-tutor'
       preLoaderRoute: typeof AuthenticatedStudentAiTutorRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/schools/onboard': {
+      id: '/_authenticated/schools/onboard'
+      path: '/schools/onboard'
+      fullPath: '/schools/onboard'
+      preLoaderRoute: typeof AuthenticatedSchoolsOnboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/school/teachers': {
+      id: '/_authenticated/school/teachers'
+      path: '/teachers'
+      fullPath: '/school/teachers'
+      preLoaderRoute: typeof AuthenticatedSchoolTeachersRouteImport
+      parentRoute: typeof AuthenticatedSchoolRoute
+    }
+    '/_authenticated/school/students': {
+      id: '/_authenticated/school/students'
+      path: '/students'
+      fullPath: '/school/students'
+      preLoaderRoute: typeof AuthenticatedSchoolStudentsRouteImport
+      parentRoute: typeof AuthenticatedSchoolRoute
+    }
+    '/_authenticated/school/settings': {
+      id: '/_authenticated/school/settings'
+      path: '/settings'
+      fullPath: '/school/settings'
+      preLoaderRoute: typeof AuthenticatedSchoolSettingsRouteImport
+      parentRoute: typeof AuthenticatedSchoolRoute
+    }
+    '/_authenticated/school/insights': {
+      id: '/_authenticated/school/insights'
+      path: '/insights'
+      fullPath: '/school/insights'
+      preLoaderRoute: typeof AuthenticatedSchoolInsightsRouteImport
+      parentRoute: typeof AuthenticatedSchoolRoute
+    }
+    '/_authenticated/school/batches': {
+      id: '/_authenticated/school/batches'
+      path: '/batches'
+      fullPath: '/school/batches'
+      preLoaderRoute: typeof AuthenticatedSchoolBatchesRouteImport
+      parentRoute: typeof AuthenticatedSchoolRoute
+    }
+    '/_authenticated/school/attendance': {
+      id: '/_authenticated/school/attendance'
+      path: '/attendance'
+      fullPath: '/school/attendance'
+      preLoaderRoute: typeof AuthenticatedSchoolAttendanceRouteImport
+      parentRoute: typeof AuthenticatedSchoolRoute
+    }
+    '/_authenticated/school/assignments': {
+      id: '/_authenticated/school/assignments'
+      path: '/assignments'
+      fullPath: '/school/assignments'
+      preLoaderRoute: typeof AuthenticatedSchoolAssignmentsRouteImport
+      parentRoute: typeof AuthenticatedSchoolRoute
+    }
+    '/_authenticated/school/analytics': {
+      id: '/_authenticated/school/analytics'
+      path: '/analytics'
+      fullPath: '/school/analytics'
+      preLoaderRoute: typeof AuthenticatedSchoolAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedSchoolRoute
     }
     '/_authenticated/parent/reports': {
       id: '/_authenticated/parent/reports'
@@ -1824,6 +2022,33 @@ const AuthenticatedParentRouteChildren: AuthenticatedParentRouteChildren = {
 const AuthenticatedParentRouteWithChildren =
   AuthenticatedParentRoute._addFileChildren(AuthenticatedParentRouteChildren)
 
+interface AuthenticatedSchoolRouteChildren {
+  AuthenticatedSchoolAnalyticsRoute: typeof AuthenticatedSchoolAnalyticsRoute
+  AuthenticatedSchoolAssignmentsRoute: typeof AuthenticatedSchoolAssignmentsRoute
+  AuthenticatedSchoolAttendanceRoute: typeof AuthenticatedSchoolAttendanceRoute
+  AuthenticatedSchoolBatchesRoute: typeof AuthenticatedSchoolBatchesRoute
+  AuthenticatedSchoolInsightsRoute: typeof AuthenticatedSchoolInsightsRoute
+  AuthenticatedSchoolSettingsRoute: typeof AuthenticatedSchoolSettingsRoute
+  AuthenticatedSchoolStudentsRoute: typeof AuthenticatedSchoolStudentsRoute
+  AuthenticatedSchoolTeachersRoute: typeof AuthenticatedSchoolTeachersRoute
+  AuthenticatedSchoolIndexRoute: typeof AuthenticatedSchoolIndexRoute
+}
+
+const AuthenticatedSchoolRouteChildren: AuthenticatedSchoolRouteChildren = {
+  AuthenticatedSchoolAnalyticsRoute: AuthenticatedSchoolAnalyticsRoute,
+  AuthenticatedSchoolAssignmentsRoute: AuthenticatedSchoolAssignmentsRoute,
+  AuthenticatedSchoolAttendanceRoute: AuthenticatedSchoolAttendanceRoute,
+  AuthenticatedSchoolBatchesRoute: AuthenticatedSchoolBatchesRoute,
+  AuthenticatedSchoolInsightsRoute: AuthenticatedSchoolInsightsRoute,
+  AuthenticatedSchoolSettingsRoute: AuthenticatedSchoolSettingsRoute,
+  AuthenticatedSchoolStudentsRoute: AuthenticatedSchoolStudentsRoute,
+  AuthenticatedSchoolTeachersRoute: AuthenticatedSchoolTeachersRoute,
+  AuthenticatedSchoolIndexRoute: AuthenticatedSchoolIndexRoute,
+}
+
+const AuthenticatedSchoolRouteWithChildren =
+  AuthenticatedSchoolRoute._addFileChildren(AuthenticatedSchoolRouteChildren)
+
 interface AuthenticatedStudentAiTutorRouteChildren {
   AuthenticatedStudentAiTutorThreadIdRoute: typeof AuthenticatedStudentAiTutorThreadIdRoute
   AuthenticatedStudentAiTutorIndexRoute: typeof AuthenticatedStudentAiTutorIndexRoute
@@ -1895,8 +2120,9 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedMRoute: typeof AuthenticatedMRouteWithChildren
   AuthenticatedParentRoute: typeof AuthenticatedParentRouteWithChildren
-  AuthenticatedSchoolRoute: typeof AuthenticatedSchoolRoute
+  AuthenticatedSchoolRoute: typeof AuthenticatedSchoolRouteWithChildren
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSchoolsOnboardRoute: typeof AuthenticatedSchoolsOnboardRoute
   AuthenticatedStudentAiTutorRoute: typeof AuthenticatedStudentAiTutorRouteWithChildren
   AuthenticatedStudentAnalyticsRoute: typeof AuthenticatedStudentAnalyticsRoute
   AuthenticatedStudentCoursesRoute: typeof AuthenticatedStudentCoursesRouteWithChildren
@@ -1923,8 +2149,9 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedMRoute: AuthenticatedMRouteWithChildren,
   AuthenticatedParentRoute: AuthenticatedParentRouteWithChildren,
-  AuthenticatedSchoolRoute: AuthenticatedSchoolRoute,
+  AuthenticatedSchoolRoute: AuthenticatedSchoolRouteWithChildren,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSchoolsOnboardRoute: AuthenticatedSchoolsOnboardRoute,
   AuthenticatedStudentAiTutorRoute:
     AuthenticatedStudentAiTutorRouteWithChildren,
   AuthenticatedStudentAnalyticsRoute: AuthenticatedStudentAnalyticsRoute,

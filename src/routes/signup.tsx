@@ -179,8 +179,8 @@ function SimpleSignup({ role }: { role: Role }) {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("We sent a 6-digit code to your email.");
-    nav({ to: "/verify-otp", search: { email: parsed.data.email } });
+    toast.success("Account created");
+    nav({ to: "/onboarding" });
   };
 
   const s = strength(form.password);
@@ -329,8 +329,8 @@ function StudentWizard() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Account created. We've emailed a 6-digit code to the parent.");
-    nav({ to: "/verify-otp", search: { email: form.parent_email } });
+    toast.success("Account created");
+    nav({ to: "/onboarding" });
   };
 
   const s = strength(form.password);

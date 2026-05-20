@@ -44,14 +44,7 @@ function LoginPage() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword(parsed.data);
     setLoading(false);
-    if (error) {
-      if (error.message.toLowerCase().includes("email not confirmed")) {
-        toast.error("Please verify your email first.");
-        nav({ to: "/verify-otp", search: { email: form.email } });
-        return;
-      }
-      return toast.error(error.message);
-    }
+    if (error) return toast.error(error.message);
     toast.success("Welcome back");
     nav({ to: redirect });
   };

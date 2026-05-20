@@ -456,8 +456,8 @@ export const nextMicroConcept = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    // Prefer in-progress weak sessions; fall back to the next never-touched
-    // micro-concept whose prerequisites are mastered.
+
+    // 1. Continue any active weak/in-progress session first.
     const { data: weak } = await supabase
       .from("learning_sessions")
       .select("micro_concept_id, mastery, state, micro_concepts(id, title)")
@@ -470,9 +470,86 @@ export const nextMicroConcept = createServerFn({ method: "GET" })
         kind: "continue" as const,
         microConceptId: weak[0].micro_concept_id,
         title: (weak[0] as any).micro_concepts?.title ?? "Continue practice",
+        reason: "Active session below mastery threshold",
       };
     }
 
+    // 2. Use the intelligence sequencer on mastery history.
+    const { data: mastery } = await supabase
+      .from("concept_mastery")
+      .select(`
+        micro_concept_id, mastery, confidence, streak, last_practiced_at, decay_at,
+        micro_concepts:micro_concept_id (
+          id, title, difficulty, estimated_minutes, tags, prerequisite_ids, concept_id
+        )
+      `)
+      .eq("student_id", userId);
+
+    if (mastery && mastery.length) {
+      const { personalizedSequence } = await import("./ai/intelligence.server");
+      const ids = mastery.map((r: any) => r.micro_concept_id);
+      const [{ data: rels }, { data: recalls }, { data: weaknesses }] = await Promise.all([
+        supabase
+          .from("concept_relations")
+          .select("source_id, target_id, relation, weight")
+          .in("source_id", ids),
+        supabase
+          .from("recollection_attempts")
+          .select("ai_score, ai_feedback, created_at")
+          .eq("student_id", userId)
+          .order("created_at", { ascending: false })
+          .limit(30),
+        supabase
+          .from("weakness_profile")
+          .select("micro_concept_id, weakness_tags, confidence, notes, updated_at")
+          .eq("student_id", userId),
+      ]);
+      const seq = personalizedSequence({
+        rows: mastery.map((r: any) => ({
+          microConceptId: r.micro_concept_id,
+          title: r.micro_concepts?.title ?? "Micro-concept",
+          conceptId: r.micro_concepts?.concept_id ?? null,
+          difficulty: r.micro_concepts?.difficulty ?? 1,
+          estimatedMinutes: r.micro_concepts?.estimated_minutes ?? 8,
+          tags: r.micro_concepts?.tags ?? [],
+          prerequisiteIds: r.micro_concepts?.prerequisite_ids ?? [],
+          mastery: Number(r.mastery) || 0,
+          confidence: Number(r.confidence) || 0,
+          streak: Number(r.streak) || 0,
+          lastPracticedAt: r.last_practiced_at,
+          decayAt: r.decay_at,
+        })),
+        recentRecalls: (recalls ?? []).map((r: any) => ({
+          score: Number(r.ai_score) || 0,
+          feedback: r.ai_feedback ?? null,
+          createdAt: r.created_at,
+        })),
+        weaknesses: (weaknesses ?? []).map((w: any) => ({
+          microConceptId: w.micro_concept_id,
+          tags: w.weakness_tags ?? [],
+          confidence: Number(w.confidence) || 0,
+          notes: w.notes,
+          updatedAt: w.updated_at,
+        })),
+        edges: (rels ?? []).map((r: any) => ({
+          source: r.source_id,
+          target: r.target_id,
+          relation: r.relation,
+          weight: Number(r.weight) || 1,
+        })),
+        topK: 1,
+      });
+      if (seq[0]) {
+        return {
+          kind: "smart" as const,
+          microConceptId: seq[0].microConceptId,
+          title: seq[0].title,
+          reason: seq[0].reason,
+        };
+      }
+    }
+
+    // 3. Fallback: first prerequisite-met micro-concept.
     const { data: candidates } = await supabase
       .from("micro_concepts")
       .select("id, title, prerequisite_ids, order_index")
@@ -484,7 +561,6 @@ export const nextMicroConcept = createServerFn({ method: "GET" })
       .eq("student_id", userId)
       .eq("state", "mastered");
     const masteredSet = new Set((mastered ?? []).map((r: any) => r.micro_concept_id));
-
     const next = (candidates ?? []).find((c: any) => {
       if (masteredSet.has(c.id)) return false;
       const prereqs = (c.prerequisite_ids ?? []) as string[];

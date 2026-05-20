@@ -1402,6 +1402,42 @@ export type Database = {
           },
         ]
       }
+      otp_verifications: {
+        Row: {
+          attempts: number
+          created_at: string
+          expires_at: string
+          id: string
+          last_sent_at: string
+          mobile: string
+          purpose: string
+          request_id: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          last_sent_at?: string
+          mobile: string
+          purpose?: string
+          request_id?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          last_sent_at?: string
+          mobile?: string
+          purpose?: string
+          request_id?: string | null
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       paragraphs: {
         Row: {
           chapter_id: string
@@ -1464,31 +1500,70 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          consent_ip: string | null
+          consent_user_agent: string | null
           created_at: string
+          date_of_birth: string | null
           full_name: string | null
           grade: string | null
           id: string
+          parent_consent_accepted_at: string | null
+          parent_email: string | null
+          parent_full_name: string | null
+          parent_mobile: string | null
+          parent_mobile_verified_at: string | null
+          privacy_accepted_at: string | null
           school: string | null
+          student_email: string | null
+          student_full_name: string | null
+          student_phone: string | null
+          terms_accepted_at: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
+          consent_ip?: string | null
+          consent_user_agent?: string | null
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string | null
           grade?: string | null
           id?: string
+          parent_consent_accepted_at?: string | null
+          parent_email?: string | null
+          parent_full_name?: string | null
+          parent_mobile?: string | null
+          parent_mobile_verified_at?: string | null
+          privacy_accepted_at?: string | null
           school?: string | null
+          student_email?: string | null
+          student_full_name?: string | null
+          student_phone?: string | null
+          terms_accepted_at?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           avatar_url?: string | null
+          consent_ip?: string | null
+          consent_user_agent?: string | null
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string | null
           grade?: string | null
           id?: string
+          parent_consent_accepted_at?: string | null
+          parent_email?: string | null
+          parent_full_name?: string | null
+          parent_mobile?: string | null
+          parent_mobile_verified_at?: string | null
+          privacy_accepted_at?: string | null
           school?: string | null
+          student_email?: string | null
+          student_full_name?: string | null
+          student_phone?: string | null
+          terms_accepted_at?: string | null
           updated_at?: string
           user_id?: string
         }

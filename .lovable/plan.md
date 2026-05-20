@@ -1,78 +1,57 @@
-# Smart Lab Online — School Ecosystem
 
-Build a multi-tenant institution layer on top of the existing student/parent/teacher app. Schools own batches; batches own students and teachers; everything rolls up into school-level analytics and AI insights.
+## Goal
+Make signup compliant for minors (10–18, India): collect student + parent details, verify parent mobile via MSG91 OTP (+91, 10 digits), and require parent consent + T&C acceptance before account creation.
 
-## 1. Database (single migration)
+## 1. Database (migration)
+Extend `profiles` with compliance columns:
+- `date_of_birth` (date, not null for new signups)
+- `student_full_name`, `student_email` (nullable), `student_phone` (nullable, 10-digit IN)
+- `parent_full_name`, `parent_email`, `parent_mobile` (10-digit IN, not null)
+- `parent_mobile_verified_at` (timestamptz)
+- `parent_consent_accepted_at`, `terms_accepted_at`, `privacy_accepted_at` (timestamptz)
+- `consent_ip`, `consent_user_agent` (audit trail)
 
-New tables (all RLS-enabled, scoped via `school_members` + `has_role`):
+New table `otp_verifications` (server-only, no client RLS read):
+- `id`, `mobile` (E.164 +91XXXXXXXXXX), `purpose` ('parent_signup'), `request_id` (MSG91), `attempts`, `verified_at`, `expires_at`, `created_at`
+- RLS: deny all to authenticated; only service role writes (server fn uses admin client).
 
-- `schools` — id, name, slug, board (CBSE/ICSE/State), city, logo_url, plan (free/pro/enterprise), seats, active, created_by, timestamps.
-- `school_members` — school_id, user_id, role (`school_admin` | `teacher` | `student` | `parent`), batch_id (nullable), status, joined_at. Composite unique (school_id, user_id, role).
-- `batches` — school_id, name, grade, section, academic_year, class_teacher_id, student_count (cached), active.
-- `batch_students` — batch_id, student_id, roll_no, joined_at.
-- `attendance_records` — batch_id, student_id, date, status (present/absent/late/excused), marked_by, note. Unique (batch_id, student_id, date).
-- `assignments` — school_id, batch_id, created_by (teacher), title, description_md, subject_id, due_at, max_score, attachments jsonb, status (draft/published/closed).
-- `assignment_submissions` — assignment_id, student_id, submitted_at, content_md, attachments jsonb, score, feedback, graded_by, graded_at. Unique (assignment_id, student_id).
-- `school_insights` — school_id, period (week/month), generated_at, payload jsonb (AI summary: at-risk students, top batches, engagement, mastery trend).
+Validation trigger on `profiles`: reject insert/update where `date_of_birth` implies age <10 or >18, and where parent fields missing.
 
-New app_role enum value: `school_admin`. Helper SECURITY DEFINER fns:
-- `is_school_member(_user, _school)` → boolean
-- `is_school_admin(_user, _school)` → boolean
-- `teaches_batch(_user, _batch)` → boolean
+## 2. MSG91 server functions (`src/lib/msg91.functions.ts`)
+Using `MSG91_AUTH_KEY` + `MSG91_OTP_TEMPLATE_ID` (already saved as secrets). Calls are server-only via `createServerFn`, no client exposure.
 
-RLS pattern: school admins read/write everything in their school; teachers read their batches + write attendance/assignments for batches they teach; students read their own attendance/assignments + submit; parents read linked child's data within school.
+- `sendParentOtp({ mobile })` — validates 10-digit IN number, rate-limits (1 per 60s per mobile via `otp_verifications`), POSTs `https://control.msg91.com/api/v5/otp?template_id=...&mobile=91XXXXXXXXXX&otp_length=6&otp_expiry=10`, stores `request_id`.
+- `verifyParentOtp({ mobile, otp })` — GETs `https://control.msg91.com/api/v5/otp/verify?mobile=91X...&otp=XXXXXX`, marks `verified_at`. Max 5 attempts.
+- `resendParentOtp({ mobile })` — POST `/api/v5/otp/retry?retrytype=text`.
 
-## 2. Server functions
+## 3. Signup flow rewrite (`src/routes/signup.tsx`)
+Three-step wizard inside existing `AuthShell` (no new auth shell):
 
-`src/lib/schools.functions.ts`:
-- `listMySchools`, `createSchool` (auth user becomes school_admin), `getSchoolOverview` (counts + KPIs)
-- `listBatches`, `createBatch`, `addStudentsToBatch`, `removeStudentFromBatch`
-- `inviteMember` (by email → creates pending school_members row), `listSchoolMembers`
+**Step 1 — Student info**
+- Role selector (student / parent / teacher) [teacher/parent skip to old flow]
+- Student full name *, DOB * (date picker, must compute age 10–18), student email (optional), student phone (optional, 10-digit IN)
 
-`src/lib/attendance.functions.ts`:
-- `getBatchAttendance(batch_id, date)`, `markBatchAttendance(records[])`, `getStudentAttendanceSummary`
+**Step 2 — Parent info + OTP**
+- Parent full name *, parent email *, parent mobile * (+91 prefix, 10 digits)
+- "Send OTP" → calls `sendParentOtp`
+- 6-digit OTP input (using existing `ui/input-otp`), Verify + Resend (60s cooldown)
+- Must show "verified ✓" before continuing
 
-`src/lib/assignments.functions.ts`:
-- `listAssignments(scope)`, `createAssignment`, `publishAssignment`
-- `submitAssignment`, `gradeSubmission`, `listSubmissions`
+**Step 3 — Consent + password**
+- Password (existing strength meter)
+- Checkboxes (all required): "I am the parent/legal guardian of the student", "I accept the Terms of Service", "I accept the Privacy Policy & consent to processing my child's data per DPDP Act 2023"
+- Submit → `supabase.auth.signUp` with user_metadata containing all fields + `parent_mobile_verified: true` flag → server-side trigger writes to profiles
 
-`src/lib/ai/school-insights.server.ts` + `src/lib/school-insights.functions.ts`:
-- `generateSchoolInsights(school_id)` — pulls engagement, mastery, attendance, assignment completion → Lovable AI (gemini-2.5-flash) → stores in `school_insights`.
-- `getLatestInsights(school_id)`.
+Teacher/parent self-signup: keep current simple flow (no minor compliance).
 
-## 3. Routes (UI)
+## 4. Files touched
+- `supabase/migrations/...` (new)
+- `src/lib/msg91.functions.ts` (new)
+- `src/lib/schemas.ts` (add IN mobile + DOB schemas)
+- `src/routes/signup.tsx` (rewrite for student role; keep current path for teacher/parent)
+- `src/components/auth/AuthField.tsx` (small: optional suffix slot for "+91" prefix) — only if needed
 
-New layout `src/routes/_authenticated/school.tsx` — sidebar nav, requires school_admin or teacher membership. Tabs:
-
-- `school/index.tsx` — Dashboard: KPIs (students, teachers, batches, today's attendance %, avg mastery, active assignments), AI insights card, recent activity.
-- `school/batches.tsx` — list/create batches, drill-in to batch detail.
-- `school/batches.$batchId.tsx` — roster, attendance for date, assignments, performance.
-- `school/students.tsx` — searchable directory across school with mastery/attendance columns.
-- `school/teachers.tsx` — teacher list + per-teacher analytics (avg class score, assignments graded, response time).
-- `school/attendance.tsx` — mark attendance flow (pick batch + date → grid).
-- `school/assignments.tsx` — list + create + grade.
-- `school/analytics.tsx` — institution-level charts (mastery by grade, attendance trend, engagement heatmap).
-- `school/insights.tsx` — AI-generated weekly insights with regenerate button.
-- `school/settings.tsx` — school profile, plan, members/invites.
-
-Plus a top-level `/schools/onboard` route inside `_authenticated` for "Create your school" when user has no membership.
-
-## 4. Wiring
-
-- Add `school_admin` to `appRoleSchema` and `Role` type.
-- Add School entry to main app nav for users with school_admin or teacher role.
-- Reuse existing PageHeader, StatCard, Table, Tabs components — no new design tokens.
-
-## Technical notes
-
-- Multi-tenancy = row-level via `school_id` + helper SECURITY DEFINER fns; no schema-per-tenant.
-- Role hierarchy enforced in RLS: school_admin ⊃ teacher (batch-scoped) ⊃ student.
-- AI insights cached in `school_insights` to avoid per-view cost; manual + scheduled regenerate.
-- All new server fns use `requireSupabaseAuth`; admin fns additionally check `is_school_admin`.
-- Existing parent/student/teacher dashboards untouched — school layer is additive.
-
-## Out of scope (this turn)
-
-- Email-based invitations (use direct user_id linking by admin for now; stub UI shows "copy invite link").
-- Billing/seats enforcement (plan field stored but not gated).
-- Cross-school federation / district-level rollup.
+## Notes
+- DPDP Act 2023 compliance: verifiable parental consent + audit trail (IP, UA, timestamp).
+- MSG91 secrets stay server-side only; never imported in client code.
+- Existing `handle_new_user()` trigger will be updated to copy new metadata fields into profiles.

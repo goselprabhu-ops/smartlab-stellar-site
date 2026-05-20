@@ -58,6 +58,7 @@ import { Route as AuthenticatedStudentNotesRouteImport } from './routes/_authent
 import { Route as AuthenticatedStudentMasteryRouteImport } from './routes/_authenticated/student/mastery'
 import { Route as AuthenticatedStudentLeaderboardRouteImport } from './routes/_authenticated/student/leaderboard'
 import { Route as AuthenticatedStudentIntelligenceRouteImport } from './routes/_authenticated/student/intelligence'
+import { Route as AuthenticatedStudentEngagementRouteImport } from './routes/_authenticated/student/engagement'
 import { Route as AuthenticatedStudentCoursesRouteImport } from './routes/_authenticated/student/courses'
 import { Route as AuthenticatedStudentAnalyticsRouteImport } from './routes/_authenticated/student/analytics'
 import { Route as AuthenticatedStudentAiTutorRouteImport } from './routes/_authenticated/student/ai-tutor'
@@ -352,6 +353,12 @@ const AuthenticatedStudentIntelligenceRoute =
     path: '/student/intelligence',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedStudentEngagementRoute =
+  AuthenticatedStudentEngagementRouteImport.update({
+    id: '/student/engagement',
+    path: '/student/engagement',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedStudentCoursesRoute =
   AuthenticatedStudentCoursesRouteImport.update({
     id: '/student/courses',
@@ -621,6 +628,7 @@ export interface FileRoutesByFullPath {
   '/student/ai-tutor': typeof AuthenticatedStudentAiTutorRouteWithChildren
   '/student/analytics': typeof AuthenticatedStudentAnalyticsRoute
   '/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
+  '/student/engagement': typeof AuthenticatedStudentEngagementRoute
   '/student/intelligence': typeof AuthenticatedStudentIntelligenceRoute
   '/student/leaderboard': typeof AuthenticatedStudentLeaderboardRoute
   '/student/mastery': typeof AuthenticatedStudentMasteryRoute
@@ -702,6 +710,7 @@ export interface FileRoutesByTo {
   '/parent/intelligence': typeof AuthenticatedParentIntelligenceRoute
   '/parent/reports': typeof AuthenticatedParentReportsRoute
   '/student/analytics': typeof AuthenticatedStudentAnalyticsRoute
+  '/student/engagement': typeof AuthenticatedStudentEngagementRoute
   '/student/intelligence': typeof AuthenticatedStudentIntelligenceRoute
   '/student/leaderboard': typeof AuthenticatedStudentLeaderboardRoute
   '/student/mastery': typeof AuthenticatedStudentMasteryRoute
@@ -790,6 +799,7 @@ export interface FileRoutesById {
   '/_authenticated/student/ai-tutor': typeof AuthenticatedStudentAiTutorRouteWithChildren
   '/_authenticated/student/analytics': typeof AuthenticatedStudentAnalyticsRoute
   '/_authenticated/student/courses': typeof AuthenticatedStudentCoursesRouteWithChildren
+  '/_authenticated/student/engagement': typeof AuthenticatedStudentEngagementRoute
   '/_authenticated/student/intelligence': typeof AuthenticatedStudentIntelligenceRoute
   '/_authenticated/student/leaderboard': typeof AuthenticatedStudentLeaderboardRoute
   '/_authenticated/student/mastery': typeof AuthenticatedStudentMasteryRoute
@@ -878,6 +888,7 @@ export interface FileRouteTypes {
     | '/student/ai-tutor'
     | '/student/analytics'
     | '/student/courses'
+    | '/student/engagement'
     | '/student/intelligence'
     | '/student/leaderboard'
     | '/student/mastery'
@@ -959,6 +970,7 @@ export interface FileRouteTypes {
     | '/parent/intelligence'
     | '/parent/reports'
     | '/student/analytics'
+    | '/student/engagement'
     | '/student/intelligence'
     | '/student/leaderboard'
     | '/student/mastery'
@@ -1046,6 +1058,7 @@ export interface FileRouteTypes {
     | '/_authenticated/student/ai-tutor'
     | '/_authenticated/student/analytics'
     | '/_authenticated/student/courses'
+    | '/_authenticated/student/engagement'
     | '/_authenticated/student/intelligence'
     | '/_authenticated/student/leaderboard'
     | '/_authenticated/student/mastery'
@@ -1448,6 +1461,13 @@ declare module '@tanstack/react-router' {
       path: '/student/intelligence'
       fullPath: '/student/intelligence'
       preLoaderRoute: typeof AuthenticatedStudentIntelligenceRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/student/engagement': {
+      id: '/_authenticated/student/engagement'
+      path: '/student/engagement'
+      fullPath: '/student/engagement'
+      preLoaderRoute: typeof AuthenticatedStudentEngagementRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/student/courses': {
@@ -1860,6 +1880,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedStudentAiTutorRoute: typeof AuthenticatedStudentAiTutorRouteWithChildren
   AuthenticatedStudentAnalyticsRoute: typeof AuthenticatedStudentAnalyticsRoute
   AuthenticatedStudentCoursesRoute: typeof AuthenticatedStudentCoursesRouteWithChildren
+  AuthenticatedStudentEngagementRoute: typeof AuthenticatedStudentEngagementRoute
   AuthenticatedStudentIntelligenceRoute: typeof AuthenticatedStudentIntelligenceRoute
   AuthenticatedStudentLeaderboardRoute: typeof AuthenticatedStudentLeaderboardRoute
   AuthenticatedStudentMasteryRoute: typeof AuthenticatedStudentMasteryRoute
@@ -1888,6 +1909,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedStudentAnalyticsRoute: AuthenticatedStudentAnalyticsRoute,
   AuthenticatedStudentCoursesRoute:
     AuthenticatedStudentCoursesRouteWithChildren,
+  AuthenticatedStudentEngagementRoute: AuthenticatedStudentEngagementRoute,
   AuthenticatedStudentIntelligenceRoute: AuthenticatedStudentIntelligenceRoute,
   AuthenticatedStudentLeaderboardRoute: AuthenticatedStudentLeaderboardRoute,
   AuthenticatedStudentMasteryRoute: AuthenticatedStudentMasteryRoute,

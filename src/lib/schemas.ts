@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const appRoleSchema = z.enum(["student", "parent", "teacher", "admin"]);
+export const appRoleSchema = z.enum(["student", "parent", "teacher", "admin", "school_admin"]);
 export const questionTypeSchema = z.enum(["mcq", "multi", "short"]);
 
 export const signupSchema = z.object({

@@ -35,7 +35,7 @@ function MobileLearn() {
           {recs.map((r, i) => (
             <MicroLessonCard
               key={i}
-              title={r.title ?? r.concept ?? "Micro lesson"}
+              title={r.topic ?? "Micro lesson"}
               subject={r.subject}
               minutes={r.minutes ?? 4}
               reason={r.reason}

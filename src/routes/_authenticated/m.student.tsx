@@ -32,7 +32,7 @@ function StudentMobileHome() {
   // Use recommendations as "due reviews" surrogate if retention list isn't loaded here.
   const due = (data?.recommendations ?? []).slice(0, 5).map((r: any, i: number) => ({
     id: r.id ?? `rec-${i}`,
-    title: r.title ?? r.concept ?? "Review concept",
+    title: r.topic ?? "Review concept",
     dueAt: r.dueAt ?? new Date(Date.now() - 1000).toISOString(),
   }));
   useRevisionReminders(due);
@@ -73,17 +73,17 @@ function StudentMobileHome() {
               <Link to="/m/learn" className="text-xs text-primary">See all</Link>
             </div>
             <div className="space-y-2.5">
-              {(data.recommendations ?? []).slice(0, 4).map((r: any, i: number) => (
+              {(data.weeklyPlan ?? []).slice(0, 4).map((r: any, i: number) => (
                 <MicroLessonCard
                   key={i}
-                  title={r.title ?? r.concept ?? "Continue concept"}
+                  title={r.topic ?? "Continue concept"}
                   subject={r.subject}
                   minutes={r.minutes ?? 4}
                   reason={r.reason}
                   to={r.microConceptId ? `/student/learn/${r.microConceptId}` : "/m/learn"}
                 />
               ))}
-              {!(data.recommendations ?? []).length && (
+              {!(data.weeklyPlan ?? []).length && (
                 <div className="rounded-2xl border bg-card p-4 text-xs text-muted-foreground">
                   Complete a quick diagnostic to get personalized suggestions.
                 </div>

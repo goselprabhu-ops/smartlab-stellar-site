@@ -53,7 +53,7 @@ function VerifyOtpPage() {
     if (token.length !== 6) return toast.error("Enter all 6 digits");
     if (!email) return toast.error("Missing email. Please sign up again.");
     setLoading(true);
-    const { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
+    const { error } = await supabase.auth.verifyOtp({ email, token, type: "signup" });
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Email verified");

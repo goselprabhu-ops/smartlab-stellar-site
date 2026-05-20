@@ -1,15 +1,16 @@
 import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
-import { Users, BarChart3, FileText, CalendarCheck } from "lucide-react";
+import { Users, BarChart3, FileText, CalendarCheck, Brain } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/parent")({
   component: ParentLayout,
 });
 
 const tabs: Array<{ to: string; label: string; icon: typeof Users; exact?: boolean }> = [
-  { to: "/parent",            label: "Children",  icon: Users,         exact: true },
-  { to: "/parent/reports",    label: "Reports",   icon: FileText },
-  { to: "/parent/attendance", label: "Attendance",icon: CalendarCheck },
-  { to: "/parent/analytics",  label: "Analytics", icon: BarChart3 },
+  { to: "/parent",              label: "Children",     icon: Users,         exact: true },
+  { to: "/parent/intelligence", label: "Intelligence", icon: Brain },
+  { to: "/parent/reports",      label: "Reports",      icon: FileText },
+  { to: "/parent/attendance",   label: "Attendance",   icon: CalendarCheck },
+  { to: "/parent/analytics",    label: "Analytics",    icon: BarChart3 },
 ];
 
 function ParentLayout() {

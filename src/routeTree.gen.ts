@@ -60,6 +60,7 @@ import { Route as AuthenticatedStudentCoursesRouteImport } from './routes/_authe
 import { Route as AuthenticatedStudentAnalyticsRouteImport } from './routes/_authenticated/student/analytics'
 import { Route as AuthenticatedStudentAiTutorRouteImport } from './routes/_authenticated/student/ai-tutor'
 import { Route as AuthenticatedParentReportsRouteImport } from './routes/_authenticated/parent.reports'
+import { Route as AuthenticatedParentIntelligenceRouteImport } from './routes/_authenticated/parent.intelligence'
 import { Route as AuthenticatedParentAttendanceRouteImport } from './routes/_authenticated/parent.attendance'
 import { Route as AuthenticatedParentAnalyticsRouteImport } from './routes/_authenticated/parent.analytics'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
@@ -356,6 +357,12 @@ const AuthenticatedParentReportsRoute =
     path: '/reports',
     getParentRoute: () => AuthenticatedParentRoute,
   } as any)
+const AuthenticatedParentIntelligenceRoute =
+  AuthenticatedParentIntelligenceRouteImport.update({
+    id: '/intelligence',
+    path: '/intelligence',
+    getParentRoute: () => AuthenticatedParentRoute,
+  } as any)
 const AuthenticatedParentAttendanceRoute =
   AuthenticatedParentAttendanceRouteImport.update({
     id: '/attendance',
@@ -547,6 +554,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/parent/analytics': typeof AuthenticatedParentAnalyticsRoute
   '/parent/attendance': typeof AuthenticatedParentAttendanceRoute
+  '/parent/intelligence': typeof AuthenticatedParentIntelligenceRoute
   '/parent/reports': typeof AuthenticatedParentReportsRoute
   '/student/ai-tutor': typeof AuthenticatedStudentAiTutorRouteWithChildren
   '/student/analytics': typeof AuthenticatedStudentAnalyticsRoute
@@ -621,6 +629,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/parent/analytics': typeof AuthenticatedParentAnalyticsRoute
   '/parent/attendance': typeof AuthenticatedParentAttendanceRoute
+  '/parent/intelligence': typeof AuthenticatedParentIntelligenceRoute
   '/parent/reports': typeof AuthenticatedParentReportsRoute
   '/student/analytics': typeof AuthenticatedStudentAnalyticsRoute
   '/student/intelligence': typeof AuthenticatedStudentIntelligenceRoute
@@ -697,6 +706,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/parent/analytics': typeof AuthenticatedParentAnalyticsRoute
   '/_authenticated/parent/attendance': typeof AuthenticatedParentAttendanceRoute
+  '/_authenticated/parent/intelligence': typeof AuthenticatedParentIntelligenceRoute
   '/_authenticated/parent/reports': typeof AuthenticatedParentReportsRoute
   '/_authenticated/student/ai-tutor': typeof AuthenticatedStudentAiTutorRouteWithChildren
   '/_authenticated/student/analytics': typeof AuthenticatedStudentAnalyticsRoute
@@ -775,6 +785,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/parent/analytics'
     | '/parent/attendance'
+    | '/parent/intelligence'
     | '/parent/reports'
     | '/student/ai-tutor'
     | '/student/analytics'
@@ -849,6 +860,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/parent/analytics'
     | '/parent/attendance'
+    | '/parent/intelligence'
     | '/parent/reports'
     | '/student/analytics'
     | '/student/intelligence'
@@ -924,6 +936,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/users'
     | '/_authenticated/parent/analytics'
     | '/_authenticated/parent/attendance'
+    | '/_authenticated/parent/intelligence'
     | '/_authenticated/parent/reports'
     | '/_authenticated/student/ai-tutor'
     | '/_authenticated/student/analytics'
@@ -1345,6 +1358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedParentReportsRouteImport
       parentRoute: typeof AuthenticatedParentRoute
     }
+    '/_authenticated/parent/intelligence': {
+      id: '/_authenticated/parent/intelligence'
+      path: '/intelligence'
+      fullPath: '/parent/intelligence'
+      preLoaderRoute: typeof AuthenticatedParentIntelligenceRouteImport
+      parentRoute: typeof AuthenticatedParentRoute
+    }
     '/_authenticated/parent/attendance': {
       id: '/_authenticated/parent/attendance'
       path: '/attendance'
@@ -1554,6 +1574,7 @@ const AuthenticatedAdminRouteWithChildren =
 interface AuthenticatedParentRouteChildren {
   AuthenticatedParentAnalyticsRoute: typeof AuthenticatedParentAnalyticsRoute
   AuthenticatedParentAttendanceRoute: typeof AuthenticatedParentAttendanceRoute
+  AuthenticatedParentIntelligenceRoute: typeof AuthenticatedParentIntelligenceRoute
   AuthenticatedParentReportsRoute: typeof AuthenticatedParentReportsRoute
   AuthenticatedParentIndexRoute: typeof AuthenticatedParentIndexRoute
 }
@@ -1561,6 +1582,7 @@ interface AuthenticatedParentRouteChildren {
 const AuthenticatedParentRouteChildren: AuthenticatedParentRouteChildren = {
   AuthenticatedParentAnalyticsRoute: AuthenticatedParentAnalyticsRoute,
   AuthenticatedParentAttendanceRoute: AuthenticatedParentAttendanceRoute,
+  AuthenticatedParentIntelligenceRoute: AuthenticatedParentIntelligenceRoute,
   AuthenticatedParentReportsRoute: AuthenticatedParentReportsRoute,
   AuthenticatedParentIndexRoute: AuthenticatedParentIndexRoute,
 }

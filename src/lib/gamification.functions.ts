@@ -735,6 +735,7 @@ export const getLeaderboard = createServerFn({ method: "GET" })
         totalXp: e?.total_xp ?? 0,
         streak: e?.current_streak ?? 0,
         isMe: id === userId,
+        rank: 0,
       };
     });
 

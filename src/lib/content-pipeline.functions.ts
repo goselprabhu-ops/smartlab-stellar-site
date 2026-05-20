@@ -143,7 +143,15 @@ export const linkConcepts = createServerFn({ method: "POST" })
       .object({
         source_id: z.string().uuid(),
         target_id: z.string().uuid(),
-        relation: z.enum(["prerequisite", "related", "applies", "extends"]),
+        relation: z.enum([
+          "prerequisite",
+          "related",
+          "applies_to",
+          "builds_on",
+          "contrasts_with",
+          "example_of",
+          "generalizes",
+        ]),
         weight: z.number().min(0).max(1).default(1),
         notes: z.string().max(500).optional(),
       })

@@ -567,7 +567,7 @@ export const updateGoals = createServerFn({ method: "POST" })
     if (data.weeklyGoalXp != null) patch.weekly_goal_xp = data.weeklyGoalXp;
     if (data.motivationProfile) patch.motivation_profile = data.motivationProfile;
     if (Object.keys(patch).length === 0) return { ok: true };
-    await supabase.from("student_engagement").update(patch).eq("student_id", userId);
+    await supabase.from("student_engagement").update(patch as any).eq("student_id", userId);
     return { ok: true };
   });
 

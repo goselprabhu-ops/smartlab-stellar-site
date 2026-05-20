@@ -3,19 +3,14 @@ import { useState } from "react";
 import { z } from "zod";
 import {
   Mail, Lock, User, GraduationCap, Users, BookUser, Shield, Loader2, Check,
-  Calendar, Phone, ShieldCheck, ArrowLeft, ArrowRight,
+  Calendar, Phone, ArrowLeft, ArrowRight,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { AuthField } from "@/components/auth/AuthField";
 import { GoogleButton } from "@/components/auth/GoogleButton";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { cn } from "@/lib/utils";
-import { useServerFn } from "@tanstack/react-start";
-import {
-  sendParentOtp, resendParentOtp, verifyParentOtp,
-} from "@/lib/msg91.functions";
 
 type Role = "student" | "parent" | "teacher";
 
@@ -56,7 +51,7 @@ const studentStep1 = z.object({
 const studentStep2 = z.object({
   parent_full_name: z.string().trim().min(2, "Enter parent's full name").max(100),
   parent_email: z.string().trim().email("Enter a valid email"),
-  parent_mobile: inMobile,
+  parent_mobile: z.union([z.literal(""), inMobile]).optional(),
 });
 
 export const Route = createFileRoute("/signup")({
@@ -86,7 +81,7 @@ function SignupPage() {
       title="Create your account"
       subtitle={
         role === "student"
-          ? "Students aged 10–18 require parent verification & consent."
+          ? "Students aged 10–18 require a parent's email & consent."
           : "Join thousands of educators and families on Smart Lab Online."
       }
       footer={
@@ -256,9 +251,6 @@ type StudentState = {
 
 function StudentWizard() {
   const nav = useNavigate();
-  const sendOtp = useServerFn(sendParentOtp);
-  const resendOtp = useServerFn(resendParentOtp);
-  const verifyOtp = useServerFn(verifyParentOtp);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState<StudentState>({
@@ -269,14 +261,6 @@ function StudentWizard() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // OTP state
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [otpBusy, setOtpBusy] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
-
-  // Consent
   const [consentParent, setConsentParent] = useState(false);
   const [consentTerms, setConsentTerms] = useState(false);
   const [consentPrivacy, setConsentPrivacy] = useState(false);
@@ -285,16 +269,6 @@ function StudentWizard() {
 
   const set = <K extends keyof StudentState>(k: K, v: StudentState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
-
-  const startCooldown = () => {
-    setCooldown(60);
-    const t = setInterval(() => {
-      setCooldown((c) => {
-        if (c <= 1) { clearInterval(t); return 0; }
-        return c - 1;
-      });
-    }, 1000);
-  };
 
   const nextFrom1 = () => {
     const parsed = studentStep1.safeParse(form);
@@ -309,14 +283,6 @@ function StudentWizard() {
   };
 
   const nextFrom2 = () => {
-    if (!otpVerified) {
-      toast.error("Please verify the parent's mobile number first.");
-      return;
-    }
-    setStep(3);
-  };
-
-  const handleSendOtp = async () => {
     const parsed = studentStep2.safeParse(form);
     if (!parsed.success) {
       const map: Record<string, string> = {};
@@ -325,44 +291,7 @@ function StudentWizard() {
       return;
     }
     setErrors({});
-    setOtpBusy(true);
-    try {
-      await sendOtp({ data: { mobile: form.parent_mobile } });
-      setOtpSent(true);
-      startCooldown();
-      toast.success(`OTP sent to +91 ${form.parent_mobile}`);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to send OTP");
-    } finally {
-      setOtpBusy(false);
-    }
-  };
-
-  const handleResend = async () => {
-    setOtpBusy(true);
-    try {
-      await resendOtp({ data: { mobile: form.parent_mobile } });
-      startCooldown();
-      toast.success("OTP resent");
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to resend OTP");
-    } finally {
-      setOtpBusy(false);
-    }
-  };
-
-  const handleVerify = async (code: string) => {
-    setOtpBusy(true);
-    try {
-      await verifyOtp({ data: { mobile: form.parent_mobile, otp: code } });
-      setOtpVerified(true);
-      toast.success("Parent mobile verified ✓");
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Invalid OTP");
-      setOtp("");
-    } finally {
-      setOtpBusy(false);
-    }
+    setStep(3);
   };
 
   const submit = async () => {
@@ -373,11 +302,6 @@ function StudentWizard() {
     const pw = passwordSchema.safeParse(form.password);
     if (!pw.success) {
       setErrors({ password: pw.error.issues[0].message });
-      return;
-    }
-    if (!otpVerified) {
-      toast.error("Parent mobile not verified.");
-      setStep(2);
       return;
     }
     setLoading(true);
@@ -395,8 +319,7 @@ function StudentWizard() {
           date_of_birth: form.date_of_birth,
           parent_full_name: form.parent_full_name,
           parent_email: form.parent_email,
-          parent_mobile: form.parent_mobile,
-          parent_mobile_verified: true,
+          parent_mobile: form.parent_mobile || null,
           parent_consent: true,
           terms_accepted: true,
           privacy_accepted: true,
@@ -406,7 +329,7 @@ function StudentWizard() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Account created. Verify your email to continue.");
+    toast.success("Account created. We've emailed a 6-digit code to the parent.");
     nav({ to: "/verify-otp", search: { email: form.parent_email } });
   };
 
@@ -419,7 +342,7 @@ function StudentWizard() {
       <ol className="flex items-center gap-2 text-[11px] font-medium">
         {[
           { n: 1, label: "Student" },
-          { n: 2, label: "Parent + OTP" },
+          { n: 2, label: "Parent" },
           { n: 3, label: "Consent" },
         ].map((it, i) => (
           <li key={it.n} className="flex flex-1 items-center gap-2">
@@ -479,7 +402,7 @@ function StudentWizard() {
           <AuthField
             label="Parent's / Guardian's full name" required icon={<User className="h-4 w-4" />}
             value={form.parent_full_name}
-            onChange={(e) => { set("parent_full_name", e.target.value); setOtpVerified(false); setOtpSent(false); }}
+            onChange={(e) => set("parent_full_name", e.target.value)}
             error={errors.parent_full_name} placeholder="Mr. Rohit Sharma" autoComplete="name"
           />
           <AuthField
@@ -487,80 +410,23 @@ function StudentWizard() {
             value={form.parent_email}
             onChange={(e) => set("parent_email", e.target.value)}
             error={errors.parent_email} placeholder="parent@example.com" autoComplete="email"
-            hint="The account login will use this email"
+            hint="We'll email a 6-digit code here to verify the parent. Account login uses this email."
           />
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium">Parent's mobile (India)</label>
-            <div className="flex gap-2">
-              <span className="inline-flex items-center rounded-lg border border-input bg-muted px-3 text-sm text-muted-foreground">
-                +91
-              </span>
-              <input
-                inputMode="numeric"
-                value={form.parent_mobile}
-                disabled={otpVerified}
-                onChange={(e) => {
-                  set("parent_mobile", e.target.value.replace(/\D/g, "").slice(0, 10));
-                  setOtpSent(false); setOtpVerified(false); setOtp("");
-                }}
-                placeholder="10-digit mobile"
-                className={cn(
-                  "flex-1 rounded-lg border bg-background px-3 py-3 text-sm outline-none",
-                  errors.parent_mobile
-                    ? "border-destructive ring-2 ring-destructive/15"
-                    : "border-input focus:border-primary focus:ring-2 focus:ring-primary/15",
-                  otpVerified && "opacity-60",
-                )}
-              />
-              {!otpVerified && (
-                <button
-                  type="button"
-                  onClick={otpSent ? handleResend : handleSendOtp}
-                  disabled={otpBusy || cooldown > 0}
-                  className="inline-flex items-center gap-1 rounded-lg border border-input bg-background px-3 text-xs font-medium hover:bg-muted disabled:opacity-50"
-                >
-                  {otpBusy && <Loader2 className="h-3 w-3 animate-spin" />}
-                  {cooldown > 0 ? `${cooldown}s` : otpSent ? "Resend" : "Send OTP"}
-                </button>
-              )}
-              {otpVerified && (
-                <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-3 text-xs font-medium text-emerald-700 dark:border-emerald-800/40 dark:bg-emerald-900/20 dark:text-emerald-400">
-                  <ShieldCheck className="h-3 w-3" /> Verified
-                </span>
-              )}
-            </div>
-            {errors.parent_mobile && <p className="text-xs text-destructive">{errors.parent_mobile}</p>}
-          </div>
-
-          {otpSent && !otpVerified && (
-            <div className="rounded-lg border border-input bg-muted/40 p-4">
-              <div className="mb-2 text-xs font-medium">Enter 6-digit OTP sent to parent's mobile</div>
-              <InputOTP
-                maxLength={6}
-                value={otp}
-                onChange={(v) => {
-                  setOtp(v);
-                  if (v.length === 6) handleVerify(v);
-                }}
-                disabled={otpBusy}
-              >
-                <InputOTPGroup>
-                  {[0,1,2,3,4,5].map((i) => <InputOTPSlot key={i} index={i} />)}
-                </InputOTPGroup>
-              </InputOTP>
-              <p className="mt-2 text-[11px] text-muted-foreground">
-                OTP expires in 10 minutes. Standard SMS rates may apply.
-              </p>
-            </div>
-          )}
+          <AuthField
+            label="Parent's mobile (optional)" inputMode="numeric" icon={<Phone className="h-4 w-4" />}
+            value={form.parent_mobile}
+            onChange={(e) => set("parent_mobile", e.target.value.replace(/\D/g, "").slice(0, 10))}
+            error={errors.parent_mobile} placeholder="10-digit Indian mobile"
+            hint="For school communications. SMS verification coming soon."
+          />
 
           <div className="flex gap-2">
             <button type="button" onClick={() => setStep(1)}
               className="inline-flex items-center gap-2 rounded-lg border border-input bg-background px-4 py-3 text-sm font-medium hover:bg-muted">
               <ArrowLeft className="h-4 w-4" /> Back
             </button>
-            <button type="button" onClick={nextFrom2} disabled={!otpVerified}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-soft hover:opacity-95 disabled:opacity-50">
+            <button type="button" onClick={nextFrom2}
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-soft hover:opacity-95">
               Continue <ArrowRight className="h-4 w-4" />
             </button>
           </div>

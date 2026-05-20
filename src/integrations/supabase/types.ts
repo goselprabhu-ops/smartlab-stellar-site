@@ -256,6 +256,236 @@ export type Database = {
         }
         Relationships: []
       }
+      assignment_submissions: {
+        Row: {
+          assignment_id: string
+          attachments: Json
+          content_md: string | null
+          feedback: string | null
+          graded_at: string | null
+          graded_by: string | null
+          id: string
+          score: number | null
+          student_id: string
+          submitted_at: string
+        }
+        Insert: {
+          assignment_id: string
+          attachments?: Json
+          content_md?: string | null
+          feedback?: string | null
+          graded_at?: string | null
+          graded_by?: string | null
+          id?: string
+          score?: number | null
+          student_id: string
+          submitted_at?: string
+        }
+        Update: {
+          assignment_id?: string
+          attachments?: Json
+          content_md?: string | null
+          feedback?: string | null
+          graded_at?: string | null
+          graded_by?: string | null
+          id?: string
+          score?: number | null
+          student_id?: string
+          submitted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignment_submissions_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "assignments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assignments: {
+        Row: {
+          attachments: Json
+          batch_id: string
+          created_at: string
+          created_by: string
+          description_md: string | null
+          due_at: string | null
+          id: string
+          max_score: number
+          school_id: string
+          status: Database["public"]["Enums"]["assignment_status"]
+          subject: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          attachments?: Json
+          batch_id: string
+          created_at?: string
+          created_by: string
+          description_md?: string | null
+          due_at?: string | null
+          id?: string
+          max_score?: number
+          school_id: string
+          status?: Database["public"]["Enums"]["assignment_status"]
+          subject?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          attachments?: Json
+          batch_id?: string
+          created_at?: string
+          created_by?: string
+          description_md?: string | null
+          due_at?: string | null
+          id?: string
+          max_score?: number
+          school_id?: string
+          status?: Database["public"]["Enums"]["assignment_status"]
+          subject?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignments_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "batches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attendance_records: {
+        Row: {
+          batch_id: string
+          created_at: string
+          date: string
+          id: string
+          marked_by: string
+          note: string | null
+          status: Database["public"]["Enums"]["attendance_status"]
+          student_id: string
+        }
+        Insert: {
+          batch_id: string
+          created_at?: string
+          date: string
+          id?: string
+          marked_by: string
+          note?: string | null
+          status: Database["public"]["Enums"]["attendance_status"]
+          student_id: string
+        }
+        Update: {
+          batch_id?: string
+          created_at?: string
+          date?: string
+          id?: string
+          marked_by?: string
+          note?: string | null
+          status?: Database["public"]["Enums"]["attendance_status"]
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_records_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "batches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      batch_students: {
+        Row: {
+          batch_id: string
+          id: string
+          joined_at: string
+          roll_no: string | null
+          student_id: string
+        }
+        Insert: {
+          batch_id: string
+          id?: string
+          joined_at?: string
+          roll_no?: string | null
+          student_id: string
+        }
+        Update: {
+          batch_id?: string
+          id?: string
+          joined_at?: string
+          roll_no?: string | null
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "batch_students_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "batches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      batches: {
+        Row: {
+          academic_year: string | null
+          active: boolean
+          class_teacher_id: string | null
+          created_at: string
+          grade: string | null
+          id: string
+          name: string
+          school_id: string
+          section: string | null
+          updated_at: string
+        }
+        Insert: {
+          academic_year?: string | null
+          active?: boolean
+          class_teacher_id?: string | null
+          created_at?: string
+          grade?: string | null
+          id?: string
+          name: string
+          school_id: string
+          section?: string | null
+          updated_at?: string
+        }
+        Update: {
+          academic_year?: string | null
+          active?: boolean
+          class_teacher_id?: string | null
+          created_at?: string
+          grade?: string | null
+          id?: string
+          name?: string
+          school_id?: string
+          section?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "batches_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chapters: {
         Row: {
           created_at: string
@@ -1531,6 +1761,121 @@ export type Database = {
         }
         Relationships: []
       }
+      school_insights: {
+        Row: {
+          generated_at: string
+          id: string
+          model: string | null
+          payload: Json
+          period: string
+          school_id: string
+        }
+        Insert: {
+          generated_at?: string
+          id?: string
+          model?: string | null
+          payload?: Json
+          period?: string
+          school_id: string
+        }
+        Update: {
+          generated_at?: string
+          id?: string
+          model?: string | null
+          payload?: Json
+          period?: string
+          school_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_insights_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      school_members: {
+        Row: {
+          id: string
+          joined_at: string
+          role: Database["public"]["Enums"]["school_member_role"]
+          school_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          role: Database["public"]["Enums"]["school_member_role"]
+          school_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          role?: Database["public"]["Enums"]["school_member_role"]
+          school_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_members_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schools: {
+        Row: {
+          active: boolean
+          board: string | null
+          city: string | null
+          created_at: string
+          created_by: string
+          id: string
+          logo_url: string | null
+          name: string
+          plan: Database["public"]["Enums"]["school_plan"]
+          seats: number
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          board?: string | null
+          city?: string | null
+          created_at?: string
+          created_by: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          plan?: Database["public"]["Enums"]["school_plan"]
+          seats?: number
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          board?: string | null
+          city?: string | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          plan?: Database["public"]["Enums"]["school_plan"]
+          seats?: number
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       smart_challenges: {
         Row: {
           ai_generated: boolean
@@ -1866,6 +2211,15 @@ export type Database = {
         Args: { _parent: string; _student: string }
         Returns: boolean
       }
+      is_school_admin: {
+        Args: { _school: string; _user: string }
+        Returns: boolean
+      }
+      is_school_member: {
+        Args: { _school: string; _user: string }
+        Returns: boolean
+      }
+      school_for_batch: { Args: { _batch: string }; Returns: string }
       score_quiz_attempt: {
         Args: { _answers: Json; _quiz_id: string }
         Returns: {
@@ -1874,10 +2228,20 @@ export type Database = {
           total: number
         }[]
       }
+      student_in_batch: {
+        Args: { _batch: string; _student: string }
+        Returns: boolean
+      }
+      teaches_batch: {
+        Args: { _batch: string; _user: string }
+        Returns: boolean
+      }
     }
     Enums: {
       achievement_rarity: "common" | "rare" | "epic" | "legendary"
-      app_role: "student" | "parent" | "admin" | "teacher"
+      app_role: "student" | "parent" | "admin" | "teacher" | "school_admin"
+      assignment_status: "draft" | "published" | "closed"
+      attendance_status: "present" | "absent" | "late" | "excused"
       bloom_level:
         | "remember"
         | "understand"
@@ -1923,6 +2287,8 @@ export type Database = {
         | "micro_test"
         | "visual_explanation"
       resource_kind: "video" | "pdf" | "note" | "link"
+      school_member_role: "school_admin" | "teacher" | "student" | "parent"
+      school_plan: "free" | "pro" | "enterprise"
       xp_kind:
         | "study"
         | "recall"
@@ -2062,7 +2428,9 @@ export const Constants = {
   public: {
     Enums: {
       achievement_rarity: ["common", "rare", "epic", "legendary"],
-      app_role: ["student", "parent", "admin", "teacher"],
+      app_role: ["student", "parent", "admin", "teacher", "school_admin"],
+      assignment_status: ["draft", "published", "closed"],
+      attendance_status: ["present", "absent", "late", "excused"],
       bloom_level: [
         "remember",
         "understand",
@@ -2113,6 +2481,8 @@ export const Constants = {
         "visual_explanation",
       ],
       resource_kind: ["video", "pdf", "note", "link"],
+      school_member_role: ["school_admin", "teacher", "student", "parent"],
+      school_plan: ["free", "pro", "enterprise"],
       xp_kind: [
         "study",
         "recall",

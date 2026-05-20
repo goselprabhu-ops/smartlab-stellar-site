@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMe } from "@/lib/auth.functions";
 import type { Session } from "@supabase/supabase-js";
 
-export type Role = "student" | "parent" | "teacher" | "admin";
+export type Role = "student" | "parent" | "teacher" | "admin" | "school_admin";
 
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);

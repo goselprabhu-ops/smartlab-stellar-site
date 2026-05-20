@@ -41,9 +41,11 @@ import { Route as ProductAiTutorRouteImport } from './routes/product.ai-tutor'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedParentRouteImport } from './routes/_authenticated/parent'
+import { Route as AuthenticatedMRouteImport } from './routes/_authenticated/m'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedParentIndexRouteImport } from './routes/_authenticated/parent.index'
+import { Route as AuthenticatedMIndexRouteImport } from './routes/_authenticated/m.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedStudentSubjectsRouteImport } from './routes/_authenticated/student/subjects'
 import { Route as AuthenticatedStudentStudyPathRouteImport } from './routes/_authenticated/student/study-path'
@@ -63,6 +65,13 @@ import { Route as AuthenticatedParentReportsRouteImport } from './routes/_authen
 import { Route as AuthenticatedParentIntelligenceRouteImport } from './routes/_authenticated/parent.intelligence'
 import { Route as AuthenticatedParentAttendanceRouteImport } from './routes/_authenticated/parent.attendance'
 import { Route as AuthenticatedParentAnalyticsRouteImport } from './routes/_authenticated/parent.analytics'
+import { Route as AuthenticatedMTutorRouteImport } from './routes/_authenticated/m.tutor'
+import { Route as AuthenticatedMTeacherRouteImport } from './routes/_authenticated/m.teacher'
+import { Route as AuthenticatedMStudentRouteImport } from './routes/_authenticated/m.student'
+import { Route as AuthenticatedMProgressRouteImport } from './routes/_authenticated/m.progress'
+import { Route as AuthenticatedMParentRouteImport } from './routes/_authenticated/m.parent'
+import { Route as AuthenticatedMLearnRouteImport } from './routes/_authenticated/m.learn'
+import { Route as AuthenticatedMInboxRouteImport } from './routes/_authenticated/m.inbox'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminTeachersRouteImport } from './routes/_authenticated/admin.teachers'
 import { Route as AuthenticatedAdminSupportRouteImport } from './routes/_authenticated/admin.support'
@@ -246,6 +255,11 @@ const AuthenticatedParentRoute = AuthenticatedParentRouteImport.update({
   path: '/parent',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedMRoute = AuthenticatedMRouteImport.update({
+  id: '/m',
+  path: '/m',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -262,6 +276,11 @@ const AuthenticatedParentIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedParentRoute,
   } as any)
+const AuthenticatedMIndexRoute = AuthenticatedMIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedMRoute,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -375,6 +394,41 @@ const AuthenticatedParentAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => AuthenticatedParentRoute,
   } as any)
+const AuthenticatedMTutorRoute = AuthenticatedMTutorRouteImport.update({
+  id: '/tutor',
+  path: '/tutor',
+  getParentRoute: () => AuthenticatedMRoute,
+} as any)
+const AuthenticatedMTeacherRoute = AuthenticatedMTeacherRouteImport.update({
+  id: '/teacher',
+  path: '/teacher',
+  getParentRoute: () => AuthenticatedMRoute,
+} as any)
+const AuthenticatedMStudentRoute = AuthenticatedMStudentRouteImport.update({
+  id: '/student',
+  path: '/student',
+  getParentRoute: () => AuthenticatedMRoute,
+} as any)
+const AuthenticatedMProgressRoute = AuthenticatedMProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => AuthenticatedMRoute,
+} as any)
+const AuthenticatedMParentRoute = AuthenticatedMParentRouteImport.update({
+  id: '/parent',
+  path: '/parent',
+  getParentRoute: () => AuthenticatedMRoute,
+} as any)
+const AuthenticatedMLearnRoute = AuthenticatedMLearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
+  getParentRoute: () => AuthenticatedMRoute,
+} as any)
+const AuthenticatedMInboxRoute = AuthenticatedMInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AuthenticatedMRoute,
+} as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -529,6 +583,7 @@ export interface FileRoutesByFullPath {
   '/verify-otp': typeof VerifyOtpRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/m': typeof AuthenticatedMRouteWithChildren
   '/parent': typeof AuthenticatedParentRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
@@ -552,6 +607,13 @@ export interface FileRoutesByFullPath {
   '/admin/support': typeof AuthenticatedAdminSupportRoute
   '/admin/teachers': typeof AuthenticatedAdminTeachersRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/m/inbox': typeof AuthenticatedMInboxRoute
+  '/m/learn': typeof AuthenticatedMLearnRoute
+  '/m/parent': typeof AuthenticatedMParentRoute
+  '/m/progress': typeof AuthenticatedMProgressRoute
+  '/m/student': typeof AuthenticatedMStudentRoute
+  '/m/teacher': typeof AuthenticatedMTeacherRoute
+  '/m/tutor': typeof AuthenticatedMTutorRoute
   '/parent/analytics': typeof AuthenticatedParentAnalyticsRoute
   '/parent/attendance': typeof AuthenticatedParentAttendanceRoute
   '/parent/intelligence': typeof AuthenticatedParentIntelligenceRoute
@@ -571,6 +633,7 @@ export interface FileRoutesByFullPath {
   '/student/study-path': typeof AuthenticatedStudentStudyPathRoute
   '/student/subjects': typeof AuthenticatedStudentSubjectsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/m/': typeof AuthenticatedMIndexRoute
   '/parent/': typeof AuthenticatedParentIndexRoute
   '/student/ai-tutor/$threadId': typeof AuthenticatedStudentAiTutorThreadIdRoute
   '/student/courses/$subjectId': typeof AuthenticatedStudentCoursesSubjectIdRouteWithChildren
@@ -627,6 +690,13 @@ export interface FileRoutesByTo {
   '/admin/support': typeof AuthenticatedAdminSupportRoute
   '/admin/teachers': typeof AuthenticatedAdminTeachersRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/m/inbox': typeof AuthenticatedMInboxRoute
+  '/m/learn': typeof AuthenticatedMLearnRoute
+  '/m/parent': typeof AuthenticatedMParentRoute
+  '/m/progress': typeof AuthenticatedMProgressRoute
+  '/m/student': typeof AuthenticatedMStudentRoute
+  '/m/teacher': typeof AuthenticatedMTeacherRoute
+  '/m/tutor': typeof AuthenticatedMTutorRoute
   '/parent/analytics': typeof AuthenticatedParentAnalyticsRoute
   '/parent/attendance': typeof AuthenticatedParentAttendanceRoute
   '/parent/intelligence': typeof AuthenticatedParentIntelligenceRoute
@@ -644,6 +714,7 @@ export interface FileRoutesByTo {
   '/student/study-path': typeof AuthenticatedStudentStudyPathRoute
   '/student/subjects': typeof AuthenticatedStudentSubjectsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/m': typeof AuthenticatedMIndexRoute
   '/parent': typeof AuthenticatedParentIndexRoute
   '/student/ai-tutor/$threadId': typeof AuthenticatedStudentAiTutorThreadIdRoute
   '/student/courses/$subjectId': typeof AuthenticatedStudentCoursesSubjectIdRouteWithChildren
@@ -681,6 +752,7 @@ export interface FileRoutesById {
   '/verify-otp': typeof VerifyOtpRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/m': typeof AuthenticatedMRouteWithChildren
   '/_authenticated/parent': typeof AuthenticatedParentRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
@@ -704,6 +776,13 @@ export interface FileRoutesById {
   '/_authenticated/admin/support': typeof AuthenticatedAdminSupportRoute
   '/_authenticated/admin/teachers': typeof AuthenticatedAdminTeachersRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/m/inbox': typeof AuthenticatedMInboxRoute
+  '/_authenticated/m/learn': typeof AuthenticatedMLearnRoute
+  '/_authenticated/m/parent': typeof AuthenticatedMParentRoute
+  '/_authenticated/m/progress': typeof AuthenticatedMProgressRoute
+  '/_authenticated/m/student': typeof AuthenticatedMStudentRoute
+  '/_authenticated/m/teacher': typeof AuthenticatedMTeacherRoute
+  '/_authenticated/m/tutor': typeof AuthenticatedMTutorRoute
   '/_authenticated/parent/analytics': typeof AuthenticatedParentAnalyticsRoute
   '/_authenticated/parent/attendance': typeof AuthenticatedParentAttendanceRoute
   '/_authenticated/parent/intelligence': typeof AuthenticatedParentIntelligenceRoute
@@ -723,6 +802,7 @@ export interface FileRoutesById {
   '/_authenticated/student/study-path': typeof AuthenticatedStudentStudyPathRoute
   '/_authenticated/student/subjects': typeof AuthenticatedStudentSubjectsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/m/': typeof AuthenticatedMIndexRoute
   '/_authenticated/parent/': typeof AuthenticatedParentIndexRoute
   '/_authenticated/student/ai-tutor/$threadId': typeof AuthenticatedStudentAiTutorThreadIdRoute
   '/_authenticated/student/courses/$subjectId': typeof AuthenticatedStudentCoursesSubjectIdRouteWithChildren
@@ -760,6 +840,7 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/admin'
     | '/dashboard'
+    | '/m'
     | '/parent'
     | '/settings'
     | '/api/chat'
@@ -783,6 +864,13 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/teachers'
     | '/admin/users'
+    | '/m/inbox'
+    | '/m/learn'
+    | '/m/parent'
+    | '/m/progress'
+    | '/m/student'
+    | '/m/teacher'
+    | '/m/tutor'
     | '/parent/analytics'
     | '/parent/attendance'
     | '/parent/intelligence'
@@ -802,6 +890,7 @@ export interface FileRouteTypes {
     | '/student/study-path'
     | '/student/subjects'
     | '/admin/'
+    | '/m/'
     | '/parent/'
     | '/student/ai-tutor/$threadId'
     | '/student/courses/$subjectId'
@@ -858,6 +947,13 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/teachers'
     | '/admin/users'
+    | '/m/inbox'
+    | '/m/learn'
+    | '/m/parent'
+    | '/m/progress'
+    | '/m/student'
+    | '/m/teacher'
+    | '/m/tutor'
     | '/parent/analytics'
     | '/parent/attendance'
     | '/parent/intelligence'
@@ -875,6 +971,7 @@ export interface FileRouteTypes {
     | '/student/study-path'
     | '/student/subjects'
     | '/admin'
+    | '/m'
     | '/parent'
     | '/student/ai-tutor/$threadId'
     | '/student/courses/$subjectId'
@@ -911,6 +1008,7 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/_authenticated/m'
     | '/_authenticated/parent'
     | '/_authenticated/settings'
     | '/api/chat'
@@ -934,6 +1032,13 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/support'
     | '/_authenticated/admin/teachers'
     | '/_authenticated/admin/users'
+    | '/_authenticated/m/inbox'
+    | '/_authenticated/m/learn'
+    | '/_authenticated/m/parent'
+    | '/_authenticated/m/progress'
+    | '/_authenticated/m/student'
+    | '/_authenticated/m/teacher'
+    | '/_authenticated/m/tutor'
     | '/_authenticated/parent/analytics'
     | '/_authenticated/parent/attendance'
     | '/_authenticated/parent/intelligence'
@@ -953,6 +1058,7 @@ export interface FileRouteTypes {
     | '/_authenticated/student/study-path'
     | '/_authenticated/student/subjects'
     | '/_authenticated/admin/'
+    | '/_authenticated/m/'
     | '/_authenticated/parent/'
     | '/_authenticated/student/ai-tutor/$threadId'
     | '/_authenticated/student/courses/$subjectId'
@@ -1225,6 +1331,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedParentRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/m': {
+      id: '/_authenticated/m'
+      path: '/m'
+      fullPath: '/m'
+      preLoaderRoute: typeof AuthenticatedMRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -1245,6 +1358,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/parent/'
       preLoaderRoute: typeof AuthenticatedParentIndexRouteImport
       parentRoute: typeof AuthenticatedParentRoute
+    }
+    '/_authenticated/m/': {
+      id: '/_authenticated/m/'
+      path: '/'
+      fullPath: '/m/'
+      preLoaderRoute: typeof AuthenticatedMIndexRouteImport
+      parentRoute: typeof AuthenticatedMRoute
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -1378,6 +1498,55 @@ declare module '@tanstack/react-router' {
       fullPath: '/parent/analytics'
       preLoaderRoute: typeof AuthenticatedParentAnalyticsRouteImport
       parentRoute: typeof AuthenticatedParentRoute
+    }
+    '/_authenticated/m/tutor': {
+      id: '/_authenticated/m/tutor'
+      path: '/tutor'
+      fullPath: '/m/tutor'
+      preLoaderRoute: typeof AuthenticatedMTutorRouteImport
+      parentRoute: typeof AuthenticatedMRoute
+    }
+    '/_authenticated/m/teacher': {
+      id: '/_authenticated/m/teacher'
+      path: '/teacher'
+      fullPath: '/m/teacher'
+      preLoaderRoute: typeof AuthenticatedMTeacherRouteImport
+      parentRoute: typeof AuthenticatedMRoute
+    }
+    '/_authenticated/m/student': {
+      id: '/_authenticated/m/student'
+      path: '/student'
+      fullPath: '/m/student'
+      preLoaderRoute: typeof AuthenticatedMStudentRouteImport
+      parentRoute: typeof AuthenticatedMRoute
+    }
+    '/_authenticated/m/progress': {
+      id: '/_authenticated/m/progress'
+      path: '/progress'
+      fullPath: '/m/progress'
+      preLoaderRoute: typeof AuthenticatedMProgressRouteImport
+      parentRoute: typeof AuthenticatedMRoute
+    }
+    '/_authenticated/m/parent': {
+      id: '/_authenticated/m/parent'
+      path: '/parent'
+      fullPath: '/m/parent'
+      preLoaderRoute: typeof AuthenticatedMParentRouteImport
+      parentRoute: typeof AuthenticatedMRoute
+    }
+    '/_authenticated/m/learn': {
+      id: '/_authenticated/m/learn'
+      path: '/learn'
+      fullPath: '/m/learn'
+      preLoaderRoute: typeof AuthenticatedMLearnRouteImport
+      parentRoute: typeof AuthenticatedMRoute
+    }
+    '/_authenticated/m/inbox': {
+      id: '/_authenticated/m/inbox'
+      path: '/inbox'
+      fullPath: '/m/inbox'
+      preLoaderRoute: typeof AuthenticatedMInboxRouteImport
+      parentRoute: typeof AuthenticatedMRoute
     }
     '/_authenticated/admin/users': {
       id: '/_authenticated/admin/users'
@@ -1571,6 +1740,32 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
+interface AuthenticatedMRouteChildren {
+  AuthenticatedMInboxRoute: typeof AuthenticatedMInboxRoute
+  AuthenticatedMLearnRoute: typeof AuthenticatedMLearnRoute
+  AuthenticatedMParentRoute: typeof AuthenticatedMParentRoute
+  AuthenticatedMProgressRoute: typeof AuthenticatedMProgressRoute
+  AuthenticatedMStudentRoute: typeof AuthenticatedMStudentRoute
+  AuthenticatedMTeacherRoute: typeof AuthenticatedMTeacherRoute
+  AuthenticatedMTutorRoute: typeof AuthenticatedMTutorRoute
+  AuthenticatedMIndexRoute: typeof AuthenticatedMIndexRoute
+}
+
+const AuthenticatedMRouteChildren: AuthenticatedMRouteChildren = {
+  AuthenticatedMInboxRoute: AuthenticatedMInboxRoute,
+  AuthenticatedMLearnRoute: AuthenticatedMLearnRoute,
+  AuthenticatedMParentRoute: AuthenticatedMParentRoute,
+  AuthenticatedMProgressRoute: AuthenticatedMProgressRoute,
+  AuthenticatedMStudentRoute: AuthenticatedMStudentRoute,
+  AuthenticatedMTeacherRoute: AuthenticatedMTeacherRoute,
+  AuthenticatedMTutorRoute: AuthenticatedMTutorRoute,
+  AuthenticatedMIndexRoute: AuthenticatedMIndexRoute,
+}
+
+const AuthenticatedMRouteWithChildren = AuthenticatedMRoute._addFileChildren(
+  AuthenticatedMRouteChildren,
+)
+
 interface AuthenticatedParentRouteChildren {
   AuthenticatedParentAnalyticsRoute: typeof AuthenticatedParentAnalyticsRoute
   AuthenticatedParentAttendanceRoute: typeof AuthenticatedParentAttendanceRoute
@@ -1659,6 +1854,7 @@ const AuthenticatedStudentTestsTestIdRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedMRoute: typeof AuthenticatedMRouteWithChildren
   AuthenticatedParentRoute: typeof AuthenticatedParentRouteWithChildren
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStudentAiTutorRoute: typeof AuthenticatedStudentAiTutorRouteWithChildren
@@ -1684,6 +1880,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedMRoute: AuthenticatedMRouteWithChildren,
   AuthenticatedParentRoute: AuthenticatedParentRouteWithChildren,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStudentAiTutorRoute:

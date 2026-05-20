@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          active: boolean
+          ai_generated: boolean
+          category: string
+          code: string
+          created_at: string
+          criteria: Json
+          description: string
+          icon: string
+          id: string
+          rarity: Database["public"]["Enums"]["achievement_rarity"]
+          title: string
+          xp_reward: number
+        }
+        Insert: {
+          active?: boolean
+          ai_generated?: boolean
+          category?: string
+          code: string
+          created_at?: string
+          criteria?: Json
+          description: string
+          icon?: string
+          id?: string
+          rarity?: Database["public"]["Enums"]["achievement_rarity"]
+          title: string
+          xp_reward?: number
+        }
+        Update: {
+          active?: boolean
+          ai_generated?: boolean
+          category?: string
+          code?: string
+          created_at?: string
+          criteria?: Json
+          description?: string
+          icon?: string
+          id?: string
+          rarity?: Database["public"]["Enums"]["achievement_rarity"]
+          title?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       ai_cache: {
         Row: {
           created_at: string
@@ -640,6 +685,45 @@ export type Database = {
           },
         ]
       }
+      daily_goals: {
+        Row: {
+          ai_message: string | null
+          completed_at: string | null
+          created_at: string
+          goal_date: string
+          id: string
+          minutes_done: number
+          student_id: string
+          target_minutes: number
+          target_xp: number
+          xp_earned: number
+        }
+        Insert: {
+          ai_message?: string | null
+          completed_at?: string | null
+          created_at?: string
+          goal_date: string
+          id?: string
+          minutes_done?: number
+          student_id: string
+          target_minutes?: number
+          target_xp?: number
+          xp_earned?: number
+        }
+        Update: {
+          ai_message?: string | null
+          completed_at?: string | null
+          created_at?: string
+          goal_date?: string
+          id?: string
+          minutes_done?: number
+          student_id?: string
+          target_minutes?: number
+          target_xp?: number
+          xp_earned?: number
+        }
+        Relationships: []
+      }
       demo_requests: {
         Row: {
           created_at: string
@@ -862,6 +946,48 @@ export type Database = {
           referral_reward?: string | null
           updated_at?: string
           waitlist_open?: boolean
+        }
+        Relationships: []
+      }
+      leaderboard_snapshots: {
+        Row: {
+          display_name: string
+          generated_at: string
+          grade: string | null
+          id: string
+          period: string
+          rank: number
+          scope: string
+          scope_key: string
+          streak: number
+          student_id: string
+          xp: number
+        }
+        Insert: {
+          display_name: string
+          generated_at?: string
+          grade?: string | null
+          id?: string
+          period?: string
+          rank: number
+          scope?: string
+          scope_key?: string
+          streak?: number
+          student_id: string
+          xp?: number
+        }
+        Update: {
+          display_name?: string
+          generated_at?: string
+          grade?: string | null
+          id?: string
+          period?: string
+          rank?: number
+          scope?: string
+          scope_key?: string
+          streak?: number
+          student_id?: string
+          xp?: number
         }
         Relationships: []
       }
@@ -1405,6 +1531,105 @@ export type Database = {
         }
         Relationships: []
       }
+      smart_challenges: {
+        Row: {
+          ai_generated: boolean
+          ai_rationale: string | null
+          claimed_at: string | null
+          completed_at: string | null
+          created_at: string
+          description: string
+          difficulty: number
+          expires_at: string
+          id: string
+          kind: Database["public"]["Enums"]["challenge_kind"]
+          progress: Json
+          student_id: string
+          target: Json
+          title: string
+          xp_reward: number
+        }
+        Insert: {
+          ai_generated?: boolean
+          ai_rationale?: string | null
+          claimed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          description: string
+          difficulty?: number
+          expires_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["challenge_kind"]
+          progress?: Json
+          student_id: string
+          target?: Json
+          title: string
+          xp_reward?: number
+        }
+        Update: {
+          ai_generated?: boolean
+          ai_rationale?: string | null
+          claimed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string
+          difficulty?: number
+          expires_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["challenge_kind"]
+          progress?: Json
+          student_id?: string
+          target?: Json
+          title?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
+      student_engagement: {
+        Row: {
+          burnout_score: number
+          current_streak: number
+          daily_goal_minutes: number
+          freeze_credits: number
+          last_active_date: string | null
+          level: number
+          longest_streak: number
+          motivation_profile: string
+          student_id: string
+          total_xp: number
+          updated_at: string
+          weekly_goal_xp: number
+        }
+        Insert: {
+          burnout_score?: number
+          current_streak?: number
+          daily_goal_minutes?: number
+          freeze_credits?: number
+          last_active_date?: string | null
+          level?: number
+          longest_streak?: number
+          motivation_profile?: string
+          student_id: string
+          total_xp?: number
+          updated_at?: string
+          weekly_goal_xp?: number
+        }
+        Update: {
+          burnout_score?: number
+          current_streak?: number
+          daily_goal_minutes?: number
+          freeze_credits?: number
+          last_active_date?: string | null
+          level?: number
+          longest_streak?: number
+          motivation_profile?: string
+          student_id?: string
+          total_xp?: number
+          updated_at?: string
+          weekly_goal_xp?: number
+        }
+        Relationships: []
+      }
       subjects: {
         Row: {
           class_id: string | null
@@ -1445,6 +1670,38 @@ export type Database = {
             columns: ["class_id"]
             isOneToOne: false
             referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          id: string
+          progress: Json
+          student_id: string
+          unlocked_at: string
+        }
+        Insert: {
+          achievement_id: string
+          id?: string
+          progress?: Json
+          student_id: string
+          unlocked_at?: string
+        }
+        Update: {
+          achievement_id?: string
+          id?: string
+          progress?: Json
+          student_id?: string
+          unlocked_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
             referencedColumns: ["id"]
           },
         ]
@@ -1556,6 +1813,36 @@ export type Database = {
           },
         ]
       }
+      xp_events: {
+        Row: {
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["xp_kind"]
+          metadata: Json
+          points: number
+          ref_id: string | null
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["xp_kind"]
+          metadata?: Json
+          points: number
+          ref_id?: string | null
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["xp_kind"]
+          metadata?: Json
+          points?: number
+          ref_id?: string | null
+          student_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1589,6 +1876,7 @@ export type Database = {
       }
     }
     Enums: {
+      achievement_rarity: "common" | "rare" | "epic" | "legendary"
       app_role: "student" | "parent" | "admin" | "teacher"
       bloom_level:
         | "remember"
@@ -1597,6 +1885,14 @@ export type Database = {
         | "analyze"
         | "evaluate"
         | "create"
+      challenge_kind:
+        | "minutes"
+        | "concepts"
+        | "recall"
+        | "quiz_score"
+        | "streak"
+        | "subject_focus"
+        | "weakness_kill"
       learning_state:
         | "not_started"
         | "studying"
@@ -1627,6 +1923,17 @@ export type Database = {
         | "micro_test"
         | "visual_explanation"
       resource_kind: "video" | "pdf" | "note" | "link"
+      xp_kind:
+        | "study"
+        | "recall"
+        | "quiz"
+        | "mastery_up"
+        | "streak_bonus"
+        | "daily_goal"
+        | "challenge"
+        | "achievement"
+        | "remediation"
+        | "manual"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1754,6 +2061,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      achievement_rarity: ["common", "rare", "epic", "legendary"],
       app_role: ["student", "parent", "admin", "teacher"],
       bloom_level: [
         "remember",
@@ -1762,6 +2070,15 @@ export const Constants = {
         "analyze",
         "evaluate",
         "create",
+      ],
+      challenge_kind: [
+        "minutes",
+        "concepts",
+        "recall",
+        "quiz_score",
+        "streak",
+        "subject_focus",
+        "weakness_kill",
       ],
       learning_state: [
         "not_started",
@@ -1796,6 +2113,18 @@ export const Constants = {
         "visual_explanation",
       ],
       resource_kind: ["video", "pdf", "note", "link"],
+      xp_kind: [
+        "study",
+        "recall",
+        "quiz",
+        "mastery_up",
+        "streak_bonus",
+        "daily_goal",
+        "challenge",
+        "achievement",
+        "remediation",
+        "manual",
+      ],
     },
   },
 } as const

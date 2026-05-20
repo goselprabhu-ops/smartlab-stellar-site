@@ -12,7 +12,7 @@ export function Logo({ className = "" }: LogoProps) {
       <img
         src={logoUrl}
         alt="Smart Lab Online"
-        className="h-10 w-auto md:h-12 lg:h-14"
+        className="h-15 w-auto md:h-18 lg:h-21"
         loading="eager"
         decoding="async"
       />

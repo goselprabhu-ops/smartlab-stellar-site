@@ -736,6 +736,72 @@ export type Database = {
           },
         ]
       }
+      ingestion_jobs: {
+        Row: {
+          chapter_id: string | null
+          class_id: string | null
+          completed_at: string | null
+          cost_cents: number | null
+          created_at: string
+          error: string | null
+          id: string
+          input_preview: string | null
+          model: string | null
+          requested_by: string | null
+          scope: string
+          source: string
+          stats: Json
+          status: string
+          subject_id: string | null
+          title: string | null
+          tokens_in: number | null
+          tokens_out: number | null
+          updated_at: string
+        }
+        Insert: {
+          chapter_id?: string | null
+          class_id?: string | null
+          completed_at?: string | null
+          cost_cents?: number | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          input_preview?: string | null
+          model?: string | null
+          requested_by?: string | null
+          scope?: string
+          source?: string
+          stats?: Json
+          status?: string
+          subject_id?: string | null
+          title?: string | null
+          tokens_in?: number | null
+          tokens_out?: number | null
+          updated_at?: string
+        }
+        Update: {
+          chapter_id?: string | null
+          class_id?: string | null
+          completed_at?: string | null
+          cost_cents?: number | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          input_preview?: string | null
+          model?: string | null
+          requested_by?: string | null
+          scope?: string
+          source?: string
+          stats?: Json
+          status?: string
+          subject_id?: string | null
+          title?: string | null
+          tokens_in?: number | null
+          tokens_out?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       launch_checklist: {
         Row: {
           category: string | null

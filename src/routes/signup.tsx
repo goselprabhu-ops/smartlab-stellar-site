@@ -20,7 +20,7 @@ import {
 type Role = "student" | "parent" | "teacher";
 
 const roles: { value: Role; label: string; desc: string; icon: typeof GraduationCap }[] = [
-  { value: "student", label: "Student", desc: "Ages 10–18", icon: GraduationCap },
+  { value: "student", label: "Student", desc: "Learn smarter", icon: GraduationCap },
   { value: "parent", label: "Parent", desc: "Track your child", icon: Users },
   { value: "teacher", label: "Teacher", desc: "Run classrooms", icon: BookUser },
 ];

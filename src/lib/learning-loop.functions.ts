@@ -182,6 +182,8 @@ export const recordEvaluation = createServerFn({ method: "POST" })
 // =========================================================
 const WeaknessSchema = z.object({
   tags: z.array(z.string()).default([]),
+  subSkills: z.array(z.object({ name: z.string(), severity: z.number().min(0).max(1) })).default([]),
+  rootCauses: z.array(z.string()).default([]),
   confidence: z.number().min(0).max(1),
   notes: z.string().default(""),
   mastered: z.boolean(),
@@ -196,59 +198,129 @@ export const analyseWeakness = createServerFn({ method: "POST" })
     const mc = await getMicroConcept(supabase, data.microConceptId);
     const session = await getOrCreateSession(supabase, userId, data.microConceptId);
 
-    const [{ data: recalls }, { data: evals }] = await Promise.all([
+    // Pull a broader window so trend + sub-skill rollup is real.
+    const [{ data: recalls }, { data: evals }, { data: priorWeakness }] = await Promise.all([
       supabase
         .from("recollection_attempts")
         .select("ai_score, ai_feedback, created_at")
         .eq("session_id", session.id)
         .order("created_at", { ascending: false })
-        .limit(3),
+        .limit(8),
       supabase
         .from("evaluation_attempts")
         .select("score, total, per_question, created_at")
         .eq("session_id", session.id)
         .order("created_at", { ascending: false })
-        .limit(3),
+        .limit(8),
+      supabase
+        .from("weakness_profile")
+        .select("weakness_tags, confidence, notes, updated_at")
+        .eq("student_id", userId)
+        .eq("micro_concept_id", data.microConceptId)
+        .maybeSingle(),
     ]);
 
+    const recallScores = (recalls ?? []).map((r: any) => Number(r.ai_score) || 0);
+    const evalScores = (evals ?? [])
+      .map((e: any) => (e.total > 0 ? Number(e.score) / Number(e.total) : 0));
+    const recallAvg = recallScores.length
+      ? recallScores.reduce((a, b) => a + b, 0) / recallScores.length
+      : 0;
+    const evalAvg = evalScores.length
+      ? evalScores.reduce((a, b) => a + b, 0) / evalScores.length
+      : 0;
     const lastRecall = (recalls ?? [])[0];
     const lastEval = (evals ?? [])[0];
-    const recallScore = Number(lastRecall?.ai_score ?? 0);
-    const evalScore =
+    const lastRecallScore = Number(lastRecall?.ai_score) || 0;
+    const lastEvalScore =
       lastEval && lastEval.total > 0 ? Number(lastEval.score) / Number(lastEval.total) : 0;
-    const heuristicMastered = recallScore >= 0.7 && evalScore >= 0.8;
+
+    // Per-sub-skill error tally across recent eval attempts.
+    const subSkillErrors = new Map<string, number>();
+    for (const e of evals ?? []) {
+      for (const q of ((e.per_question as any[]) ?? [])) {
+        if (q?.correct === false && q?.subSkill) {
+          subSkillErrors.set(q.subSkill, (subSkillErrors.get(q.subSkill) ?? 0) + 1);
+        }
+      }
+    }
+    const subSkillRollup = Array.from(subSkillErrors.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([name, count]) => ({ name, count }));
+
+    // Heuristic mastery: needs recent AND sustained performance.
+    const heuristicMastered =
+      lastRecallScore >= 0.7 &&
+      lastEvalScore >= 0.8 &&
+      recallAvg >= 0.65 &&
+      evalAvg >= 0.7;
 
     const result = await aiJson<WeaknessResult>([
       {
         role: "system",
         content:
-          "You diagnose a student's weakness on a single micro-concept based on their latest recall + quiz signals. " +
-          'Return strict JSON: {"tags":[short labels],"confidence":0..1,"notes":"plain-English diagnosis","mastered":boolean}. ' +
-          "Tags should be short (2-4 words), specific sub-skills (e.g. 'sign errors', 'formula confusion').",
+          "You diagnose a student's weakness on a single micro-concept using multi-attempt signals. " +
+          'Return strict JSON: {"tags":[short labels],"subSkills":[{"name":"","severity":0..1}],' +
+          '"rootCauses":[short phrases],"confidence":0..1,"notes":"plain-English diagnosis (2-3 sentences)","mastered":boolean}. ' +
+          "Tags should be short (2-4 words) specific sub-skills (e.g. 'sign errors', 'formula confusion'). " +
+          "rootCauses must explain WHY the gap exists (e.g. 'confuses prerequisite X'). " +
+          "Only set mastered=true if BOTH heuristicMastered=true AND the trend is non-decreasing.",
       },
       {
         role: "user",
         content: JSON.stringify({
           microConcept: { title: mc.title, objective: mc.learning_objective },
-          recallScore,
-          recallFeedback: lastRecall?.ai_feedback ?? null,
-          evalScore,
-          perQuestion: lastEval?.per_question ?? [],
+          recallAvg,
+          evalAvg,
+          lastRecallScore,
+          lastEvalScore,
+          recallTrend: recallScores.slice(0, 4),
+          evalTrend: evalScores.slice(0, 4),
+          lastRecallFeedback: lastRecall?.ai_feedback ?? null,
+          subSkillErrors: subSkillRollup,
+          priorWeakness: priorWeakness ?? null,
           heuristicMastered,
         }),
       },
     ]);
     const parsed = WeaknessSchema.parse(result);
     const mastered = parsed.mastered && heuristicMastered;
-    const mastery = Math.max(0, Math.min(1, 0.5 * recallScore + 0.5 * evalScore));
+
+    // Blended mastery — weights sustained performance higher than the last shot.
+    const mastery = Math.max(
+      0,
+      Math.min(
+        1,
+        0.30 * lastRecallScore +
+          0.30 * lastEvalScore +
+          0.20 * recallAvg +
+          0.20 * evalAvg,
+      ),
+    );
+
+    // Merge prior tags so weakness profile compounds across attempts.
+    const mergedTags = Array.from(
+      new Set<string>([...(parsed.tags ?? []), ...((priorWeakness as any)?.weakness_tags ?? [])]),
+    ).slice(0, 12);
+
+    const richNotes = [
+      parsed.notes,
+      parsed.rootCauses?.length ? `Root causes: ${parsed.rootCauses.join("; ")}` : "",
+      parsed.subSkills?.length
+        ? `Sub-skills: ${parsed.subSkills.map((s) => `${s.name} (${Math.round(s.severity * 100)}%)`).join(", ")}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     await supabase.from("weakness_profile").upsert(
       {
         student_id: userId,
         micro_concept_id: data.microConceptId,
-        weakness_tags: parsed.tags,
+        weakness_tags: mergedTags,
         confidence: parsed.confidence,
-        notes: parsed.notes,
+        notes: richNotes,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "student_id,micro_concept_id" },
@@ -263,7 +335,36 @@ export const analyseWeakness = createServerFn({ method: "POST" })
       })
       .eq("id", session.id);
 
-    return { sessionId: session.id, mastered, mastery, weakness: parsed };
+    // Update concept_mastery streak/confidence so retention math picks it up.
+    const { data: existingMastery } = await supabase
+      .from("concept_mastery")
+      .select("streak")
+      .eq("student_id", userId)
+      .eq("micro_concept_id", data.microConceptId)
+      .maybeSingle();
+    const nextStreak = mastered ? (existingMastery?.streak ?? 0) + 1 : 0;
+    await supabase
+      .from("concept_mastery")
+      .upsert(
+        {
+          student_id: userId,
+          micro_concept_id: data.microConceptId,
+          mastery,
+          confidence: parsed.confidence,
+          streak: nextStreak,
+          last_practiced_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "student_id,micro_concept_id" },
+      );
+
+    return {
+      sessionId: session.id,
+      mastered,
+      mastery,
+      weakness: { ...parsed, tags: mergedTags },
+      signals: { recallAvg, evalAvg, lastRecallScore, lastEvalScore, subSkillRollup },
+    };
   });
 
 // =========================================================

@@ -99,6 +99,7 @@ import { Route as AuthenticatedAdminActivityRouteImport } from './routes/_authen
 import { Route as AuthenticatedStudentTestsIndexRouteImport } from './routes/_authenticated/student/tests.index'
 import { Route as AuthenticatedStudentCoursesIndexRouteImport } from './routes/_authenticated/student/courses.index'
 import { Route as AuthenticatedStudentAiTutorIndexRouteImport } from './routes/_authenticated/student/ai-tutor.index'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as AuthenticatedStudentTestsTestIdRouteImport } from './routes/_authenticated/student/tests.$testId'
 import { Route as AuthenticatedStudentRemediationMicroConceptIdRouteImport } from './routes/_authenticated/student/remediation.$microConceptId'
 import { Route as AuthenticatedStudentLearnMicroConceptIdRouteImport } from './routes/_authenticated/student/learn.$microConceptId'
@@ -600,6 +601,12 @@ const AuthenticatedStudentAiTutorIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedStudentAiTutorRoute,
   } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedStudentTestsTestIdRoute =
   AuthenticatedStudentTestsTestIdRouteImport.update({
     id: '/student/tests/$testId',
@@ -735,6 +742,7 @@ export interface FileRoutesByFullPath {
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/student/tests/$testId': typeof AuthenticatedStudentTestsTestIdRouteWithChildren
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/student/ai-tutor/': typeof AuthenticatedStudentAiTutorIndexRoute
   '/student/courses/': typeof AuthenticatedStudentCoursesIndexRoute
   '/student/tests/': typeof AuthenticatedStudentTestsIndexRoute
@@ -827,6 +835,7 @@ export interface FileRoutesByTo {
   '/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/student/tests/$testId': typeof AuthenticatedStudentTestsTestIdRouteWithChildren
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/student/ai-tutor': typeof AuthenticatedStudentAiTutorIndexRoute
   '/student/courses': typeof AuthenticatedStudentCoursesIndexRoute
   '/student/tests': typeof AuthenticatedStudentTestsIndexRoute
@@ -927,6 +936,7 @@ export interface FileRoutesById {
   '/_authenticated/student/learn/$microConceptId': typeof AuthenticatedStudentLearnMicroConceptIdRoute
   '/_authenticated/student/remediation/$microConceptId': typeof AuthenticatedStudentRemediationMicroConceptIdRoute
   '/_authenticated/student/tests/$testId': typeof AuthenticatedStudentTestsTestIdRouteWithChildren
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/_authenticated/student/ai-tutor/': typeof AuthenticatedStudentAiTutorIndexRoute
   '/_authenticated/student/courses/': typeof AuthenticatedStudentCoursesIndexRoute
   '/_authenticated/student/tests/': typeof AuthenticatedStudentTestsIndexRoute
@@ -1027,6 +1037,7 @@ export interface FileRouteTypes {
     | '/student/learn/$microConceptId'
     | '/student/remediation/$microConceptId'
     | '/student/tests/$testId'
+    | '/lovable/email/queue/process'
     | '/student/ai-tutor/'
     | '/student/courses/'
     | '/student/tests/'
@@ -1119,6 +1130,7 @@ export interface FileRouteTypes {
     | '/student/learn/$microConceptId'
     | '/student/remediation/$microConceptId'
     | '/student/tests/$testId'
+    | '/lovable/email/queue/process'
     | '/student/ai-tutor'
     | '/student/courses'
     | '/student/tests'
@@ -1218,6 +1230,7 @@ export interface FileRouteTypes {
     | '/_authenticated/student/learn/$microConceptId'
     | '/_authenticated/student/remediation/$microConceptId'
     | '/_authenticated/student/tests/$testId'
+    | '/lovable/email/queue/process'
     | '/_authenticated/student/ai-tutor/'
     | '/_authenticated/student/courses/'
     | '/_authenticated/student/tests/'
@@ -1256,6 +1269,7 @@ export interface RootRouteChildren {
   ProductStudentDashboardRoute: typeof ProductStudentDashboardRoute
   ProductStudyPathRoute: typeof ProductStudyPathRoute
   ProductTestEngineRoute: typeof ProductTestEngineRoute
+  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1890,6 +1904,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentAiTutorIndexRouteImport
       parentRoute: typeof AuthenticatedStudentAiTutorRoute
     }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/student/tests/$testId': {
       id: '/_authenticated/student/tests/$testId'
       path: '/student/tests/$testId'
@@ -2215,6 +2236,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductStudentDashboardRoute: ProductStudentDashboardRoute,
   ProductStudyPathRoute: ProductStudyPathRoute,
   ProductTestEngineRoute: ProductTestEngineRoute,
+  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

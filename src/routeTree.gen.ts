@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
+import { Route as SubscribeRouteImport } from './routes/subscribe'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SchoolsRouteImport } from './routes/schools'
@@ -112,6 +113,11 @@ import { Route as AuthenticatedStudentTestsTestIdResultsAttemptIdRouteImport } f
 const VerifyOtpRoute = VerifyOtpRouteImport.update({
   id: '/verify-otp',
   path: '/verify-otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscribeRoute = SubscribeRouteImport.update({
+  id: '/subscribe',
+  path: '/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -677,6 +683,7 @@ export interface FileRoutesByFullPath {
   '/schools': typeof SchoolsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subscribe': typeof SubscribeRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -777,6 +784,7 @@ export interface FileRoutesByTo {
   '/schools': typeof SchoolsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subscribe': typeof SubscribeRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -873,6 +881,7 @@ export interface FileRoutesById {
   '/schools': typeof SchoolsRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subscribe': typeof SubscribeRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -975,6 +984,7 @@ export interface FileRouteTypes {
     | '/schools'
     | '/signup'
     | '/sitemap.xml'
+    | '/subscribe'
     | '/verify-otp'
     | '/admin'
     | '/dashboard'
@@ -1075,6 +1085,7 @@ export interface FileRouteTypes {
     | '/schools'
     | '/signup'
     | '/sitemap.xml'
+    | '/subscribe'
     | '/verify-otp'
     | '/dashboard'
     | '/settings'
@@ -1170,6 +1181,7 @@ export interface FileRouteTypes {
     | '/schools'
     | '/signup'
     | '/sitemap.xml'
+    | '/subscribe'
     | '/verify-otp'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
@@ -1272,6 +1284,7 @@ export interface RootRouteChildren {
   SchoolsRoute: typeof SchoolsRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SubscribeRoute: typeof SubscribeRoute
   VerifyOtpRoute: typeof VerifyOtpRoute
   ApiChatRoute: typeof ApiChatRoute
   ProductAiTutorRoute: typeof ProductAiTutorRoute
@@ -1292,6 +1305,13 @@ declare module '@tanstack/react-router' {
       path: '/verify-otp'
       fullPath: '/verify-otp'
       preLoaderRoute: typeof VerifyOtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscribe': {
+      id: '/subscribe'
+      path: '/subscribe'
+      fullPath: '/subscribe'
+      preLoaderRoute: typeof SubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -2247,6 +2267,7 @@ const rootRouteChildren: RootRouteChildren = {
   SchoolsRoute: SchoolsRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SubscribeRoute: SubscribeRoute,
   VerifyOtpRoute: VerifyOtpRoute,
   ApiChatRoute: ApiChatRoute,
   ProductAiTutorRoute: ProductAiTutorRoute,

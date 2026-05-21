@@ -116,6 +116,9 @@ const signupSchema = z.object({
   parent_full_name: z.string().trim().min(2).max(100),
   parent_email: z.string().trim().email(),
   parent_mobile: z.string().regex(/^[6-9]\d{9}$/),
+  class_id: z.string().uuid(),
+  board: z.enum(["CBSE", "ICSE", "State", "IB", "IGCSE", "Other"]),
+  stream: z.enum(["science", "commerce", "humanities"]).optional().or(z.literal("")),
   consent_user_agent: z.string().max(500).optional(),
 });
 
@@ -142,12 +145,16 @@ export const signupStudentWithUsername = createServerFn({ method: "POST" })
         parent_full_name: data.parent_full_name,
         parent_email: data.parent_email,
         parent_mobile: data.parent_mobile,
+        class_id: data.class_id,
+        board: data.board,
+        stream: data.stream || null,
         parent_consent: true,
         terms_accepted: true,
         privacy_accepted: true,
         consent_user_agent: data.consent_user_agent,
       },
     });
+
     if (error || !created.user) throw new Error(error?.message ?? "Signup failed");
     return { email, user_id: created.user.id };
   });

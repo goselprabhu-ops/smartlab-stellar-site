@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { getStudentDashboard } from "@/lib/dashboard.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { StartStudyingButton } from "@/components/StartStudyingButton";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   beforeLoad: async ({ location }) => {

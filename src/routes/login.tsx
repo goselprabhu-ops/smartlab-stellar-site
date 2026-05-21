@@ -71,6 +71,7 @@ function LoginPage() {
       } catch {
         nav({ to: redirect });
       }
+    } catch (err) {
       toast.error((err as Error).message ?? "Sign-in failed");
     } finally {
       setLoading(false);

@@ -58,11 +58,18 @@ const studentStep1 = z.object({
 });
 
 const studentStep2 = z.object({
+  class_id: z.string().uuid("Select your class"),
+  board: z.enum(["CBSE", "ICSE", "State", "IB", "IGCSE", "Other"]),
+  stream: z.string().optional(),
+});
+
+const studentStep3 = z.object({
   parent_full_name: z.string().trim().min(2, "Enter parent's full name").max(100),
   parent_email: z.string().trim().email("Enter a valid email"),
   parent_mobile: inMobile,
   username: z.string().trim().regex(USERNAME_RE, "3–20 chars: letters, numbers, . _ -"),
 });
+
 
 export const Route = createFileRoute("/signup")({
   head: () => ({

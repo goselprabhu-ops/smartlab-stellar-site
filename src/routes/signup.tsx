@@ -260,6 +260,10 @@ type StudentState = {
   date_of_birth: string;
   student_email: string;
   student_phone: string;
+  class_id: string;
+  class_label: string;
+  board: "CBSE" | "ICSE" | "State" | "IB" | "IGCSE" | "Other";
+  stream: "" | "science" | "commerce" | "humanities";
   parent_full_name: string;
   parent_email: string;
   parent_mobile: string;
@@ -267,25 +271,30 @@ type StudentState = {
   password: string;
 };
 
+type ClassRow = { id: string; label: string; order_index: number };
+
 function StudentWizard() {
   const nav = useNavigate();
   const suggestFn = useServerFn(suggestUsername);
   const checkFn = useServerFn(checkUsername);
   const signupFn = useServerFn(signupStudentWithUsername);
 
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [form, setForm] = useState<StudentState>({
     student_full_name: "", date_of_birth: "",
     student_email: "", student_phone: "",
+    class_id: "", class_label: "", board: "CBSE", stream: "",
     parent_full_name: "", parent_email: "", parent_mobile: "",
     username: "",
     password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [classes, setClasses] = useState<ClassRow[]>([]);
   const [usernameStatus, setUsernameStatus] = useState<
     { state: "idle" } | { state: "checking" } | { state: "ok" } | { state: "taken"; msg: string }
   >({ state: "idle" });
   const usernameTouched = useRef(false);
+
 
   const [consentParent, setConsentParent] = useState(false);
   const [consentTerms, setConsentTerms] = useState(false);

@@ -13,7 +13,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { getStudentDashboard } from "@/lib/dashboard.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import { StartStudyingButton } from "@/components/StartStudyingButton";
+
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   beforeLoad: async ({ location }) => {
@@ -113,8 +113,6 @@ function HeroGreeting({ name, streak, goalPct }: { name: string; streak: number;
           <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-600 dark:text-orange-400">
             <Flame className="h-3.5 w-3.5" /> {streak}-day streak
           </span>
-          <StartStudyingButton />
-
         </div>
       </div>
     </div>

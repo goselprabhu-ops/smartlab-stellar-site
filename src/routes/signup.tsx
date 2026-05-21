@@ -366,6 +366,10 @@ function StudentWizard() {
       setErrors(map);
       return;
     }
+    if (usernameStatus.state === "taken") {
+      setErrors({ username: usernameStatus.msg });
+      return;
+    }
     setErrors({});
     setStep(3);
   };
@@ -381,33 +385,40 @@ function StudentWizard() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email: form.parent_email,
-      password: form.password,
-      options: {
-        emailRedirectTo: window.location.origin + "/onboarding",
+    try {
+      const { email } = await signupFn({
         data: {
-          role: "student",
-          full_name: form.student_full_name,
+          username: form.username,
+          password: form.password,
           student_full_name: form.student_full_name,
-          student_email: form.student_email || null,
-          student_phone: form.student_phone || null,
           date_of_birth: form.date_of_birth,
+          student_email: form.student_email || "",
+          student_phone: form.student_phone || "",
           parent_full_name: form.parent_full_name,
           parent_email: form.parent_email,
-          parent_mobile: form.parent_mobile || null,
-          parent_consent: true,
-          terms_accepted: true,
-          privacy_accepted: true,
+          parent_mobile: form.parent_mobile,
           consent_user_agent: navigator.userAgent,
         },
-      },
-    });
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Account created");
-    nav({ to: "/onboarding" });
+      });
+      // Sign in with the synthetic email returned by the server
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email,
+        password: form.password,
+      });
+      if (signInErr) {
+        toast.success("Account created — please sign in");
+        nav({ to: "/login" });
+        return;
+      }
+      toast.success(`Account created. Your username is ${form.username}`);
+      nav({ to: "/onboarding" });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   const s = strength(form.password);
   const strengthLabel = ["Too weak", "Weak", "Okay", "Strong", "Excellent"][s];

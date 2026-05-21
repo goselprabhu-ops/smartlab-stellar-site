@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import {
   Mail, Lock, User, AtSign, GraduationCap, Users, BookUser, Shield, Loader2, Check,
-  Calendar, Phone, ArrowLeft, ArrowRight, RefreshCw,
+  Calendar, Phone, ArrowLeft, ArrowRight, RefreshCw, Lock as LockIcon,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import {

@@ -18,7 +18,7 @@ export const getStudyAccess = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<StudyAccess> => {
     const { supabase, userId } = context;
-    const [{ data: sub }, { data: prof }] = await Promise.all([
+    const [{ data: sub }, { data: prof }, { data: rpcAccess }] = await Promise.all([
       supabase
         .from("subscriptions")
         .select("plan,status,trial_ends_at,current_period_end")
@@ -29,17 +29,10 @@ export const getStudyAccess = createServerFn({ method: "GET" })
         .select("class_id, onboarding_completed_at")
         .eq("user_id", userId)
         .maybeSingle(),
+      supabase.rpc("has_active_access", { _user: userId }),
     ]);
 
-    const now = Date.now();
-    const trialing =
-      sub?.status === "trialing" &&
-      !!sub.trial_ends_at &&
-      new Date(sub.trial_ends_at).getTime() > now;
-    const active =
-      sub?.status === "active" &&
-      (!sub.current_period_end || new Date(sub.current_period_end).getTime() > now);
-    const hasAccess = trialing || active;
+    const hasAccess = rpcAccess === true;
     const onboarded = !!prof?.onboarding_completed_at;
     const hasClass = !!prof?.class_id;
 

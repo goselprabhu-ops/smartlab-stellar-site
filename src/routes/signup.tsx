@@ -305,6 +305,27 @@ function StudentWizard() {
   const set = <K extends keyof StudentState>(k: K, v: StudentState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
+  // Load class list (public read)
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("classes")
+      .select("id, label, order_index")
+      .order("order_index")
+      .then(({ data }) => {
+        if (cancelled) return;
+        setClasses((data ?? []) as ClassRow[]);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  const classNum = useMemo(() => {
+    const m = form.class_label.match(/\d+/);
+    return m ? parseInt(m[0], 10) : NaN;
+  }, [form.class_label]);
+  const showStream = classNum === 11 || classNum === 12;
+
+
   // Auto-suggest username when student name + parent email are known
   useEffect(() => {
     if (usernameTouched.current) return;

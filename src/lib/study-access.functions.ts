@@ -67,22 +67,44 @@ export const startTrial = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
-    const { data: existing } = await supabase
-      .from("subscriptions")
-      .select("id, status, trial_started_at")
+
+    // Load parent identifiers from profile
+    const { data: prof } = await supabase
+      .from("profiles")
+      .select("parent_email, parent_mobile")
       .eq("user_id", userId)
       .maybeSingle();
 
-    if (existing?.trial_started_at) {
+    const emailNorm = (prof?.parent_email ?? "").trim().toLowerCase();
+    const mobileNorm = (prof?.parent_mobile ?? "").replace(/\D/g, "");
+
+    if (!emailNorm || !mobileNorm) {
+      throw new Error("Parent email and mobile are required before starting a trial.");
+    }
+
+    // Use admin client via RPC-safe check: query ledger for either match
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: prior } = await supabaseAdmin
+      .from("parent_trial_ledger")
+      .select("id, trial_ends_at, first_user_id")
+      .or(`parent_email_norm.eq.${emailNorm},parent_mobile_norm.eq.${mobileNorm}`)
+      .maybeSingle();
+
+    if (prior) {
+      // If this same family already has a trial — siblings automatically share access.
+      if (prior.first_user_id !== userId) {
+        return { ok: true, trialEndsAt: prior.trial_ends_at, shared: true };
+      }
       throw new Error(
-        "You have already used your free trial. Please choose a paid plan.",
+        "A free trial has already been used for this parent email or mobile. Please choose a paid plan.",
       );
     }
 
     const now = new Date();
     const trialEnds = new Date(now.getTime() + TRIAL_DAYS * 86400 * 1000);
 
-    const { error } = await supabase
+    const { error: subErr } = await supabaseAdmin
       .from("subscriptions")
       .upsert(
         {
@@ -94,7 +116,25 @@ export const startTrial = createServerFn({ method: "POST" })
         },
         { onConflict: "user_id" },
       );
-    if (error) throw new Error(error.message);
+    if (subErr) throw new Error(subErr.message);
+
+    const { error: ledgerErr } = await supabaseAdmin
+      .from("parent_trial_ledger")
+      .insert({
+        parent_email_norm: emailNorm,
+        parent_mobile_norm: mobileNorm,
+        first_user_id: userId,
+        plan: data.plan,
+        trial_started_at: now.toISOString(),
+        trial_ends_at: trialEnds.toISOString(),
+      });
+    if (ledgerErr) {
+      // Unique violation = race; treat as already used
+      throw new Error(
+        "A free trial has already been used for this parent email or mobile.",
+      );
+    }
+
     return { ok: true, trialEndsAt: trialEnds.toISOString() };
   });
 

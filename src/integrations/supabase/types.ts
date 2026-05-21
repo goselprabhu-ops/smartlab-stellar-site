@@ -1587,6 +1587,8 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          board: string | null
+          class_id: string | null
           consent_ip: string | null
           consent_user_agent: string | null
           created_at: string
@@ -1594,6 +1596,7 @@ export type Database = {
           full_name: string | null
           grade: string | null
           id: string
+          onboarding_completed_at: string | null
           parent_consent_accepted_at: string | null
           parent_email: string | null
           parent_full_name: string | null
@@ -1601,6 +1604,7 @@ export type Database = {
           parent_mobile_verified_at: string | null
           privacy_accepted_at: string | null
           school: string | null
+          stream: string | null
           student_email: string | null
           student_full_name: string | null
           student_phone: string | null
@@ -1611,6 +1615,8 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          board?: string | null
+          class_id?: string | null
           consent_ip?: string | null
           consent_user_agent?: string | null
           created_at?: string
@@ -1618,6 +1624,7 @@ export type Database = {
           full_name?: string | null
           grade?: string | null
           id?: string
+          onboarding_completed_at?: string | null
           parent_consent_accepted_at?: string | null
           parent_email?: string | null
           parent_full_name?: string | null
@@ -1625,6 +1632,7 @@ export type Database = {
           parent_mobile_verified_at?: string | null
           privacy_accepted_at?: string | null
           school?: string | null
+          stream?: string | null
           student_email?: string | null
           student_full_name?: string | null
           student_phone?: string | null
@@ -1635,6 +1643,8 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          board?: string | null
+          class_id?: string | null
           consent_ip?: string | null
           consent_user_agent?: string | null
           created_at?: string
@@ -1642,6 +1652,7 @@ export type Database = {
           full_name?: string | null
           grade?: string | null
           id?: string
+          onboarding_completed_at?: string | null
           parent_consent_accepted_at?: string | null
           parent_email?: string | null
           parent_full_name?: string | null
@@ -1649,6 +1660,7 @@ export type Database = {
           parent_mobile_verified_at?: string | null
           privacy_accepted_at?: string | null
           school?: string | null
+          stream?: string | null
           student_email?: string | null
           student_full_name?: string | null
           student_phone?: string | null
@@ -1657,7 +1669,15 @@ export type Database = {
           user_id?: string
           username?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       progress: {
         Row: {
@@ -2184,6 +2204,42 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string | null
+          id: string
+          plan: Database["public"]["Enums"]["subscription_plan"] | null
+          status: Database["public"]["Enums"]["subscription_status"]
+          trial_ends_at: string | null
+          trial_started_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          plan?: Database["public"]["Enums"]["subscription_plan"] | null
+          status?: Database["public"]["Enums"]["subscription_status"]
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          plan?: Database["public"]["Enums"]["subscription_plan"] | null
+          status?: Database["public"]["Enums"]["subscription_status"]
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -2397,6 +2453,7 @@ export type Database = {
           question_id: string
         }[]
       }
+      has_active_access: { Args: { _user: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2504,6 +2561,13 @@ export type Database = {
       resource_kind: "video" | "pdf" | "note" | "link"
       school_member_role: "school_admin" | "teacher" | "student" | "parent"
       school_plan: "free" | "pro" | "enterprise"
+      subscription_plan: "monthly" | "yearly"
+      subscription_status:
+        | "none"
+        | "trialing"
+        | "active"
+        | "expired"
+        | "canceled"
       xp_kind:
         | "study"
         | "recall"
@@ -2698,6 +2762,14 @@ export const Constants = {
       resource_kind: ["video", "pdf", "note", "link"],
       school_member_role: ["school_admin", "teacher", "student", "parent"],
       school_plan: ["free", "pro", "enterprise"],
+      subscription_plan: ["monthly", "yearly"],
+      subscription_status: [
+        "none",
+        "trialing",
+        "active",
+        "expired",
+        "canceled",
+      ],
       xp_kind: [
         "study",
         "recall",

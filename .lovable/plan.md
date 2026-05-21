@@ -1,57 +1,80 @@
-
 ## Goal
-Make signup compliant for minors (10–18, India): collect student + parent details, verify parent mobile via MSG91 OTP (+91, 10 digits), and require parent consent + T&C acceptance before account creation.
 
-## 1. Database (migration)
-Extend `profiles` with compliance columns:
-- `date_of_birth` (date, not null for new signups)
-- `student_full_name`, `student_email` (nullable), `student_phone` (nullable, 10-digit IN)
-- `parent_full_name`, `parent_email`, `parent_mobile` (10-digit IN, not null)
-- `parent_mobile_verified_at` (timestamptz)
-- `parent_consent_accepted_at`, `terms_accepted_at`, `privacy_accepted_at` (timestamptz)
-- `consent_ip`, `consent_user_agent` (audit trail)
+Turn "Start studying" into a smart gateway that respects subscription, trial, and onboarding state — and lock the student's class/board/stream at registration.
 
-New table `otp_verifications` (server-only, no client RLS read):
-- `id`, `mobile` (E.164 +91XXXXXXXXXX), `purpose` ('parent_signup'), `request_id` (MSG91), `attempts`, `verified_at`, `expires_at`, `created_at`
-- RLS: deny all to authenticated; only service role writes (server fn uses admin client).
+---
 
-Validation trigger on `profiles`: reject insert/update where `date_of_birth` implies age <10 or >18, and where parent fields missing.
+## 1. Database changes (one migration)
 
-## 2. MSG91 server functions (`src/lib/msg91.functions.ts`)
-Using `MSG91_AUTH_KEY` + `MSG91_OTP_TEMPLATE_ID` (already saved as secrets). Calls are server-only via `createServerFn`, no client exposure.
+**`subscriptions`** (one row per user)
+- `user_id` (unique), `plan` (`monthly` | `yearly` | `null`), `status` (`none` | `trialing` | `active` | `expired` | `canceled`), `trial_started_at`, `trial_ends_at`, `current_period_end`, timestamps
+- RLS: user reads own; admin all; only server (service role) writes
+- Helper RPC `has_active_access(uid)` → bool (trialing+not expired, or active)
 
-- `sendParentOtp({ mobile })` — validates 10-digit IN number, rate-limits (1 per 60s per mobile via `otp_verifications`), POSTs `https://control.msg91.com/api/v5/otp?template_id=...&mobile=91XXXXXXXXXX&otp_length=6&otp_expiry=10`, stores `request_id`.
-- `verifyParentOtp({ mobile, otp })` — GETs `https://control.msg91.com/api/v5/otp/verify?mobile=91X...&otp=XXXXXX`, marks `verified_at`. Max 5 attempts.
-- `resendParentOtp({ mobile })` — POST `/api/v5/otp/retry?retrytype=text`.
+**`profiles`** — add locked academic fields
+- `class_id uuid` (FK classes), `board text` (CBSE/ICSE/State/IB/IGCSE), `stream text` (science/commerce/humanities, only for 11–12), `onboarding_completed_at timestamptz`
+- These three are write-once after first set (enforced by trigger; admin bypass)
 
-## 3. Signup flow rewrite (`src/routes/signup.tsx`)
-Three-step wizard inside existing `AuthShell` (no new auth shell):
+**`classes`/`subjects`** — already exist. Content readiness = at least one chapter with `published=true` linked through subject. No new flag.
 
-**Step 1 — Student info**
-- Role selector (student / parent / teacher) [teacher/parent skip to old flow]
-- Student full name *, DOB * (date picker, must compute age 10–18), student email (optional), student phone (optional, 10-digit IN)
+---
 
-**Step 2 — Parent info + OTP**
-- Parent full name *, parent email *, parent mobile * (+91 prefix, 10 digits)
-- "Send OTP" → calls `sendParentOtp`
-- 6-digit OTP input (using existing `ui/input-otp`), Verify + Resend (60s cooldown)
-- Must show "verified ✓" before continuing
+## 2. Signup wizard — collect Class + Board + (Stream)
 
-**Step 3 — Consent + password**
-- Password (existing strength meter)
-- Checkboxes (all required): "I am the parent/legal guardian of the student", "I accept the Terms of Service", "I accept the Privacy Policy & consent to processing my child's data per DPDP Act 2023"
-- Submit → `supabase.auth.signUp` with user_metadata containing all fields + `parent_mobile_verified: true` flag → server-side trigger writes to profiles
+Edit `src/routes/signup.tsx` student wizard:
+- New step "Academic": Class (6–12 from `classes` table), Board, Stream (only shown if Class is 11 or 12)
+- Pass these in `raw_user_meta_data`; `handle_new_user` trigger writes them into `profiles`
+- Add UI copy: "This cannot be changed later. Email support@smartlabonline.com to switch."
 
-Teacher/parent self-signup: keep current simple flow (no minor compliance).
+Lock UI in Settings: show class/board/stream as read-only with the support note.
 
-## 4. Files touched
-- `supabase/migrations/...` (new)
-- `src/lib/msg91.functions.ts` (new)
-- `src/lib/schemas.ts` (add IN mobile + DOB schemas)
-- `src/routes/signup.tsx` (rewrite for student role; keep current path for teacher/parent)
-- `src/components/auth/AuthField.tsx` (small: optional suffix slot for "+91" prefix) — only if needed
+---
 
-## Notes
-- DPDP Act 2023 compliance: verifiable parental consent + audit trail (IP, UA, timestamp).
-- MSG91 secrets stay server-side only; never imported in client code.
-- Existing `handle_new_user()` trigger will be updated to copy new metadata fields into profiles.
+## 3. `/onboarding` becomes once-only + filtered
+
+- Route guard: if `profile.onboarding_completed_at` is set → redirect to `/student/study-path`
+- The subject/goal picker only lists subjects belonging to the user's locked `class_id` AND having ≥1 published chapter (server fn `listOnboardingSubjects`)
+- On completion, set `profiles.onboarding_completed_at = now()`
+
+---
+
+## 4. Subscription/Trial flow (stubbed payments)
+
+- New page `/subscribe` — Monthly vs Yearly cards (price placeholders), "Start 14-day free trial" CTA
+- Server fn `startTrial({ plan })` — only allowed if user has never trialed; inserts subscription row with `status='trialing'`, `trial_ends_at = now()+14d`
+- After trial start → redirect to `/onboarding` (with a "Skip for now" link that goes to `/student/study-path` but flags `study_locked=true` until onboarding done)
+- No real payment; `pricing.tsx` "Start free trial" buttons route to `/subscribe`
+
+---
+
+## 5. "Start studying" gateway
+
+New server fn `getStudyAccess()` returns `{ hasAccess, onboarded, nextStep }`.
+
+Replace the `<Link to="/student/study-path">Start studying</Link>` (dashboard + anywhere else) with a `<StartStudyingButton />` client component that calls `getStudyAccess()` and routes:
+
+```text
+hasAccess=false                 → /subscribe
+hasAccess=true, onboarded=false → /onboarding
+hasAccess=true, onboarded=true  → /student/study-path
+```
+
+Same gate enforced server-side: `/student/*` loader (via `_authenticated` layout extension) redirects per the rules above so URL hacking can't bypass it.
+
+---
+
+## 6. Catalog filtering
+
+`listClasses` / `listSubjects` / courses catalog: add filter `onlyWithPublishedContent=true` (default for student views). Subjects with zero published chapters are hidden. Admin views unchanged.
+
+---
+
+## Technical notes
+
+- Trigger `enforce_profile_lock` on `profiles` UPDATE: if `class_id`/`board`/`stream` already non-null and new value differs and caller is not admin → raise.
+- `has_active_access` is SECURITY DEFINER, used in route guards and the gateway fn.
+- All new server fns use `requireSupabaseAuth`.
+- No payment provider yet — `startTrial` is the only entry to `trialing`; "Activate paid" is admin-only stub for now.
+- Files: 1 migration; new `src/lib/subscription.functions.ts`, `src/lib/study-access.functions.ts`; new `src/routes/subscribe.tsx`; new `src/components/StartStudyingButton.tsx`; edits to `signup.tsx`, `onboarding.tsx`, `dashboard.tsx`, `settings.tsx`, `content.functions.ts`, `_authenticated/student/*` loaders.
+
+Approve and I'll run the migration first, then ship the code.

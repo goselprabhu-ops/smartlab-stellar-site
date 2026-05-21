@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import {
   Mail, Lock, User, AtSign, GraduationCap, Users, BookUser, Shield, Loader2, Check,
-  Calendar, Phone, ArrowLeft, ArrowRight, RefreshCw,
+  Calendar, Phone, ArrowLeft, ArrowRight, RefreshCw, Lock as LockIcon,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -57,11 +58,16 @@ const studentStep1 = z.object({
 });
 
 const studentStep2 = z.object({
+  class_id: z.string().uuid("Select your class"),
+  board: z.enum(["CBSE", "ICSE", "State", "IB", "IGCSE", "Other"]),
+  stream: z.string().optional(),
   parent_full_name: z.string().trim().min(2, "Enter parent's full name").max(100),
   parent_email: z.string().trim().email("Enter a valid email"),
   parent_mobile: inMobile,
   username: z.string().trim().regex(USERNAME_RE, "3–20 chars: letters, numbers, . _ -"),
 });
+
+
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -252,6 +258,10 @@ type StudentState = {
   date_of_birth: string;
   student_email: string;
   student_phone: string;
+  class_id: string;
+  class_label: string;
+  board: "CBSE" | "ICSE" | "State" | "IB" | "IGCSE" | "Other";
+  stream: "" | "science" | "commerce" | "humanities";
   parent_full_name: string;
   parent_email: string;
   parent_mobile: string;
@@ -259,25 +269,30 @@ type StudentState = {
   password: string;
 };
 
+type ClassRow = { id: string; label: string; order_index: number };
+
 function StudentWizard() {
   const nav = useNavigate();
   const suggestFn = useServerFn(suggestUsername);
   const checkFn = useServerFn(checkUsername);
   const signupFn = useServerFn(signupStudentWithUsername);
 
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [form, setForm] = useState<StudentState>({
     student_full_name: "", date_of_birth: "",
     student_email: "", student_phone: "",
+    class_id: "", class_label: "", board: "CBSE", stream: "",
     parent_full_name: "", parent_email: "", parent_mobile: "",
     username: "",
     password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [classes, setClasses] = useState<ClassRow[]>([]);
   const [usernameStatus, setUsernameStatus] = useState<
     { state: "idle" } | { state: "checking" } | { state: "ok" } | { state: "taken"; msg: string }
   >({ state: "idle" });
   const usernameTouched = useRef(false);
+
 
   const [consentParent, setConsentParent] = useState(false);
   const [consentTerms, setConsentTerms] = useState(false);
@@ -287,6 +302,27 @@ function StudentWizard() {
 
   const set = <K extends keyof StudentState>(k: K, v: StudentState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
+
+  // Load class list (public read)
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("classes")
+      .select("id, label, order_index")
+      .order("order_index")
+      .then(({ data }) => {
+        if (cancelled) return;
+        setClasses((data ?? []) as ClassRow[]);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  const classNum = useMemo(() => {
+    const m = form.class_label.match(/\d+/);
+    return m ? parseInt(m[0], 10) : NaN;
+  }, [form.class_label]);
+  const showStream = classNum === 11 || classNum === 12;
+
 
   // Auto-suggest username when student name + parent email are known
   useEffect(() => {
@@ -397,9 +433,13 @@ function StudentWizard() {
           parent_full_name: form.parent_full_name,
           parent_email: form.parent_email,
           parent_mobile: form.parent_mobile,
+          class_id: form.class_id,
+          board: form.board,
+          stream: form.stream || "",
           consent_user_agent: navigator.userAgent,
         },
       });
+
       // Sign in with the synthetic email returned by the server
       const { error: signInErr } = await supabase.auth.signInWithPassword({
         email,
@@ -486,8 +526,55 @@ function StudentWizard() {
 
       {step === 2 && (
         <div className="space-y-5">
+          <div>
+            <label className="mb-1.5 block text-xs font-medium">Class <span className="text-destructive">*</span></label>
+            <select
+              value={form.class_id}
+              onChange={(e) => {
+                const c = classes.find((x) => x.id === e.target.value);
+                set("class_id", e.target.value);
+                set("class_label", c?.label ?? "");
+                if (!(c?.label?.match(/11|12/))) set("stream", "");
+              }}
+              className="w-full rounded-lg border border-input bg-background px-3 py-3 text-sm"
+            >
+              <option value="">Select class</option>
+              {classes.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+            </select>
+            {errors.class_id && <p className="mt-1 text-xs text-destructive">{errors.class_id}</p>}
+            <p className="mt-1 text-[11px] text-muted-foreground inline-flex items-center gap-1">
+              <LockIcon className="h-3 w-3" /> Locked after signup. Email support@smartlabonline.com to change.
+            </p>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-medium">Board <span className="text-destructive">*</span></label>
+            <div className="flex flex-wrap gap-2">
+              {(["CBSE","ICSE","State","IB","IGCSE","Other"] as const).map((b) => (
+                <button key={b} type="button" onClick={() => set("board", b)}
+                  className={cn("rounded-full border px-3 py-1.5 text-xs font-medium",
+                    form.board === b ? "border-primary bg-primary text-primary-foreground" : "border-input hover:bg-muted")}>
+                  {b}
+                </button>
+              ))}
+            </div>
+          </div>
+          {showStream && (
+            <div>
+              <label className="mb-1.5 block text-xs font-medium">Stream <span className="text-destructive">*</span></label>
+              <div className="flex flex-wrap gap-2">
+                {(["science","commerce","humanities"] as const).map((s) => (
+                  <button key={s} type="button" onClick={() => set("stream", s)}
+                    className={cn("rounded-full border px-3 py-1.5 text-xs font-medium capitalize",
+                      form.stream === s ? "border-primary bg-primary text-primary-foreground" : "border-input hover:bg-muted")}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <AuthField
             label="Parent's / Guardian's full name" required icon={<User className="h-4 w-4" />}
+
             value={form.parent_full_name}
             onChange={(e) => set("parent_full_name", e.target.value)}
             error={errors.parent_full_name} placeholder="Mr. Rohit Sharma" autoComplete="name"

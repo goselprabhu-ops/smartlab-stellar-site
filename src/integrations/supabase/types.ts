@@ -1607,6 +1607,7 @@ export type Database = {
           terms_accepted_at: string | null
           updated_at: string
           user_id: string
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -1630,6 +1631,7 @@ export type Database = {
           terms_accepted_at?: string | null
           updated_at?: string
           user_id: string
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -1653,6 +1655,7 @@ export type Database = {
           terms_accepted_at?: string | null
           updated_at?: string
           user_id?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -2447,6 +2450,7 @@ export type Database = {
         Args: { _batch: string; _user: string }
         Returns: boolean
       }
+      username_available: { Args: { _username: string }; Returns: boolean }
     }
     Enums: {
       achievement_rarity: "common" | "rare" | "epic" | "legendary"

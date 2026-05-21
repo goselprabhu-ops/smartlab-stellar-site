@@ -1,15 +1,17 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-import { Mail, Lock, Loader2 } from "lucide-react";
+import { User, Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { resolveLoginIdentity } from "@/lib/account.functions";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { AuthField } from "@/components/auth/AuthField";
 import { GoogleButton } from "@/components/auth/GoogleButton";
 
 const loginSchema = z.object({
-  email: z.string().trim().email("Enter a valid email"),
+  identifier: z.string().trim().min(3, "Enter your username or email").max(255),
   password: z.string().min(8, "At least 8 characters"),
 });
 
@@ -27,7 +29,8 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const nav = useNavigate();
   const { redirect } = useSearch({ from: "/login" });
-  const [form, setForm] = useState({ email: "", password: "" });
+  const resolve = useServerFn(resolveLoginIdentity);
+  const [form, setForm] = useState({ identifier: "", password: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
@@ -42,11 +45,23 @@ function LoginPage() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword(parsed.data);
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Welcome back");
-    nav({ to: redirect });
+    try {
+      const { email } = await resolve({ data: { identifier: parsed.data.identifier } });
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password: parsed.data.password,
+      });
+      if (error) {
+        toast.error("Incorrect username or password");
+        return;
+      }
+      toast.success("Welcome back");
+      nav({ to: redirect });
+    } catch (err) {
+      toast.error((err as Error).message ?? "Sign-in failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,15 +79,14 @@ function LoginPage() {
     >
       <form onSubmit={submit} className="space-y-4">
         <AuthField
-          label="Email"
-          type="email"
-          autoComplete="email"
+          label="Username or email"
+          autoComplete="username"
           required
-          icon={<Mail className="h-4 w-4" />}
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          error={errors.email}
-          placeholder="you@school.com"
+          icon={<User className="h-4 w-4" />}
+          value={form.identifier}
+          onChange={(e) => setForm({ ...form, identifier: e.target.value })}
+          error={errors.identifier}
+          placeholder="aanya.sharma"
         />
         <AuthField
           label="Password"
@@ -85,11 +99,10 @@ function LoginPage() {
           error={errors.password}
           placeholder="••••••••"
         />
-        <div className="flex items-center justify-between text-sm">
-          <label className="inline-flex items-center gap-2 text-muted-foreground">
-            <input type="checkbox" className="h-4 w-4 rounded border-input" defaultChecked />
-            Remember me
-          </label>
+        <div className="flex items-center justify-between text-xs">
+          <Link to="/forgot-username" className="text-primary hover:underline">
+            Forgot username?
+          </Link>
           <Link to="/forgot-password" className="text-primary hover:underline">
             Forgot password?
           </Link>

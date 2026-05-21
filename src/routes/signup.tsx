@@ -1,16 +1,24 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import {
-  Mail, Lock, User, GraduationCap, Users, BookUser, Shield, Loader2, Check,
-  Calendar, Phone, ArrowLeft, ArrowRight,
+  Mail, Lock, User, AtSign, GraduationCap, Users, BookUser, Shield, Loader2, Check,
+  Calendar, Phone, ArrowLeft, ArrowRight, RefreshCw,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  suggestUsername,
+  checkUsername,
+  signupStudentWithUsername,
+} from "@/lib/account.functions";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { AuthField } from "@/components/auth/AuthField";
 import { GoogleButton } from "@/components/auth/GoogleButton";
 import { cn } from "@/lib/utils";
+
+const USERNAME_RE = /^[a-zA-Z0-9._-]{3,20}$/;
 
 type Role = "student" | "parent" | "teacher";
 
@@ -51,7 +59,8 @@ const studentStep1 = z.object({
 const studentStep2 = z.object({
   parent_full_name: z.string().trim().min(2, "Enter parent's full name").max(100),
   parent_email: z.string().trim().email("Enter a valid email"),
-  parent_mobile: z.union([z.literal(""), inMobile]).optional(),
+  parent_mobile: inMobile,
+  username: z.string().trim().regex(USERNAME_RE, "3–20 chars: letters, numbers, . _ -"),
 });
 
 export const Route = createFileRoute("/signup")({
@@ -246,20 +255,29 @@ type StudentState = {
   parent_full_name: string;
   parent_email: string;
   parent_mobile: string;
+  username: string;
   password: string;
 };
 
 function StudentWizard() {
   const nav = useNavigate();
+  const suggestFn = useServerFn(suggestUsername);
+  const checkFn = useServerFn(checkUsername);
+  const signupFn = useServerFn(signupStudentWithUsername);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState<StudentState>({
     student_full_name: "", date_of_birth: "",
     student_email: "", student_phone: "",
     parent_full_name: "", parent_email: "", parent_mobile: "",
+    username: "",
     password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [usernameStatus, setUsernameStatus] = useState<
+    { state: "idle" } | { state: "checking" } | { state: "ok" } | { state: "taken"; msg: string }
+  >({ state: "idle" });
+  const usernameTouched = useRef(false);
 
   const [consentParent, setConsentParent] = useState(false);
   const [consentTerms, setConsentTerms] = useState(false);
@@ -269,6 +287,64 @@ function StudentWizard() {
 
   const set = <K extends keyof StudentState>(k: K, v: StudentState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
+
+  // Auto-suggest username when student name + parent email are known
+  useEffect(() => {
+    if (usernameTouched.current) return;
+    const fullName = form.student_full_name.trim();
+    if (fullName.length < 2) return;
+    const [first, ...rest] = fullName.split(/\s+/);
+    const last = rest.join(" ");
+    let cancelled = false;
+    suggestFn({ data: { first_name: first, last_name: last } })
+      .then((res) => {
+        if (cancelled || usernameTouched.current) return;
+        setForm((f) => ({ ...f, username: res.username }));
+        setUsernameStatus({ state: "ok" });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [form.student_full_name, suggestFn]);
+
+  // Debounced username availability check when user edits
+  useEffect(() => {
+    if (!form.username) {
+      setUsernameStatus({ state: "idle" });
+      return;
+    }
+    if (!USERNAME_RE.test(form.username)) {
+      setUsernameStatus({ state: "taken", msg: "3–20 chars: letters, numbers, . _ -" });
+      return;
+    }
+    setUsernameStatus({ state: "checking" });
+    const t = setTimeout(async () => {
+      try {
+        const res = await checkFn({ data: { username: form.username } });
+        setUsernameStatus(
+          res.available
+            ? { state: "ok" }
+            : { state: "taken", msg: res.reason ?? "Already taken" },
+        );
+      } catch {
+        setUsernameStatus({ state: "idle" });
+      }
+    }, 400);
+    return () => clearTimeout(t);
+  }, [form.username, checkFn]);
+
+  const regenerate = async () => {
+    usernameTouched.current = false;
+    const [first, ...rest] = form.student_full_name.trim().split(/\s+/);
+    if (!first) return;
+    const res = await suggestFn({
+      data: { first_name: first, last_name: rest.join(" ") },
+    });
+    setForm((f) => ({ ...f, username: res.username }));
+  };
+
+
 
   const nextFrom1 = () => {
     const parsed = studentStep1.safeParse(form);
@@ -290,6 +366,10 @@ function StudentWizard() {
       setErrors(map);
       return;
     }
+    if (usernameStatus.state === "taken") {
+      setErrors({ username: usernameStatus.msg });
+      return;
+    }
     setErrors({});
     setStep(3);
   };
@@ -305,33 +385,40 @@ function StudentWizard() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email: form.parent_email,
-      password: form.password,
-      options: {
-        emailRedirectTo: window.location.origin + "/onboarding",
+    try {
+      const { email } = await signupFn({
         data: {
-          role: "student",
-          full_name: form.student_full_name,
+          username: form.username,
+          password: form.password,
           student_full_name: form.student_full_name,
-          student_email: form.student_email || null,
-          student_phone: form.student_phone || null,
           date_of_birth: form.date_of_birth,
+          student_email: form.student_email || "",
+          student_phone: form.student_phone || "",
           parent_full_name: form.parent_full_name,
           parent_email: form.parent_email,
-          parent_mobile: form.parent_mobile || null,
-          parent_consent: true,
-          terms_accepted: true,
-          privacy_accepted: true,
+          parent_mobile: form.parent_mobile,
           consent_user_agent: navigator.userAgent,
         },
-      },
-    });
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Account created");
-    nav({ to: "/onboarding" });
+      });
+      // Sign in with the synthetic email returned by the server
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email,
+        password: form.password,
+      });
+      if (signInErr) {
+        toast.success("Account created — please sign in");
+        nav({ to: "/login" });
+        return;
+      }
+      toast.success(`Account created. Your username is ${form.username}`);
+      nav({ to: "/onboarding" });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   const s = strength(form.password);
   const strengthLabel = ["Too weak", "Weak", "Okay", "Strong", "Excellent"][s];
@@ -410,15 +497,65 @@ function StudentWizard() {
             value={form.parent_email}
             onChange={(e) => set("parent_email", e.target.value)}
             error={errors.parent_email} placeholder="parent@example.com" autoComplete="email"
-            hint="We'll email a 6-digit code here to verify the parent. Account login uses this email."
+            hint="Used for account recovery (forgot username / password)."
           />
           <AuthField
-            label="Parent's mobile (optional)" inputMode="numeric" icon={<Phone className="h-4 w-4" />}
+            label="Parent's mobile" required inputMode="numeric" icon={<Phone className="h-4 w-4" />}
             value={form.parent_mobile}
             onChange={(e) => set("parent_mobile", e.target.value.replace(/\D/g, "").slice(0, 10))}
             error={errors.parent_mobile} placeholder="10-digit Indian mobile"
-            hint="For school communications. SMS verification coming soon."
+            hint="For school communications."
           />
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-foreground">Choose a username</label>
+            <div className={cn(
+              "group relative flex items-center rounded-lg border bg-background transition-soft",
+              errors.username || usernameStatus.state === "taken"
+                ? "border-destructive ring-2 ring-destructive/15"
+                : "border-input focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15",
+            )}>
+              <span className="pl-3 text-muted-foreground"><AtSign className="h-4 w-4" /></span>
+              <input
+                value={form.username}
+                onChange={(e) => {
+                  usernameTouched.current = true;
+                  set("username", e.target.value.replace(/[^a-zA-Z0-9._-]/g, "").slice(0, 20));
+                }}
+                placeholder="aanya.sharma"
+                autoComplete="off"
+                className="w-full flex-1 bg-transparent px-3 py-3 text-sm outline-none placeholder:text-muted-foreground/70"
+              />
+              <button
+                type="button"
+                onClick={regenerate}
+                disabled={!form.student_full_name}
+                title="Suggest a new username"
+                className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <p className={cn(
+              "text-xs",
+              errors.username || usernameStatus.state === "taken"
+                ? "text-destructive"
+                : usernameStatus.state === "ok"
+                ? "text-emerald-600"
+                : "text-muted-foreground",
+            )}>
+              {errors.username
+                ? errors.username
+                : usernameStatus.state === "checking"
+                ? "Checking availability…"
+                : usernameStatus.state === "ok"
+                ? "Username available"
+                : usernameStatus.state === "taken"
+                ? usernameStatus.msg
+                : "3–20 chars: letters, numbers, . _ - · This is what you'll use to sign in."}
+            </p>
+          </div>
+
 
           <div className="flex gap-2">
             <button type="button" onClick={() => setStep(1)}

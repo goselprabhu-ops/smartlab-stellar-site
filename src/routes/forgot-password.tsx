@@ -1,13 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-import { Mail, Loader2, ArrowLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { User, Loader2, ArrowLeft } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { forgotPasswordByUsername } from "@/lib/account.functions";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { AuthField } from "@/components/auth/AuthField";
 
-const schema = z.object({ email: z.string().trim().email("Enter a valid email") });
+const schema = z.object({
+  identifier: z.string().trim().min(3, "Enter your username or email").max(255),
+});
 
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({
@@ -21,7 +24,8 @@ export const Route = createFileRoute("/forgot-password")({
 
 function ForgotPage() {
   const nav = useNavigate();
-  const [email, setEmail] = useState("");
+  const reset = useServerFn(forgotPasswordByUsername);
+  const [identifier, setIdentifier] = useState("");
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -29,15 +33,17 @@ function ForgotPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(undefined);
-    const parsed = schema.safeParse({ email });
+    const parsed = schema.safeParse({ identifier });
     if (!parsed.success) return setError(parsed.error.issues[0].message);
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + "/reset-password",
-    });
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    setSent(true);
+    try {
+      await reset({ data: parsed.data });
+      setSent(true);
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,8 +51,8 @@ function ForgotPage() {
       title={sent ? "Check your email" : "Reset your password"}
       subtitle={
         sent
-          ? `We sent a reset link to ${email}. It expires in 60 minutes.`
-          : "Enter your email and we'll send you a link to set a new password."
+          ? "If an account exists, we've sent a reset link to the parent email on file. It expires in 60 minutes."
+          : "Enter your username or email. We'll send a reset link to the parent email on file."
       }
       footer={
         <Link to="/login" className="inline-flex items-center gap-1 text-primary hover:underline">
@@ -66,21 +72,20 @@ function ForgotPage() {
             onClick={() => setSent(false)}
             className="w-full rounded-lg border border-input px-4 py-3 text-sm font-medium hover:bg-muted"
           >
-            Resend to a different email
+            Try another username
           </button>
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-4">
           <AuthField
-            label="Email"
-            type="email"
+            label="Username or email"
             required
-            icon={<Mail className="h-4 w-4" />}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            icon={<User className="h-4 w-4" />}
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             error={error}
-            placeholder="you@school.com"
-            autoComplete="email"
+            placeholder="aanya.sharma"
+            autoComplete="username"
           />
           <button
             disabled={loading}
@@ -89,6 +94,12 @@ function ForgotPage() {
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             {loading ? "Sending…" : "Send reset link"}
           </button>
+          <p className="text-center text-xs text-muted-foreground">
+            Forgot your username?{" "}
+            <Link to="/forgot-username" className="text-primary hover:underline">
+              Recover it here
+            </Link>
+          </p>
         </form>
       )}
     </AuthShell>

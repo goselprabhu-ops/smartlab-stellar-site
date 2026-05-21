@@ -497,15 +497,65 @@ function StudentWizard() {
             value={form.parent_email}
             onChange={(e) => set("parent_email", e.target.value)}
             error={errors.parent_email} placeholder="parent@example.com" autoComplete="email"
-            hint="We'll email a 6-digit code here to verify the parent. Account login uses this email."
+            hint="Used for account recovery (forgot username / password)."
           />
           <AuthField
-            label="Parent's mobile (optional)" inputMode="numeric" icon={<Phone className="h-4 w-4" />}
+            label="Parent's mobile" required inputMode="numeric" icon={<Phone className="h-4 w-4" />}
             value={form.parent_mobile}
             onChange={(e) => set("parent_mobile", e.target.value.replace(/\D/g, "").slice(0, 10))}
             error={errors.parent_mobile} placeholder="10-digit Indian mobile"
-            hint="For school communications. SMS verification coming soon."
+            hint="For school communications."
           />
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-foreground">Choose a username</label>
+            <div className={cn(
+              "group relative flex items-center rounded-lg border bg-background transition-soft",
+              errors.username || usernameStatus.state === "taken"
+                ? "border-destructive ring-2 ring-destructive/15"
+                : "border-input focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15",
+            )}>
+              <span className="pl-3 text-muted-foreground"><AtSign className="h-4 w-4" /></span>
+              <input
+                value={form.username}
+                onChange={(e) => {
+                  usernameTouched.current = true;
+                  set("username", e.target.value.replace(/[^a-zA-Z0-9._-]/g, "").slice(0, 20));
+                }}
+                placeholder="aanya.sharma"
+                autoComplete="off"
+                className="w-full flex-1 bg-transparent px-3 py-3 text-sm outline-none placeholder:text-muted-foreground/70"
+              />
+              <button
+                type="button"
+                onClick={regenerate}
+                disabled={!form.student_full_name}
+                title="Suggest a new username"
+                className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <p className={cn(
+              "text-xs",
+              errors.username || usernameStatus.state === "taken"
+                ? "text-destructive"
+                : usernameStatus.state === "ok"
+                ? "text-emerald-600"
+                : "text-muted-foreground",
+            )}>
+              {errors.username
+                ? errors.username
+                : usernameStatus.state === "checking"
+                ? "Checking availability…"
+                : usernameStatus.state === "ok"
+                ? "Username available"
+                : usernameStatus.state === "taken"
+                ? usernameStatus.msg
+                : "3–20 chars: letters, numbers, . _ - · This is what you'll use to sign in."}
+            </p>
+          </div>
+
 
           <div className="flex gap-2">
             <button type="button" onClick={() => setStep(1)}

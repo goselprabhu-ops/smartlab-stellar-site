@@ -288,14 +288,63 @@ function StudentWizard() {
   const set = <K extends keyof StudentState>(k: K, v: StudentState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  const [consentParent, setConsentParent] = useState(false);
-  const [consentTerms, setConsentTerms] = useState(false);
-  const [consentPrivacy, setConsentPrivacy] = useState(false);
+  // Auto-suggest username when student name + parent email are known
+  useEffect(() => {
+    if (usernameTouched.current) return;
+    const fullName = form.student_full_name.trim();
+    if (fullName.length < 2) return;
+    const [first, ...rest] = fullName.split(/\s+/);
+    const last = rest.join(" ");
+    let cancelled = false;
+    suggestFn({ data: { first_name: first, last_name: last } })
+      .then((res) => {
+        if (cancelled || usernameTouched.current) return;
+        setForm((f) => ({ ...f, username: res.username }));
+        setUsernameStatus({ state: "ok" });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [form.student_full_name, suggestFn]);
 
-  const [loading, setLoading] = useState(false);
+  // Debounced username availability check when user edits
+  useEffect(() => {
+    if (!form.username) {
+      setUsernameStatus({ state: "idle" });
+      return;
+    }
+    if (!USERNAME_RE.test(form.username)) {
+      setUsernameStatus({ state: "taken", msg: "3–20 chars: letters, numbers, . _ -" });
+      return;
+    }
+    setUsernameStatus({ state: "checking" });
+    const t = setTimeout(async () => {
+      try {
+        const res = await checkFn({ data: { username: form.username } });
+        setUsernameStatus(
+          res.available
+            ? { state: "ok" }
+            : { state: "taken", msg: res.reason ?? "Already taken" },
+        );
+      } catch {
+        setUsernameStatus({ state: "idle" });
+      }
+    }, 400);
+    return () => clearTimeout(t);
+  }, [form.username, checkFn]);
 
-  const set = <K extends keyof StudentState>(k: K, v: StudentState[K]) =>
-    setForm((f) => ({ ...f, [k]: v }));
+  const regenerate = async () => {
+    usernameTouched.current = false;
+    const [first, ...rest] = form.student_full_name.trim().split(/\s+/);
+    if (!first) return;
+    const res = await suggestFn({
+      data: { first_name: first, last_name: rest.join(" ") },
+    });
+    setForm((f) => ({ ...f, username: res.username }));
+  };
+
+
 
   const nextFrom1 = () => {
     const parsed = studentStep1.safeParse(form);

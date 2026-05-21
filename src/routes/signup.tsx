@@ -1,16 +1,24 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import {
-  Mail, Lock, User, GraduationCap, Users, BookUser, Shield, Loader2, Check,
-  Calendar, Phone, ArrowLeft, ArrowRight,
+  Mail, Lock, User, AtSign, GraduationCap, Users, BookUser, Shield, Loader2, Check,
+  Calendar, Phone, ArrowLeft, ArrowRight, RefreshCw,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  suggestUsername,
+  checkUsername,
+  signupStudentWithUsername,
+} from "@/lib/account.functions";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { AuthField } from "@/components/auth/AuthField";
 import { GoogleButton } from "@/components/auth/GoogleButton";
 import { cn } from "@/lib/utils";
+
+const USERNAME_RE = /^[a-zA-Z0-9._-]{3,20}$/;
 
 type Role = "student" | "parent" | "teacher";
 

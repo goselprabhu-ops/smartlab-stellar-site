@@ -1584,6 +1584,39 @@ export type Database = {
         }
         Relationships: []
       }
+      parent_trial_ledger: {
+        Row: {
+          created_at: string
+          first_user_id: string
+          id: string
+          parent_email_norm: string
+          parent_mobile_norm: string
+          plan: Database["public"]["Enums"]["subscription_plan"] | null
+          trial_ends_at: string
+          trial_started_at: string
+        }
+        Insert: {
+          created_at?: string
+          first_user_id: string
+          id?: string
+          parent_email_norm: string
+          parent_mobile_norm: string
+          plan?: Database["public"]["Enums"]["subscription_plan"] | null
+          trial_ends_at: string
+          trial_started_at?: string
+        }
+        Update: {
+          created_at?: string
+          first_user_id?: string
+          id?: string
+          parent_email_norm?: string
+          parent_mobile_norm?: string
+          plan?: Database["public"]["Enums"]["subscription_plan"] | null
+          trial_ends_at?: string
+          trial_started_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

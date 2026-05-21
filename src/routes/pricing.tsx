@@ -94,7 +94,7 @@ const PLANS: Plan[] = [
     badge: "Most popular",
     highlight: true,
     audience: "1 student · Classes 6–12",
-    ctaLabel: "Start free for 14 days",
+    ctaLabel: "Start free for 15 days",
     icon: Brain,
     features: [
       "Everything in Basic",
@@ -174,7 +174,7 @@ const COMPARE: CompareRow[] = [
 // ─────────────────────────── FAQ
 
 const FAQ = [
-  { q: "Is there a free trial?", a: "Yes — Basic and Pro come with a 7- and 14-day free trial respectively. No card required to start." },
+  { q: "Is there a free trial?", a: "Yes — Basic and Pro come with a 7- and 15-day free trial respectively. No card required to start." },
   { q: "Can I switch plans later?", a: "Anytime, in one click. Upgrades take effect immediately; downgrades apply from the next billing cycle." },
   { q: "How does yearly billing work?", a: "You pay once for 12 months at the discounted rate (~20% off). You can cancel mid-year and we'll refund the unused months on a pro-rata basis." },
   { q: "What's included for parents?", a: "Pro and above include the full parent dashboard — weekly summaries, mastery trends, and smart alerts. Privacy-first: students see exactly what parents see." },
@@ -254,7 +254,7 @@ function PricingPage() {
               {[
                 "20-minute call, no slides — live product walkthrough.",
                 "We'll match the plan to your child's grade and goals.",
-                "Get a free 14-day full-access trial after the call.",
+                "Get a free 15-day full-access trial after the call.",
               ].map((l) => (
                 <li key={l} className="flex items-start gap-3">
                   <Check className="text-success mt-0.5 size-4 shrink-0" />
@@ -733,7 +733,7 @@ function StickyPricingCta() {
               <Sparkles className="size-4" />
             </span>
             <div>
-              <div className="text-sm font-semibold">Try Pro free for 14 days</div>
+              <div className="text-sm font-semibold">Try Pro free for 15 days</div>
               <div className="text-muted-foreground text-xs">No card needed. Cancel anytime.</div>
             </div>
           </div>

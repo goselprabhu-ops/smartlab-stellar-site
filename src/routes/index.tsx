@@ -919,7 +919,7 @@ function FinalCtaSection() {
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <CtaButton href="/signup" external={false}>
-              Start Free Trial <ArrowRight className="ml-2 h-4 w-4" />
+              Experience Smart Lab Online <ArrowRight className="ml-2 h-4 w-4" />
             </CtaButton>
             <CtaButton href="/demo" external={false} variant="secondary" className="text-cream">
               Book a School Demo

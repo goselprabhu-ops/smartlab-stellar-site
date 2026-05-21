@@ -526,8 +526,55 @@ function StudentWizard() {
 
       {step === 2 && (
         <div className="space-y-5">
+          <div>
+            <label className="mb-1.5 block text-xs font-medium">Class <span className="text-destructive">*</span></label>
+            <select
+              value={form.class_id}
+              onChange={(e) => {
+                const c = classes.find((x) => x.id === e.target.value);
+                set("class_id", e.target.value);
+                set("class_label", c?.label ?? "");
+                if (!(c?.label?.match(/11|12/))) set("stream", "");
+              }}
+              className="w-full rounded-lg border border-input bg-background px-3 py-3 text-sm"
+            >
+              <option value="">Select class</option>
+              {classes.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+            </select>
+            {errors.class_id && <p className="mt-1 text-xs text-destructive">{errors.class_id}</p>}
+            <p className="mt-1 text-[11px] text-muted-foreground inline-flex items-center gap-1">
+              <LockIcon className="h-3 w-3" /> Locked after signup. Email support@smartlabonline.com to change.
+            </p>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-medium">Board <span className="text-destructive">*</span></label>
+            <div className="flex flex-wrap gap-2">
+              {(["CBSE","ICSE","State","IB","IGCSE","Other"] as const).map((b) => (
+                <button key={b} type="button" onClick={() => set("board", b)}
+                  className={cn("rounded-full border px-3 py-1.5 text-xs font-medium",
+                    form.board === b ? "border-primary bg-primary text-primary-foreground" : "border-input hover:bg-muted")}>
+                  {b}
+                </button>
+              ))}
+            </div>
+          </div>
+          {showStream && (
+            <div>
+              <label className="mb-1.5 block text-xs font-medium">Stream <span className="text-destructive">*</span></label>
+              <div className="flex flex-wrap gap-2">
+                {(["science","commerce","humanities"] as const).map((s) => (
+                  <button key={s} type="button" onClick={() => set("stream", s)}
+                    className={cn("rounded-full border px-3 py-1.5 text-xs font-medium capitalize",
+                      form.stream === s ? "border-primary bg-primary text-primary-foreground" : "border-input hover:bg-muted")}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <AuthField
             label="Parent's / Guardian's full name" required icon={<User className="h-4 w-4" />}
+
             value={form.parent_full_name}
             onChange={(e) => set("parent_full_name", e.target.value)}
             error={errors.parent_full_name} placeholder="Mr. Rohit Sharma" autoComplete="name"

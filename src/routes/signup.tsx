@@ -255,20 +255,38 @@ type StudentState = {
   parent_full_name: string;
   parent_email: string;
   parent_mobile: string;
+  username: string;
   password: string;
 };
 
 function StudentWizard() {
   const nav = useNavigate();
+  const suggestFn = useServerFn(suggestUsername);
+  const checkFn = useServerFn(checkUsername);
+  const signupFn = useServerFn(signupStudentWithUsername);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState<StudentState>({
     student_full_name: "", date_of_birth: "",
     student_email: "", student_phone: "",
     parent_full_name: "", parent_email: "", parent_mobile: "",
+    username: "",
     password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [usernameStatus, setUsernameStatus] = useState<
+    { state: "idle" } | { state: "checking" } | { state: "ok" } | { state: "taken"; msg: string }
+  >({ state: "idle" });
+  const usernameTouched = useRef(false);
+
+  const [consentParent, setConsentParent] = useState(false);
+  const [consentTerms, setConsentTerms] = useState(false);
+  const [consentPrivacy, setConsentPrivacy] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const set = <K extends keyof StudentState>(k: K, v: StudentState[K]) =>
+    setForm((f) => ({ ...f, [k]: v }));
 
   const [consentParent, setConsentParent] = useState(false);
   const [consentTerms, setConsentTerms] = useState(false);

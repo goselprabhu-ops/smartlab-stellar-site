@@ -29,7 +29,7 @@ function CoursesPage() {
       eyebrow="Catalog · CBSE 6–12"
       title={<>Complete CBSE coverage, <span className="text-gradient bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">adaptive by design</span></>}
       description="Every subject is broken into micro-concepts. The AI maps each student's journey and surfaces exactly the next concept they need."
-      primaryCta={{ label: "Start free", to: "/signup" }}
+      primaryCta={{ label: "Experience Smart Lab Online", to: "/signup" }}
       secondaryCta={{ label: "Book a demo", to: "/demo" }}
       features={subjects}
     >

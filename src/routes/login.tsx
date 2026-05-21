@@ -5,6 +5,7 @@ import { User, Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { resolveLoginIdentity } from "@/lib/account.functions";
+import { getStudyAccess } from "@/lib/study-access.functions";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { AuthField } from "@/components/auth/AuthField";
@@ -30,6 +31,7 @@ function LoginPage() {
   const nav = useNavigate();
   const { redirect } = useSearch({ from: "/login" });
   const resolve = useServerFn(resolveLoginIdentity);
+  const fetchAccess = useServerFn(getStudyAccess);
   const [form, setForm] = useState({ identifier: "", password: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -56,7 +58,19 @@ function LoginPage() {
         return;
       }
       toast.success("Welcome back");
-      nav({ to: redirect });
+      // First-time sign-in → onboarding; otherwise dashboard / redirect target
+      try {
+        const access = await fetchAccess();
+        if (!access.hasAccess) {
+          nav({ to: "/subscribe" });
+        } else if (!access.onboarded) {
+          nav({ to: "/onboarding" });
+        } else {
+          nav({ to: redirect });
+        }
+      } catch {
+        nav({ to: redirect });
+      }
     } catch (err) {
       toast.error((err as Error).message ?? "Sign-in failed");
     } finally {

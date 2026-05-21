@@ -451,7 +451,7 @@ function StudentWizard() {
         return;
       }
       toast.success(`Account created. Your username is ${form.username}`);
-      nav({ to: "/onboarding" });
+      nav({ to: "/subscribe" });
     } catch (e) {
       toast.error((e as Error).message);
     } finally {

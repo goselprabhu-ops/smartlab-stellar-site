@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { generateStudyPath, type OnboardingPrefs } from "@/lib/onboarding.functions";
+import { markOnboardingComplete } from "@/lib/study-access.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
@@ -94,6 +95,7 @@ function OnboardingPage() {
   const nav = useNavigate();
   const auth = useAuth();
   const generate = useServerFn(generateStudyPath);
+  const markComplete = useServerFn(markOnboardingComplete);
   const [step, setStep] = useState<StepId>(0);
   const [loading, setLoading] = useState(false);
   const [path, setPath] = useState<Awaited<ReturnType<typeof generate>>["path"] | null>(null);
@@ -135,6 +137,7 @@ function OnboardingPage() {
     try {
       const res = await generate({ data: form });
       setPath(res.path);
+      try { await markComplete(); } catch {}
       toast.success("Your personalized study path is ready!");
     } catch (err) {
       toast.error((err as Error).message || "Could not generate study path");

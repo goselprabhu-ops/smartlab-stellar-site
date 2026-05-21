@@ -57,7 +57,7 @@ function SubscribePage() {
     setPending(plan);
     try {
       await trial({ data: { plan } });
-      toast.success(`Your 14-day free trial has started`);
+      toast.success(`Your 15-day free trial has started`);
       nav({ to: "/onboarding" });
     } catch (e) {
       toast.error((e as Error).message);
@@ -70,7 +70,7 @@ function SubscribePage() {
 
   return (
     <AuthShell
-      title="Pick a plan and start your 14-day free trial"
+      title="Pick a plan and start your 15-day free trial"
       subtitle="No card required. Cancel anytime during the trial."
     >
       <div className="space-y-4">
@@ -129,7 +129,7 @@ function SubscribePage() {
                 ) : (
                   <Calendar className="h-3.5 w-3.5" />
                 )}
-                Start 14-day free trial
+                Start 15-day free trial
               </div>
             </button>
           ))}
@@ -150,7 +150,7 @@ function SubscribePage() {
 
         <div className="flex items-start gap-2 rounded-lg bg-muted/60 p-3 text-[11px] text-muted-foreground">
           <ShieldCheck className="mt-0.5 h-3.5 w-3.5 text-primary" />
-          During the 14-day trial you get full access. We'll remind you 3 days before it ends.
+          During the 15-day trial you get full access. We'll remind you 3 days before it ends.
         </div>
       </div>
     </AuthShell>

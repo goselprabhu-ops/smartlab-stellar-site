@@ -433,9 +433,13 @@ function StudentWizard() {
           parent_full_name: form.parent_full_name,
           parent_email: form.parent_email,
           parent_mobile: form.parent_mobile,
+          class_id: form.class_id,
+          board: form.board,
+          stream: form.stream || "",
           consent_user_agent: navigator.userAgent,
         },
       });
+
       // Sign in with the synthetic email returned by the server
       const { error: signInErr } = await supabase.auth.signInWithPassword({
         email,

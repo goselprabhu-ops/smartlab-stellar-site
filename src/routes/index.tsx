@@ -915,7 +915,7 @@ function FinalCtaSection() {
             Give your child an AI study partner — starting tonight.
           </h2>
           <p className="mt-4 text-cream/70">
-            14-day free trial · No credit card · Cancel anytime
+            15-day free trial · No credit card · Cancel anytime
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <CtaButton href="/signup" external={false}>

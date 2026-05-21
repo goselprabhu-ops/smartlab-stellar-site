@@ -93,7 +93,7 @@ export function Header() {
           <Link to="/login" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             Sign in
           </Link>
-          <CtaButton size="md" href="/signup" external={false}>Start free</CtaButton>
+          <CtaButton size="md" href="/signup" external={false}>Experience Smart Lab Online</CtaButton>
         </div>
         <button
           onClick={() => setOpen(!open)}
@@ -122,7 +122,7 @@ export function Header() {
               <Link to="/login" className="flex-1 rounded-md border px-3 py-2 text-center text-sm font-medium">
                 Sign in
               </Link>
-              <CtaButton size="md" href="/signup" external={false} className="flex-1 justify-center">Start free</CtaButton>
+              <CtaButton size="md" href="/signup" external={false} className="flex-1 justify-center">Experience Smart Lab Online</CtaButton>
             </div>
           </nav>
         </div>

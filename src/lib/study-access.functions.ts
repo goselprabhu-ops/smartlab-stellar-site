@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-const TRIAL_DAYS = 14;
+const TRIAL_DAYS = 15;
 
 export type StudyAccess = {
   hasAccess: boolean;

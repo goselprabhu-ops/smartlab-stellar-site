@@ -19,6 +19,7 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LaunchRouteImport } from './routes/launch'
+import { Route as ForgotUsernameRouteImport } from './routes/forgot-username'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as DesignSystemRouteImport } from './routes/design-system'
@@ -156,6 +157,11 @@ const LoginRoute = LoginRouteImport.update({
 const LaunchRoute = LaunchRouteImport.update({
   id: '/launch',
   path: '/launch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotUsernameRoute = ForgotUsernameRouteImport.update({
+  id: '/forgot-username',
+  path: '/forgot-username',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -661,6 +667,7 @@ export interface FileRoutesByFullPath {
   '/design-system': typeof DesignSystemRoute
   '/features': typeof FeaturesRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/forgot-username': typeof ForgotUsernameRoute
   '/launch': typeof LaunchRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -760,6 +767,7 @@ export interface FileRoutesByTo {
   '/design-system': typeof DesignSystemRoute
   '/features': typeof FeaturesRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/forgot-username': typeof ForgotUsernameRoute
   '/launch': typeof LaunchRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -855,6 +863,7 @@ export interface FileRoutesById {
   '/design-system': typeof DesignSystemRoute
   '/features': typeof FeaturesRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/forgot-username': typeof ForgotUsernameRoute
   '/launch': typeof LaunchRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -956,6 +965,7 @@ export interface FileRouteTypes {
     | '/design-system'
     | '/features'
     | '/forgot-password'
+    | '/forgot-username'
     | '/launch'
     | '/login'
     | '/onboarding'
@@ -1055,6 +1065,7 @@ export interface FileRouteTypes {
     | '/design-system'
     | '/features'
     | '/forgot-password'
+    | '/forgot-username'
     | '/launch'
     | '/login'
     | '/onboarding'
@@ -1149,6 +1160,7 @@ export interface FileRouteTypes {
     | '/design-system'
     | '/features'
     | '/forgot-password'
+    | '/forgot-username'
     | '/launch'
     | '/login'
     | '/onboarding'
@@ -1250,6 +1262,7 @@ export interface RootRouteChildren {
   DesignSystemRoute: typeof DesignSystemRoute
   FeaturesRoute: typeof FeaturesRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  ForgotUsernameRoute: typeof ForgotUsernameRoute
   LaunchRoute: typeof LaunchRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -1342,6 +1355,13 @@ declare module '@tanstack/react-router' {
       path: '/launch'
       fullPath: '/launch'
       preLoaderRoute: typeof LaunchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-username': {
+      id: '/forgot-username'
+      path: '/forgot-username'
+      fullPath: '/forgot-username'
+      preLoaderRoute: typeof ForgotUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -2217,6 +2237,7 @@ const rootRouteChildren: RootRouteChildren = {
   DesignSystemRoute: DesignSystemRoute,
   FeaturesRoute: FeaturesRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  ForgotUsernameRoute: ForgotUsernameRoute,
   LaunchRoute: LaunchRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,

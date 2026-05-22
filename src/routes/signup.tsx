@@ -59,7 +59,7 @@ const studentStep1 = z.object({
 
 const studentStep2 = z.object({
   class_id: z.string().uuid("Select your class"),
-  board: z.enum(["CBSE", "ICSE", "State", "IB", "IGCSE", "Other"]),
+  board: z.string().min(1, "Select your board"),
   stream: z.string().optional(),
   parent_full_name: z.string().trim().min(2, "Enter parent's full name").max(100),
   parent_email: z.string().trim().email("Enter a valid email"),

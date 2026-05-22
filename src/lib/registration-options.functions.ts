@@ -14,7 +14,7 @@ export type RegistrationOptions = {
  */
 export const getRegistrationOptions = createServerFn({ method: "GET" }).handler(
   async (): Promise<RegistrationOptions> => {
-    const { data, error } = await supabase.rpc("available_content_tree");
+    const { data, error } = await supabaseAdmin.rpc("available_content_tree");
     if (error) throw new Error(error.message);
 
     const boardsSet = new Set<string>();

@@ -282,13 +282,16 @@ function StudentWizard() {
   const [form, setForm] = useState<StudentState>({
     student_full_name: "", date_of_birth: "",
     student_email: "", student_phone: "",
-    class_id: "", class_label: "", board: "CBSE", stream: "",
+    class_id: "", class_label: "", board: "", stream: "",
     parent_full_name: "", parent_email: "", parent_mobile: "",
     username: "",
     password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [classes, setClasses] = useState<ClassRow[]>([]);
+  const [boards, setBoards] = useState<string[]>([]);
+  const [classesByBoard, setClassesByBoard] = useState<Record<string, ClassRow[]>>({});
+  const [optionsLoading, setOptionsLoading] = useState(true);
+  const optionsFn = useServerFn(getRegistrationOptions);
   const [usernameStatus, setUsernameStatus] = useState<
     { state: "idle" } | { state: "checking" } | { state: "ok" } | { state: "taken"; msg: string }
   >({ state: "idle" });
@@ -304,19 +307,27 @@ function StudentWizard() {
   const set = <K extends keyof StudentState>(k: K, v: StudentState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  // Load class list (public read)
+  // Load only boards/classes that have at least one published chapter
   useEffect(() => {
     let cancelled = false;
-    supabase
-      .from("classes")
-      .select("id, label, order_index")
-      .order("order_index")
-      .then(({ data }) => {
+    optionsFn()
+      .then((res) => {
         if (cancelled) return;
-        setClasses((data ?? []) as ClassRow[]);
-      });
+        setBoards(res.boards);
+        setClassesByBoard(res.classesByBoard);
+        if (res.boards.length === 1) {
+          setForm((f) => (f.board ? f : { ...f, board: res.boards[0] }));
+        }
+      })
+      .catch(() => {})
+      .finally(() => !cancelled && setOptionsLoading(false));
     return () => { cancelled = true; };
-  }, []);
+  }, [optionsFn]);
+
+  const classes = useMemo<ClassRow[]>(
+    () => (form.board ? classesByBoard[form.board] ?? [] : []),
+    [form.board, classesByBoard],
+  );
 
   const classNum = useMemo(() => {
     const m = form.class_label.match(/\d+/);

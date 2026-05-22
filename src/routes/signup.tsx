@@ -260,7 +260,7 @@ type StudentState = {
   student_phone: string;
   class_id: string;
   class_label: string;
-  board: "CBSE" | "ICSE" | "State" | "IB" | "IGCSE" | "Other";
+  board: string;
   stream: "" | "science" | "commerce" | "humanities";
   parent_full_name: string;
   parent_email: string;

@@ -138,16 +138,18 @@ export const listOnboardingSubjects = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data: prof } = await supabase
       .from("profiles")
-      .select("class_id")
+      .select("class_id, board")
       .eq("user_id", userId)
       .maybeSingle();
     if (!prof?.class_id) return [];
 
-    const { data: subjects, error } = await supabase
+    let q = supabase
       .from("subjects")
-      .select("id, name, slug, icon, tags, class_id")
+      .select("id, name, slug, icon, tags, class_id, board")
       .eq("class_id", prof.class_id)
       .order("name");
+    if (prof.board) q = q.eq("board", prof.board);
+    const { data: subjects, error } = await q;
     if (error) throw new Error(error.message);
 
     if (!subjects?.length) return [];

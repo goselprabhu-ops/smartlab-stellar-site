@@ -2195,6 +2195,7 @@ export type Database = {
       }
       subjects: {
         Row: {
+          board: string | null
           class_id: string | null
           created_at: string
           description: string | null
@@ -2206,6 +2207,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          board?: string | null
           class_id?: string | null
           created_at?: string
           description?: string | null
@@ -2217,6 +2219,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          board?: string | null
           class_id?: string | null
           created_at?: string
           description?: string | null
@@ -2471,6 +2474,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      available_content_tree: {
+        Args: never
+        Returns: {
+          board: string
+          class_id: string
+          class_label: string
+          class_order: number
+          subject_id: string
+          subject_name: string
+          subject_slug: string
+        }[]
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean

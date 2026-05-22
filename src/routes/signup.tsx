@@ -13,6 +13,7 @@ import {
   checkUsername,
   signupStudentWithUsername,
 } from "@/lib/account.functions";
+import { getRegistrationOptions } from "@/lib/registration-options.functions";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { AuthField } from "@/components/auth/AuthField";
@@ -59,7 +60,7 @@ const studentStep1 = z.object({
 
 const studentStep2 = z.object({
   class_id: z.string().uuid("Select your class"),
-  board: z.enum(["CBSE", "ICSE", "State", "IB", "IGCSE", "Other"]),
+  board: z.string().min(1, "Select your board"),
   stream: z.string().optional(),
   parent_full_name: z.string().trim().min(2, "Enter parent's full name").max(100),
   parent_email: z.string().trim().email("Enter a valid email"),
@@ -260,7 +261,7 @@ type StudentState = {
   student_phone: string;
   class_id: string;
   class_label: string;
-  board: "CBSE" | "ICSE" | "State" | "IB" | "IGCSE" | "Other";
+  board: string;
   stream: "" | "science" | "commerce" | "humanities";
   parent_full_name: string;
   parent_email: string;
@@ -281,13 +282,16 @@ function StudentWizard() {
   const [form, setForm] = useState<StudentState>({
     student_full_name: "", date_of_birth: "",
     student_email: "", student_phone: "",
-    class_id: "", class_label: "", board: "CBSE", stream: "",
+    class_id: "", class_label: "", board: "", stream: "",
     parent_full_name: "", parent_email: "", parent_mobile: "",
     username: "",
     password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [classes, setClasses] = useState<ClassRow[]>([]);
+  const [boards, setBoards] = useState<string[]>([]);
+  const [classesByBoard, setClassesByBoard] = useState<Record<string, ClassRow[]>>({});
+  const [optionsLoading, setOptionsLoading] = useState(true);
+  const optionsFn = useServerFn(getRegistrationOptions);
   const [usernameStatus, setUsernameStatus] = useState<
     { state: "idle" } | { state: "checking" } | { state: "ok" } | { state: "taken"; msg: string }
   >({ state: "idle" });
@@ -303,19 +307,27 @@ function StudentWizard() {
   const set = <K extends keyof StudentState>(k: K, v: StudentState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  // Load class list (public read)
+  // Load only boards/classes that have at least one published chapter
   useEffect(() => {
     let cancelled = false;
-    supabase
-      .from("classes")
-      .select("id, label, order_index")
-      .order("order_index")
-      .then(({ data }) => {
+    optionsFn()
+      .then((res) => {
         if (cancelled) return;
-        setClasses((data ?? []) as ClassRow[]);
-      });
+        setBoards(res.boards);
+        setClassesByBoard(res.classesByBoard);
+        if (res.boards.length === 1) {
+          setForm((f) => (f.board ? f : { ...f, board: res.boards[0] }));
+        }
+      })
+      .catch(() => {})
+      .finally(() => !cancelled && setOptionsLoading(false));
     return () => { cancelled = true; };
-  }, []);
+  }, [optionsFn]);
+
+  const classes = useMemo<ClassRow[]>(
+    () => (form.board ? classesByBoard[form.board] ?? [] : []),
+    [form.board, classesByBoard],
+  );
 
   const classNum = useMemo(() => {
     const m = form.class_label.match(/\d+/);
@@ -527,18 +539,46 @@ function StudentWizard() {
       {step === 2 && (
         <div className="space-y-5">
           <div>
+            <label className="mb-1.5 block text-xs font-medium">Board <span className="text-destructive">*</span></label>
+            {optionsLoading ? (
+              <p className="text-xs text-muted-foreground">Loading available boards…</p>
+            ) : boards.length === 0 ? (
+              <p className="text-xs text-destructive">No course content is published yet. Please check back soon.</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {boards.map((b) => (
+                  <button key={b} type="button"
+                    onClick={() => {
+                      set("board", b);
+                      set("class_id", "");
+                      set("class_label", "");
+                      set("stream", "");
+                    }}
+                    className={cn("rounded-full border px-3 py-1.5 text-xs font-medium",
+                      form.board === b ? "border-primary bg-primary text-primary-foreground" : "border-input hover:bg-muted")}>
+                    {b}
+                  </button>
+                ))}
+              </div>
+            )}
+            {errors.board && <p className="mt-1 text-xs text-destructive">{errors.board}</p>}
+          </div>
+          <div>
             <label className="mb-1.5 block text-xs font-medium">Class <span className="text-destructive">*</span></label>
             <select
               value={form.class_id}
+              disabled={!form.board || classes.length === 0}
               onChange={(e) => {
                 const c = classes.find((x) => x.id === e.target.value);
                 set("class_id", e.target.value);
                 set("class_label", c?.label ?? "");
                 if (!(c?.label?.match(/11|12/))) set("stream", "");
               }}
-              className="w-full rounded-lg border border-input bg-background px-3 py-3 text-sm"
+              className="w-full rounded-lg border border-input bg-background px-3 py-3 text-sm disabled:opacity-60"
             >
-              <option value="">Select class</option>
+              <option value="">
+                {!form.board ? "Select board first" : classes.length === 0 ? "No classes available" : "Select class"}
+              </option>
               {classes.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
             </select>
             {errors.class_id && <p className="mt-1 text-xs text-destructive">{errors.class_id}</p>}
@@ -546,18 +586,7 @@ function StudentWizard() {
               <LockIcon className="h-3 w-3" /> Locked after signup. Email support@smartlabonline.com to change.
             </p>
           </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-medium">Board <span className="text-destructive">*</span></label>
-            <div className="flex flex-wrap gap-2">
-              {(["CBSE","ICSE","State","IB","IGCSE","Other"] as const).map((b) => (
-                <button key={b} type="button" onClick={() => set("board", b)}
-                  className={cn("rounded-full border px-3 py-1.5 text-xs font-medium",
-                    form.board === b ? "border-primary bg-primary text-primary-foreground" : "border-input hover:bg-muted")}>
-                  {b}
-                </button>
-              ))}
-            </div>
-          </div>
+
           {showStream && (
             <div>
               <label className="mb-1.5 block text-xs font-medium">Stream <span className="text-destructive">*</span></label>

@@ -539,18 +539,46 @@ function StudentWizard() {
       {step === 2 && (
         <div className="space-y-5">
           <div>
+            <label className="mb-1.5 block text-xs font-medium">Board <span className="text-destructive">*</span></label>
+            {optionsLoading ? (
+              <p className="text-xs text-muted-foreground">Loading available boards…</p>
+            ) : boards.length === 0 ? (
+              <p className="text-xs text-destructive">No course content is published yet. Please check back soon.</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {boards.map((b) => (
+                  <button key={b} type="button"
+                    onClick={() => {
+                      set("board", b);
+                      set("class_id", "");
+                      set("class_label", "");
+                      set("stream", "");
+                    }}
+                    className={cn("rounded-full border px-3 py-1.5 text-xs font-medium",
+                      form.board === b ? "border-primary bg-primary text-primary-foreground" : "border-input hover:bg-muted")}>
+                    {b}
+                  </button>
+                ))}
+              </div>
+            )}
+            {errors.board && <p className="mt-1 text-xs text-destructive">{errors.board}</p>}
+          </div>
+          <div>
             <label className="mb-1.5 block text-xs font-medium">Class <span className="text-destructive">*</span></label>
             <select
               value={form.class_id}
+              disabled={!form.board || classes.length === 0}
               onChange={(e) => {
                 const c = classes.find((x) => x.id === e.target.value);
                 set("class_id", e.target.value);
                 set("class_label", c?.label ?? "");
                 if (!(c?.label?.match(/11|12/))) set("stream", "");
               }}
-              className="w-full rounded-lg border border-input bg-background px-3 py-3 text-sm"
+              className="w-full rounded-lg border border-input bg-background px-3 py-3 text-sm disabled:opacity-60"
             >
-              <option value="">Select class</option>
+              <option value="">
+                {!form.board ? "Select board first" : classes.length === 0 ? "No classes available" : "Select class"}
+              </option>
               {classes.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
             </select>
             {errors.class_id && <p className="mt-1 text-xs text-destructive">{errors.class_id}</p>}
@@ -558,18 +586,7 @@ function StudentWizard() {
               <LockIcon className="h-3 w-3" /> Locked after signup. Email support@smartlabonline.com to change.
             </p>
           </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-medium">Board <span className="text-destructive">*</span></label>
-            <div className="flex flex-wrap gap-2">
-              {(["CBSE","ICSE","State","IB","IGCSE","Other"] as const).map((b) => (
-                <button key={b} type="button" onClick={() => set("board", b)}
-                  className={cn("rounded-full border px-3 py-1.5 text-xs font-medium",
-                    form.board === b ? "border-primary bg-primary text-primary-foreground" : "border-input hover:bg-muted")}>
-                  {b}
-                </button>
-              ))}
-            </div>
-          </div>
+
           {showStream && (
             <div>
               <label className="mb-1.5 block text-xs font-medium">Stream <span className="text-destructive">*</span></label>

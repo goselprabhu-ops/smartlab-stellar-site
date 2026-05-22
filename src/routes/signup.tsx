@@ -13,6 +13,7 @@ import {
   checkUsername,
   signupStudentWithUsername,
 } from "@/lib/account.functions";
+import { getRegistrationOptions } from "@/lib/registration-options.functions";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { AuthField } from "@/components/auth/AuthField";

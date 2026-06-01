@@ -20,7 +20,7 @@ export const getLaunchConfig = createServerFn({ method: "GET" }).handler(async (
     .maybeSingle();
   if (error) throw new Error(error.message);
   return data ?? {
-    launch_at: null,
+    launch_at: "2026-06-07T12:30:00.000Z",
     demo_mode_enabled: false,
     waitlist_open: true,
     referral_reward: "1 month free Pro",
